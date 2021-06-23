@@ -1,47 +1,57 @@
 import { useEffect, useState } from 'react';
+import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 
-// Redux
-import { connect } from 'react-redux';
-import { getApps } from '../../store/actions';
-
-// Typescript
-import { App, GlobalState } from '../../interfaces';
-
-// CSS
-import classes from './Apps.module.css';
-
-// UI
-import { Container } from '../UI/Layout/Layout';
-import Headline from '../UI/Headlines/Headline/Headline';
-import Spinner from '../UI/Spinner/Spinner';
+import { App, Category, GlobalState } from '../../interfaces';
+import { getAppCategories } from '../../store/actions';
 import ActionButton from '../UI/Buttons/ActionButton/ActionButton';
+import Headline from '../UI/Headlines/Headline/Headline';
+import { Container } from '../UI/Layout/Layout';
 import Modal from '../UI/Modal/Modal';
-
-// Subcomponents
-import AppGrid from './AppGrid/AppGrid';
+import Spinner from '../UI/Spinner/Spinner';
 import AppForm from './AppForm/AppForm';
+import AppGrid from './AppGrid/AppGrid';
+import classes from './Apps.module.css';
 import AppTable from './AppTable/AppTable';
 
-interface ComponentProps {
-  getApps: Function;
-  apps: App[];
+interface ComponentProps {  
   loading: boolean;
+  categories: Category[];
+  getAppCategories: () => void;
+}
+
+export enum ContentType {
+  category,
+  app
 }
 
 const Apps = (props: ComponentProps): JSX.Element => {
   const {
-    getApps,
-    apps,
+    getAppCategories,
+    categories,
     loading
   } = props;
 
   const [modalIsOpen, setModalIsOpen] = useState(false);
+  const [formContentType, setFormContentType] = useState(ContentType.category);
   const [isInEdit, setIsInEdit] = useState(false);
+  const [tableContentType, setTableContentType] = useState(ContentType.category);
   const [isInUpdate, setIsInUpdate] = useState(false);
+  const [categoryInUpdate, setCategoryInUpdate] = useState<Category>({
+    name: '',
+    id: -1,
+    isPinned: false,
+    orderId: 0,
+    type: 'apps',
+    apps: [],
+    bookmarks: [],
+    createdAt: new Date(),
+    updatedAt: new Date()
+  })
   const [appInUpdate, setAppInUpdate] = useState<App>({
     name: 'string',
     url: 'string',
+    categoryId: -1,
     icon: 'string',
     isPinned: false,
     orderId: 0,
@@ -50,72 +60,113 @@ const Apps = (props: ComponentProps): JSX.Element => {
     updatedAt: new Date()
   })
 
+  // useEffect(() => {
+  //   if (apps.length === 0) {
+  //     getApps();
+  //   }
+  // }, [getApps]);
   useEffect(() => {
-    if (apps.length === 0) {
-      getApps();
+    if (categories.length === 0) {
+      getAppCategories();
     }
-  }, [getApps]);
+  }, [getAppCategories])
 
   const toggleModal = (): void => {
     setModalIsOpen(!modalIsOpen);
-    setIsInUpdate(false);
+    // setIsInUpdate(false);
   }
 
-  const toggleEdit = (): void => {
-    setIsInEdit(!isInEdit);
+  const addActionHandler = (contentType: ContentType) => {
+    setFormContentType(contentType);
     setIsInUpdate(false);
+    toggleModal();
   }
 
-  const toggleUpdate = (app: App): void => {
-    setAppInUpdate(app);
+  const editActionHandler = (contentType: ContentType) => {
+    // We're in the edit mode and the same button was clicked - go back to list
+    if (isInEdit && contentType === tableContentType) {
+      setIsInEdit(false);
+    } else {
+      setIsInEdit(true);
+      setTableContentType(contentType);
+    }
+  }
+
+  const instanceOfCategory = (object: any): object is Category => {
+    return 'apps' in object;
+  }
+
+  const goToUpdateMode = (data: Category | App): void => {
     setIsInUpdate(true);
-    setModalIsOpen(true);
+    if (instanceOfCategory(data)) {
+      setFormContentType(ContentType.category);
+      setCategoryInUpdate(data);
+    } else {
+      setFormContentType(ContentType.app);
+      setAppInUpdate(data);
+    }
+    toggleModal();
   }
 
   return (
     <Container>
-      <Modal isOpen={modalIsOpen} setIsOpen={setModalIsOpen}>
+      <Modal isOpen={modalIsOpen} setIsOpen={toggleModal}>
         {!isInUpdate
-          ? <AppForm modalHandler={toggleModal} />
-          : <AppForm modalHandler={toggleModal} app={appInUpdate} />
+          ? <AppForm modalHandler={toggleModal} contentType={formContentType} />
+          : formContentType === ContentType.category
+            ? <AppForm modalHandler={toggleModal} contentType={formContentType} category={categoryInUpdate} />
+            : <AppForm modalHandler={toggleModal} contentType={formContentType} app={appInUpdate} />
         }
       </Modal>
 
       <Headline
-        title='All Applications'
+        title='All Apps'
         subtitle={(<Link to='/'>Go back</Link>)}
       />
       
       <div className={classes.ActionsContainer}>
         <ActionButton
-          name='Add'
+          name='Add Category'
           icon='mdiPlusBox'
-          handler={toggleModal}
+          handler={() => addActionHandler(ContentType.category)}
         />
         <ActionButton
-          name='Edit'
+          name='Add App'
+          icon='mdiPlusBox'
+          handler={() => addActionHandler(ContentType.app)}
+        />
+        <ActionButton
+          name='Edit Categories'
           icon='mdiPencil'
-          handler={toggleEdit}
+          handler={() => editActionHandler(ContentType.category)}
+        />
+        <ActionButton
+          name='Edit Apps'
+          icon='mdiPencil'
+          handler={() => editActionHandler(ContentType.app)}
         />
       </div>
 
-      <div className={classes.Apps}>
-        {loading
-          ? <Spinner />
-          : (!isInEdit
-              ? <AppGrid apps={apps} />
-              : <AppTable updateAppHandler={toggleUpdate} />)
-        }
-      </div>
+      {loading
+        ? <Spinner />
+        : (!isInEdit
+          ? <AppGrid categories={categories} />
+          : <AppTable
+              contentType={tableContentType}
+              categories={categories}
+              updateHandler={goToUpdateMode}
+            />
+          )
+      }
     </Container>
   )
 }
 
 const mapStateToProps = (state: GlobalState) => {
   return {
-    apps: state.app.apps,
-    loading: state.app.loading
+    loading: state.app.loading,
+    categories: state.app.categories
   }
 }
 
-export default connect(mapStateToProps, { getApps })(Apps);
+export default connect(mapStateToProps, { getAppCategories })(Apps);

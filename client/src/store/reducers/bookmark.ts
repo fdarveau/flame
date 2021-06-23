@@ -1,6 +1,6 @@
-import { ActionTypes, Action } from '../actions';
-import { Category, Bookmark } from '../../interfaces';
+import { Bookmark, Category } from '../../interfaces';
 import { sortData } from '../../utility';
+import { Action, ActionTypes } from '../actions';
 
 export interface State {
   loading: boolean;
@@ -37,6 +37,7 @@ const addCategory = (state: State, action: Action): State => {
       ...state.categories,
       {
         ...action.payload,
+        type: 'bookmarks',
         bookmarks: []
       }
     ]
@@ -160,17 +161,17 @@ const reorderCategories = (state: State, action: Action): State => {
 
 const bookmarkReducer = (state = initialState, action: Action) => {
   switch (action.type) {
-    case ActionTypes.getCategories: return getCategories(state, action);
-    case ActionTypes.getCategoriesSuccess: return getCategoriesSuccess(state, action);
-    case ActionTypes.addCategory: return addCategory(state, action);
+    case ActionTypes.getBookmarkCategories: return getCategories(state, action);
+    case ActionTypes.getBookmarkCategoriesSuccess: return getCategoriesSuccess(state, action);
+    case ActionTypes.addBookmarkCategory: return addCategory(state, action);
     case ActionTypes.addBookmark: return addBookmark(state, action);
-    case ActionTypes.pinCategory: return pinCategory(state, action);
-    case ActionTypes.deleteCategory: return deleteCategory(state, action);
-    case ActionTypes.updateCategory: return updateCategory(state, action);
+    case ActionTypes.pinBookmarkCategory: return pinCategory(state, action);
+    case ActionTypes.deleteBookmarkCategory: return deleteCategory(state, action);
+    case ActionTypes.updateBookmarkCategory: return updateCategory(state, action);
     case ActionTypes.deleteBookmark: return deleteBookmark(state, action);
     case ActionTypes.updateBookmark: return updateBookmark(state, action);
-    case ActionTypes.sortCategories: return sortCategories(state, action);
-    case ActionTypes.reorderCategories: return reorderCategories(state, action);
+    case ActionTypes.sortBookmarkCategories: return sortCategories(state, action);
+    case ActionTypes.reorderBookmarkCategories: return reorderCategories(state, action);
     default: return state;
   }
 }

@@ -1,19 +1,22 @@
-import { useState, useEffect, ChangeEvent, FormEvent } from 'react';
+import { ChangeEvent, FormEvent, useEffect, useState } from 'react';
+import { connect } from 'react-redux';
+
+import { GlobalState, NewNotification, SettingsForm } from '../../../interfaces';
+import {
+  createNotification,
+  sortAppCategories,
+  sortApps,
+  sortBookmarkCategories,
+  updateConfig,
+} from '../../../store/actions';
+import { searchConfig } from '../../../utility';
+import Button from '../../UI/Buttons/Button/Button';
+import InputGroup from '../../UI/Forms/InputGroup/InputGroup';
 
 // Redux
-import { connect } from 'react-redux';
-import { createNotification, updateConfig, sortApps, sortCategories } from '../../../store/actions';
-
 // Typescript
-import { GlobalState, NewNotification, SettingsForm } from '../../../interfaces';
-
 // UI
-import InputGroup from '../../UI/Forms/InputGroup/InputGroup';
-import Button from '../../UI/Buttons/Button/Button';
-
 // Utils
-import { searchConfig } from '../../../utility';
-
 interface ComponentProps {
   createNotification: (notification: NewNotification) => void;
   updateConfig: (formData: SettingsForm) => void;
@@ -149,7 +152,8 @@ const actions = {
   createNotification,
   updateConfig,
   sortApps,
-  sortCategories
+  sortAppCategories,
+  sortBookmarkCategories
 }
 
 export default connect(mapStateToProps, actions)(OtherSettings);

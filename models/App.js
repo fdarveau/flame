@@ -10,6 +10,10 @@ const App = sequelize.define('App', {
     type: DataTypes.STRING,
     allowNull: false
   },
+  categoryId: {
+    type: DataTypes.INTEGER,
+    allowNull: false
+  },
   icon: {
     type: DataTypes.STRING,
     allowNull: false,

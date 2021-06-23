@@ -1,12 +1,19 @@
-import { useState, SyntheticEvent, Fragment, ChangeEvent, useEffect } from 'react';
+import { ChangeEvent, Fragment, SyntheticEvent, useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 
-import ModalForm from '../../UI/Forms/ModalForm/ModalForm';
-import InputGroup from '../../UI/Forms/InputGroup/InputGroup';
 import { Bookmark, Category, GlobalState, NewBookmark, NewCategory, NewNotification } from '../../../interfaces';
-import { ContentType } from '../Bookmarks';
-import { getCategories, addCategory, addBookmark, updateCategory, updateBookmark, createNotification } from '../../../store/actions';
+import {
+  addBookmark,
+  addBookmarkCategory,
+  createNotification,
+  getBookmarkCategories,
+  updateBookmark,
+  updateBookmarkCategory,
+} from '../../../store/actions';
 import Button from '../../UI/Buttons/Button/Button';
+import InputGroup from '../../UI/Forms/InputGroup/InputGroup';
+import ModalForm from '../../UI/Forms/ModalForm/ModalForm';
+import { ContentType } from '../Bookmarks';
 
 interface ComponentProps {
   modalHandler: () => void;
@@ -14,19 +21,20 @@ interface ComponentProps {
   categories: Category[];
   category?: Category;
   bookmark?: Bookmark;
-  addCategory: (formData: NewCategory) => void;
+  addBookmarkCategory: (formData: NewCategory) => void;
   addBookmark: (formData: NewBookmark) => void;
-  updateCategory: (id: number, formData: NewCategory) => void;
+  updateBookmarkCategory: (id: number, formData: NewCategory) => void;
   updateBookmark: (id: number, formData: NewBookmark, previousCategoryId: number) => void;
   createNotification: (notification: NewNotification) => void;
 }
 
 const BookmarkForm = (props: ComponentProps): JSX.Element => {
-  const [categoryName, setCategoryName] = useState<NewCategory>({
-    name: ''
+  const [categoryData, setCategoryData] = useState<NewCategory>({
+    name: '',
+    type: 'bookmarks'
   })
 
-  const [formData, setFormData] = useState<NewBookmark>({
+  const [bookmarkData, setBookmarkData] = useState<NewBookmark>({
     name: '',
     url: '',
     categoryId: -1,
@@ -36,23 +44,23 @@ const BookmarkForm = (props: ComponentProps): JSX.Element => {
   // Load category data if provided for editing
   useEffect(() => {
     if (props.category) {
-      setCategoryName({ name: props.category.name });
+      setCategoryData({ name: props.category.name, type: props.category.type });
     } else {
-      setCategoryName({ name: '' });
+      setCategoryData({ name: '', type: "bookmarks" });
     }
   }, [props.category])
 
   // Load bookmark data if provided for editing
   useEffect(() => {
     if (props.bookmark) {
-      setFormData({
+      setBookmarkData({
         name: props.bookmark.name,
         url: props.bookmark.url,
         categoryId: props.bookmark.categoryId,
         icon: props.bookmark.icon
       })
     } else {
-      setFormData({
+      setBookmarkData({
         name: '',
         url: '',
         categoryId: -1,
@@ -68,11 +76,11 @@ const BookmarkForm = (props: ComponentProps): JSX.Element => {
       // Add new
       if (props.contentType === ContentType.category) {
         // Add category
-        props.addCategory(categoryName);
-        setCategoryName({ name: '' });
+        props.addBookmarkCategory(categoryData);
+        setCategoryData({ name: '', type: 'bookmarks' });
       } else if (props.contentType === ContentType.bookmark) {
         // Add bookmark
-        if (formData.categoryId === -1) {
+        if (bookmarkData.categoryId === -1) {
           props.createNotification({
             title: 'Error',
             message: 'Please select category'
@@ -80,11 +88,11 @@ const BookmarkForm = (props: ComponentProps): JSX.Element => {
           return;
         }
   
-        props.addBookmark(formData);
-        setFormData({
+        props.addBookmark(bookmarkData);
+        setBookmarkData({
           name: '',
           url: '',
-          categoryId: formData.categoryId,
+          categoryId: bookmarkData.categoryId,
           icon: ''
         })
       }
@@ -92,12 +100,12 @@ const BookmarkForm = (props: ComponentProps): JSX.Element => {
       // Update
       if (props.contentType === ContentType.category && props.category) {
         // Update category
-        props.updateCategory(props.category.id, categoryName);
-        setCategoryName({ name: '' });
+        props.updateBookmarkCategory(props.category.id, categoryData);
+        setCategoryData({ name: '', type: 'bookmarks' });
       } else if (props.contentType === ContentType.bookmark && props.bookmark) {
         // Update bookmark
-        props.updateBookmark(props.bookmark.id, formData, props.bookmark.categoryId);
-        setFormData({
+        props.updateBookmark(props.bookmark.id, bookmarkData, props.bookmark.categoryId);
+        setBookmarkData({
           name: '',
           url: '',
           categoryId: -1,
@@ -109,16 +117,16 @@ const BookmarkForm = (props: ComponentProps): JSX.Element => {
     }
   }
 
-  const inputChangeHandler = (e: ChangeEvent<HTMLInputElement>): void => {
-    setFormData({
-      ...formData,
+  const inputChangeHandler = (e: ChangeEvent<HTMLInputElement>, data: any): void => {
+    setBookmarkData({
+      ...data,
       [e.target.name]: e.target.value
     })
   }
 
-  const selectChangeHandler = (e: ChangeEvent<HTMLSelectElement>): void => {
-    setFormData({
-      ...formData,
+  const selectChangeHandler = (e: ChangeEvent<HTMLSelectElement>, data: any): void => {
+    setBookmarkData({
+      ...data,
       categoryId: parseInt(e.target.value)
     })
   }
@@ -153,8 +161,8 @@ const BookmarkForm = (props: ComponentProps): JSX.Element => {
                 id='categoryName'
                 placeholder='Social Media'
                 required
-                value={categoryName.name}
-                onChange={(e) => setCategoryName({ name: e.target.value })}
+                value={categoryData.name}
+                onChange={(e) => inputChangeHandler(e, categoryData)}
               />
             </InputGroup>
           </Fragment>
@@ -169,8 +177,8 @@ const BookmarkForm = (props: ComponentProps): JSX.Element => {
                 id='name'
                 placeholder='Reddit'
                 required
-                value={formData.name}
-                onChange={(e) => inputChangeHandler(e)}
+                value={bookmarkData.name}
+                onChange={(e) => inputChangeHandler(e, bookmarkData)}
               />
             </InputGroup>
             <InputGroup>
@@ -181,8 +189,8 @@ const BookmarkForm = (props: ComponentProps): JSX.Element => {
                 id='url'
                 placeholder='reddit.com'
                 required
-                value={formData.url}
-                onChange={(e) => inputChangeHandler(e)}
+                value={bookmarkData.url}
+                onChange={(e) => inputChangeHandler(e, bookmarkData)}
               />
               <span>
                 <a
@@ -200,8 +208,8 @@ const BookmarkForm = (props: ComponentProps): JSX.Element => {
                 name='categoryId'
                 id='categoryId'
                 required
-                onChange={(e) => selectChangeHandler(e)}
-                value={formData.categoryId}
+                onChange={(e) => selectChangeHandler(e, bookmarkData)}
+                value={bookmarkData.categoryId}
               >
                 <option value={-1}>Select category</option>
                 {props.categories.map((category: Category): JSX.Element => {
@@ -223,8 +231,8 @@ const BookmarkForm = (props: ComponentProps): JSX.Element => {
                 name='icon'
                 id='icon'
                 placeholder='book-open-outline'
-                value={formData.icon}
-                onChange={(e) => inputChangeHandler(e)}
+                value={bookmarkData.icon}
+                onChange={(e) => inputChangeHandler(e, bookmarkData)}
               />
               <span>
                 Use icon name from MDI. 
@@ -250,10 +258,10 @@ const mapStateToProps = (state: GlobalState) => {
 }
 
 const dispatchMap = {
-  getCategories,
-  addCategory,
+  getBookmarkCategories,
+  addBookmarkCategory,
   addBookmark,
-  updateCategory,
+  updateBookmarkCategory,
   updateBookmark,
   createNotification
 }

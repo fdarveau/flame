@@ -1,73 +1,98 @@
-import { Fragment, KeyboardEvent, useState, useEffect } from 'react';
-import { DragDropContext, Droppable, Draggable, DropResult } from 'react-beautiful-dnd';
+import { Fragment, KeyboardEvent, useEffect, useState } from 'react';
+import { DragDropContext, Draggable, Droppable, DropResult } from 'react-beautiful-dnd';
+import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 
-// Redux
-import { connect } from 'react-redux';
-import { pinApp, deleteApp, reorderApps, updateConfig, createNotification } from '../../../store/actions';
-
-// Typescript
-import { App, GlobalState, NewNotification } from '../../../interfaces';
-
-// CSS
-import classes from './AppTable.module.css';
-
-// UI
+import { App, Category, NewNotification } from '../../../interfaces';
+import {
+  createNotification,
+  deleteApp,
+  deleteAppCategory,
+  pinApp,
+  pinAppCategory,
+  reorderAppCategories,
+  reorderApps,
+  updateConfig,
+} from '../../../store/actions';
+import { searchConfig } from '../../../utility';
 import Icon from '../../UI/Icons/Icon/Icon';
 import Table from '../../UI/Table/Table';
-
-// Utils
-import { searchConfig } from '../../../utility';
+import { ContentType } from '../Apps';
+import classes from './AppTable.module.css';
 
 interface ComponentProps {
-  apps: App[];
+  contentType: ContentType;
+  categories: Category[];
+  pinAppCategory: (category: Category) => void;
+  deleteAppCategory: (id: number) => void;
+  reorderAppCategories: (categories: Category[]) => void;
+  updateHandler: (data: Category | App) => void;
   pinApp: (app: App) => void;
   deleteApp: (id: number) => void;
-  updateAppHandler: (app: App) => void;
   reorderApps: (apps: App[]) => void;
   updateConfig: (formData: any) => void;
   createNotification: (notification: NewNotification) => void;
 }
 
 const AppTable = (props: ComponentProps): JSX.Element => {
+  const [localCategories, setLocalCategories] = useState<Category[]>([]);
   const [localApps, setLocalApps] = useState<App[]>([]);
   const [isCustomOrder, setIsCustomOrder] = useState<boolean>(false);
 
-  // Copy apps array
+  // Copy categories and apps array
   useEffect(() => {
-    setLocalApps([...props.apps]);
-  }, [props.apps])
+    setLocalCategories([...props.categories]);
+    setLocalApps(
+      props.categories.flatMap((category: Category) => category.apps)
+    );
+  }, [props.categories]);
 
   // Check ordering
   useEffect(() => {
-    const order = searchConfig('useOrdering', '');
+    const order = searchConfig("useOrdering", "");
 
-    if (order === 'orderId') {
+    if (order === "orderId") {
       setIsCustomOrder(true);
     }
-  }, [])
+  }, []);
+
+  const deleteCategoryHandler = (category: Category): void => {
+    const proceed = window.confirm(
+      `Are you sure you want to delete ${category.name}? It will delete ALL assigned apps`
+    );
+
+    if (proceed) {
+      props.deleteAppCategory(category.id);
+    }
+  };
 
   const deleteAppHandler = (app: App): void => {
-    const proceed = window.confirm(`Are you sure you want to delete ${app.name} at ${app.url} ?`);
+    const proceed = window.confirm(
+      `Are you sure you want to delete ${app.name} at ${app.url} ?`
+    );
 
     if (proceed) {
       props.deleteApp(app.id);
     }
-  }
+  };
 
   // Support keyboard navigation for actions
-  const keyboardActionHandler = (e: KeyboardEvent, app: App, handler: Function) => {
-    if (e.key === 'Enter') {
-      handler(app);
+  const keyboardActionHandler = (
+    e: KeyboardEvent,
+    object: any,
+    handler: Function
+  ) => {
+    if (e.key === "Enter") {
+      handler(object);
     }
-  }
+  };
 
   const dragEndHanlder = (result: DropResult): void => {
     if (!isCustomOrder) {
       props.createNotification({
-        title: 'Error',
-        message: 'Custom order is disabled'
-      })
+        title: "Error",
+        message: "Custom order is disabled",
+      });
       return;
     }
 
@@ -75,106 +100,260 @@ const AppTable = (props: ComponentProps): JSX.Element => {
       return;
     }
 
-    const tmpApps = [...localApps];
-    const [movedApp] = tmpApps.splice(result.source.index, 1);
-    tmpApps.splice(result.destination.index, 0, movedApp);
+    if (props.contentType === ContentType.app) {
+      const tmpApps = [...localApps];
+      const [movedApp] = tmpApps.splice(result.source.index, 1);
+      tmpApps.splice(result.destination.index, 0, movedApp);
 
-    setLocalApps(tmpApps);
-    props.reorderApps(tmpApps);
-  }
+      setLocalApps(tmpApps);
+      props.reorderApps(tmpApps);
+    } else if (props.contentType === ContentType.category) {
+      const tmpCategories = [...localCategories];
+      const [movedCategory] = tmpCategories.splice(result.source.index, 1);
+      tmpCategories.splice(result.destination.index, 0, movedCategory);
 
-  return (
-    <Fragment>
-      <div className={classes.Message}>
-        {isCustomOrder
-          ? <p>You can drag and drop single rows to reorder application</p>
-          : <p>Custom order is disabled. You can change it in <Link to='/settings/other'>settings</Link></p>
-        }
-      </div>
-      <DragDropContext onDragEnd={dragEndHanlder}>
-        <Droppable droppableId='apps'>
-          {(provided) => (
-            <Table headers={[
-              'Name',
-              'URL',
-              'Icon',
-              'Actions'
-            ]}
-            innerRef={provided.innerRef}>
-              {localApps.map((app: App, index): JSX.Element => {
-                return (
-                  <Draggable key={app.id} draggableId={app.id.toString()} index={index}>
-                    {(provided, snapshot) => {
-                      const style = {
-                        border: snapshot.isDragging ? '1px solid var(--color-accent)' : 'none',
-                        borderRadius: '4px',
-                        ...provided.draggableProps.style,
-                      };
-
-                      return (
-                        <tr
-                          {...provided.draggableProps}
-                          {...provided.dragHandleProps}
-                          ref={provided.innerRef}
-                          style={style}
-                        >
-                          <td style={{ width:'200px' }}>{app.name}</td>
-                          <td style={{ width:'200px' }}>{app.url}</td>
-                          <td style={{ width:'200px' }}>{app.icon}</td>
-                          {!snapshot.isDragging && (
-                            <td className={classes.TableActions}>
-                              <div
-                                className={classes.TableAction}
-                                onClick={() => deleteAppHandler(app)}
-                                onKeyDown={(e) => keyboardActionHandler(e, app, deleteAppHandler)}
-                                tabIndex={0}>
-                                <Icon icon='mdiDelete' />
-                              </div>
-                              <div
-                                className={classes.TableAction}
-                                onClick={() => props.updateAppHandler(app)}
-                                onKeyDown={(e) => keyboardActionHandler(e, app, props.updateAppHandler)}
-                                tabIndex={0}>
-                                <Icon icon='mdiPencil' />
-                              </div>
-                              <div
-                                className={classes.TableAction}
-                                onClick={() => props.pinApp(app)}
-                                onKeyDown={(e) => keyboardActionHandler(e, app, props.pinApp)}
-                                tabIndex={0}>
-                                {app.isPinned
-                                  ? <Icon icon='mdiPinOff' color='var(--color-accent)' />
-                                  : <Icon icon='mdiPin' />
-                                }
-                              </div>
-                            </td>
-                          )}
-                        </tr>
-                      )
-                    }}
-                  </Draggable>
-                )
-              })}
-            </Table>
+      setLocalCategories(tmpCategories);
+      props.reorderAppCategories(tmpCategories);
+    }
+  };
+  if (props.contentType === ContentType.category) {
+    return (
+      <Fragment>
+        <div className={classes.Message}>
+          {isCustomOrder ? (
+            <p>You can drag and drop single rows to reorder categories</p>
+          ) : (
+            <p>
+              Custom order is disabled. You can change it in{" "}
+              <Link to="/settings/other">settings</Link>
+            </p>
           )}
-        </Droppable>
-      </DragDropContext>
-    </Fragment>
-  )
-}
+        </div>
+        <DragDropContext onDragEnd={dragEndHanlder}>
+          <Droppable droppableId="categories">
+            {(provided) => (
+              <Table headers={["Name", "Actions"]} innerRef={provided.innerRef}>
+                {localCategories.map(
+                  (category: Category, index): JSX.Element => {
+                    return (
+                      <Draggable
+                        key={category.id}
+                        draggableId={category.id.toString()}
+                        index={index}
+                      >
+                        {(provided, snapshot) => {
+                          const style = {
+                            border: snapshot.isDragging
+                              ? "1px solid var(--color-accent)"
+                              : "none",
+                            borderRadius: "4px",
+                            ...provided.draggableProps.style,
+                          };
 
-const mapStateToProps = (state: GlobalState) => {
-  return {
-    apps: state.app.apps
+                          return (
+                            <tr
+                              {...provided.draggableProps}
+                              {...provided.dragHandleProps}
+                              ref={provided.innerRef}
+                              style={style}
+                            >
+                              <td>{category.name}</td>
+                              {!snapshot.isDragging && (
+                                <td className={classes.TableActions}>
+                                  <div
+                                    className={classes.TableAction}
+                                    onClick={() =>
+                                      deleteCategoryHandler(category)
+                                    }
+                                    onKeyDown={(e) =>
+                                      keyboardActionHandler(
+                                        e,
+                                        category,
+                                        deleteCategoryHandler
+                                      )
+                                    }
+                                    tabIndex={0}
+                                  >
+                                    <Icon icon="mdiDelete" />
+                                  </div>
+                                  <div
+                                    className={classes.TableAction}
+                                    onClick={() =>
+                                      props.updateHandler(category)
+                                    }
+                                    tabIndex={0}
+                                  >
+                                    <Icon icon="mdiPencil" />
+                                  </div>
+                                  <div
+                                    className={classes.TableAction}
+                                    onClick={() => props.pinAppCategory(category)}
+                                    onKeyDown={(e) =>
+                                      keyboardActionHandler(
+                                        e,
+                                        category,
+                                        props.pinAppCategory
+                                      )
+                                    }
+                                    tabIndex={0}
+                                  >
+                                    {category.isPinned ? (
+                                      <Icon
+                                        icon="mdiPinOff"
+                                        color="var(--color-accent)"
+                                      />
+                                    ) : (
+                                      <Icon icon="mdiPin" />
+                                    )}
+                                  </div>
+                                </td>
+                              )}
+                            </tr>
+                          );
+                        }}
+                      </Draggable>
+                    );
+                  }
+                )}
+              </Table>
+            )}
+          </Droppable>
+        </DragDropContext>
+      </Fragment>
+    );
+  } else {
+    const apps: { app: App; categoryName: string }[] = [];
+    props.categories.forEach((category: Category) => {
+      category.apps.forEach((app: App) => {
+        apps.push({
+          app: app,
+          categoryName: category.name,
+        });
+      });
+    });
+
+    return (
+      <Fragment>
+        <div className={classes.Message}>
+          {isCustomOrder ? (
+            <p>You can drag and drop single rows to reorder application</p>
+          ) : (
+            <p>
+              Custom order is disabled. You can change it in{" "}
+              <Link to="/settings/other">settings</Link>
+            </p>
+          )}
+        </div>
+        <DragDropContext onDragEnd={dragEndHanlder}>
+          <Droppable droppableId="apps">
+            {(provided) => (
+              <Table
+                headers={["Name", "URL", "Icon", "Category", "Actions"]}
+                innerRef={provided.innerRef}
+              >
+                {localApps.map((app: App, index): JSX.Element => {
+                  return (
+                    <Draggable
+                      key={app.id}
+                      draggableId={app.id.toString()}
+                      index={index}
+                    >
+                      {(provided, snapshot) => {
+                        const style = {
+                          border: snapshot.isDragging
+                            ? "1px solid var(--color-accent)"
+                            : "none",
+                          borderRadius: "4px",
+                          ...provided.draggableProps.style,
+                        };
+
+                        const category = localCategories.find((category: Category) => category.id === app.categoryId);
+                        const categoryName = category?.name;
+
+                        return (
+                          <tr
+                            {...provided.draggableProps}
+                            {...provided.dragHandleProps}
+                            ref={provided.innerRef}
+                            style={style}
+                          >
+                            <td style={{ width: "200px" }}>{app.name}</td>
+                            <td style={{ width: "200px" }}>{app.url}</td>
+                            <td style={{ width: "200px" }}>{app.icon}</td>
+                            <td style={{ width: "200px" }}>{categoryName}</td>
+                            {!snapshot.isDragging && (
+                              <td className={classes.TableActions}>
+                                <div
+                                  className={classes.TableAction}
+                                  onClick={() => deleteAppHandler(app)}
+                                  onKeyDown={(e) =>
+                                    keyboardActionHandler(
+                                      e,
+                                      app,
+                                      deleteAppHandler
+                                    )
+                                  }
+                                  tabIndex={0}
+                                >
+                                  <Icon icon="mdiDelete" />
+                                </div>
+                                <div
+                                  className={classes.TableAction}
+                                  onClick={() => props.updateHandler(app)}
+                                  onKeyDown={(e) =>
+                                    keyboardActionHandler(
+                                      e,
+                                      app,
+                                      props.updateHandler
+                                    )
+                                  }
+                                  tabIndex={0}
+                                >
+                                  <Icon icon="mdiPencil" />
+                                </div>
+                                <div
+                                  className={classes.TableAction}
+                                  onClick={() => props.pinApp(app)}
+                                  onKeyDown={(e) =>
+                                    keyboardActionHandler(e, app, props.pinApp)
+                                  }
+                                  tabIndex={0}
+                                >
+                                  {app.isPinned ? (
+                                    <Icon
+                                      icon="mdiPinOff"
+                                      color="var(--color-accent)"
+                                    />
+                                  ) : (
+                                    <Icon icon="mdiPin" />
+                                  )}
+                                </div>
+                              </td>
+                            )}
+                          </tr>
+                        );
+                      }}
+                    </Draggable>
+                  );
+                })}
+              </Table>
+            )}
+          </Droppable>
+        </DragDropContext>
+      </Fragment>
+    );
   }
-}
+};
 
 const actions = {
+  pinAppCategory,
+  deleteAppCategory,
+  reorderAppCategories,
   pinApp,
   deleteApp,
   reorderApps,
   updateConfig,
-  createNotification
-}
+  createNotification,
+};
 
-export default connect(mapStateToProps, actions)(AppTable);
+export default connect(null, actions)(AppTable);

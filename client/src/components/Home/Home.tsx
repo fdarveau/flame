@@ -1,52 +1,39 @@
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
+import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 
-// Redux
-import { connect } from 'react-redux';
-import { getApps, getCategories } from '../../store/actions';
-
-// Typescript
+import { Category } from '../../interfaces';
 import { GlobalState } from '../../interfaces/GlobalState';
-import { App, Category } from '../../interfaces';
-
-// UI
-import Icon from '../UI/Icons/Icon/Icon';
-import { Container } from '../UI/Layout/Layout';
-import SectionHeadline from '../UI/Headlines/SectionHeadline/SectionHeadline';
-import Spinner from '../UI/Spinner/Spinner';
-
-// CSS
-import classes from './Home.module.css';
-
-// Components
+import { getAppCategories, getBookmarkCategories } from '../../store/actions';
+import { searchConfig } from '../../utility';
 import AppGrid from '../Apps/AppGrid/AppGrid';
 import BookmarkGrid from '../Bookmarks/BookmarkGrid/BookmarkGrid';
+import SectionHeadline from '../UI/Headlines/SectionHeadline/SectionHeadline';
+import Icon from '../UI/Icons/Icon/Icon';
+import { Container } from '../UI/Layout/Layout';
+import Spinner from '../UI/Spinner/Spinner';
 import WeatherWidget from '../Widgets/WeatherWidget/WeatherWidget';
-
-// Functions
-import { greeter } from './functions/greeter';
 import { dateTime } from './functions/dateTime';
-
-// Utils
-import { searchConfig } from '../../utility';
+import { greeter } from './functions/greeter';
+import classes from './Home.module.css';
 
 interface ComponentProps {
-  getApps: Function;
-  getCategories: Function;
-  appsLoading: boolean;
-  apps: App[];
-  categoriesLoading: boolean;
-  categories: Category[];
+  getAppCategories: Function;
+  getBookmarkCategories: Function;
+  appCategoriesLoading: boolean;
+  bookmarkCategoriesLoading: boolean;
+  appCategories: Category[];
+  bookmarkCategories: Category[];
 }
 
 const Home = (props: ComponentProps): JSX.Element => {
   const {
-    getApps,
-    apps,
-    appsLoading,
-    getCategories,
-    categories,
-    categoriesLoading
+    getAppCategories,
+    getBookmarkCategories,
+    appCategories,
+    bookmarkCategories,
+    appCategoriesLoading,
+    bookmarkCategoriesLoading
   } = props;
 
   const [header, setHeader] = useState({
@@ -54,19 +41,19 @@ const Home = (props: ComponentProps): JSX.Element => {
     greeting: greeter()
   })
 
-  // Load applications
+  // Load app categories
   useEffect(() => {
-    if (apps.length === 0) {
-      getApps();
+    if (appCategories.length === 0) {
+      getAppCategories();
     }
-  }, [getApps]);
+  }, [getAppCategories]);
 
   // Load bookmark categories
   useEffect(() => {
-    if (categories.length === 0) {
-      getCategories();
+    if (bookmarkCategories.length === 0) {
+      getBookmarkCategories();
     }
-  }, [getCategories]);
+  }, [getBookmarkCategories]);
 
   // Refresh greeter and time
   useEffect(() => {
@@ -102,22 +89,22 @@ const Home = (props: ComponentProps): JSX.Element => {
       }
       
       <SectionHeadline title='Applications' link='/applications' />
-      {appsLoading
+      {appCategoriesLoading
         ? <Spinner />
         : <AppGrid
-          apps={apps.filter((app: App) => app.isPinned)}
-          totalApps={apps.length}
+            categories={appCategories.filter((category: Category) => category.isPinned && category.type === 'apps')}
+            totalCategories={appCategories.filter((category: Category) => category.type === 'apps').length}
         />
       }
 
       <div className={classes.HomeSpace}></div>
 
       <SectionHeadline title='Bookmarks' link='/bookmarks' />
-      {categoriesLoading
+      {bookmarkCategoriesLoading
         ? <Spinner />
         : <BookmarkGrid
-            categories={categories.filter((category: Category) => category.isPinned)}
-            totalCategories={categories.length}
+            categories={bookmarkCategories.filter((category: Category) => category.isPinned && category.type === 'bookmarks')}
+            totalCategories={bookmarkCategories.filter((category: Category) => category.type === 'bookmarks').length}
         />
       }
 
@@ -130,11 +117,11 @@ const Home = (props: ComponentProps): JSX.Element => {
 
 const mapStateToProps = (state: GlobalState) => {
   return {
-    appsLoading: state.app.loading,
-    apps: state.app.apps,
-    categoriesLoading: state.bookmark.loading,
-    categories: state.bookmark.categories
+    appCategoriesLoading: state.app.loading,
+    appCategories: state.app.categories,
+    bookmarkCategoriesLoading: state.bookmark.loading,
+    bookmarkCategories: state.bookmark.categories
   }
 }
 
-export default connect(mapStateToProps, { getApps, getCategories })(Home);
+export default connect(mapStateToProps, { getAppCategories, getBookmarkCategories })(Home);
