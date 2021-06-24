@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 
 import { App, Category, GlobalState } from '../../interfaces';
-import { getAppCategories } from '../../store/actions';
+import { getAppCategories, getApps } from '../../store/actions';
 import ActionButton from '../UI/Buttons/ActionButton/ActionButton';
 import Headline from '../UI/Headlines/Headline/Headline';
 import { Container } from '../UI/Layout/Layout';
@@ -18,6 +18,8 @@ interface ComponentProps {
   loading: boolean;
   categories: Category[];
   getAppCategories: () => void;
+  apps: App[];
+  getApps: () => void;
 }
 
 export enum ContentType {
@@ -27,6 +29,8 @@ export enum ContentType {
 
 const Apps = (props: ComponentProps): JSX.Element => {
   const {
+    apps,
+    getApps,
     getAppCategories,
     categories,
     loading
@@ -43,7 +47,6 @@ const Apps = (props: ComponentProps): JSX.Element => {
     isPinned: false,
     orderId: 0,
     type: 'apps',
-    apps: [],
     bookmarks: [],
     createdAt: new Date(),
     updatedAt: new Date()
@@ -60,11 +63,12 @@ const Apps = (props: ComponentProps): JSX.Element => {
     updatedAt: new Date()
   })
 
-  // useEffect(() => {
-  //   if (apps.length === 0) {
-  //     getApps();
-  //   }
-  // }, [getApps]);
+  useEffect(() => {
+    if (apps.length === 0) {
+      getApps();
+    }
+  }, [getApps]);
+
   useEffect(() => {
     if (categories.length === 0) {
       getAppCategories();
@@ -150,10 +154,11 @@ const Apps = (props: ComponentProps): JSX.Element => {
       {loading
         ? <Spinner />
         : (!isInEdit
-          ? <AppGrid categories={categories} />
+          ? <AppGrid categories={categories} apps={apps} />
           : <AppTable
               contentType={tableContentType}
               categories={categories}
+              apps={apps}
               updateHandler={goToUpdateMode}
             />
           )
@@ -165,8 +170,9 @@ const Apps = (props: ComponentProps): JSX.Element => {
 const mapStateToProps = (state: GlobalState) => {
   return {
     loading: state.app.loading,
-    categories: state.app.categories
+    categories: state.app.categories,
+    apps: state.app.apps
   }
 }
 
-export default connect(mapStateToProps, { getAppCategories })(Apps);
+export default connect(mapStateToProps, { getApps, getAppCategories })(Apps);

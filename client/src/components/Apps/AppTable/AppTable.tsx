@@ -23,6 +23,7 @@ import classes from './AppTable.module.css';
 interface ComponentProps {
   contentType: ContentType;
   categories: Category[];
+  apps: App[];
   pinAppCategory: (category: Category) => void;
   deleteAppCategory: (id: number) => void;
   reorderAppCategories: (categories: Category[]) => void;
@@ -39,13 +40,15 @@ const AppTable = (props: ComponentProps): JSX.Element => {
   const [localApps, setLocalApps] = useState<App[]>([]);
   const [isCustomOrder, setIsCustomOrder] = useState<boolean>(false);
 
-  // Copy categories and apps array
+  // Copy categories array
   useEffect(() => {
     setLocalCategories([...props.categories]);
-    setLocalApps(
-      props.categories.flatMap((category: Category) => category.apps)
-    );
   }, [props.categories]);
+  
+  // Copy apps array
+  useEffect(() => {
+    setLocalApps([...props.apps]);
+  }, [props.apps]);
 
   // Check ordering
   useEffect(() => {
@@ -87,7 +90,7 @@ const AppTable = (props: ComponentProps): JSX.Element => {
     }
   };
 
-  const dragEndHanlder = (result: DropResult): void => {
+  const dragEndHandler = (result: DropResult): void => {
     if (!isCustomOrder) {
       props.createNotification({
         title: "Error",
@@ -116,6 +119,7 @@ const AppTable = (props: ComponentProps): JSX.Element => {
       props.reorderAppCategories(tmpCategories);
     }
   };
+  
   if (props.contentType === ContentType.category) {
     return (
       <Fragment>
@@ -129,7 +133,7 @@ const AppTable = (props: ComponentProps): JSX.Element => {
             </p>
           )}
         </div>
-        <DragDropContext onDragEnd={dragEndHanlder}>
+        <DragDropContext onDragEnd={dragEndHandler}>
           <Droppable droppableId="categories">
             {(provided) => (
               <Table headers={["Name", "Actions"]} innerRef={provided.innerRef}>
@@ -222,16 +226,6 @@ const AppTable = (props: ComponentProps): JSX.Element => {
       </Fragment>
     );
   } else {
-    const apps: { app: App; categoryName: string }[] = [];
-    props.categories.forEach((category: Category) => {
-      category.apps.forEach((app: App) => {
-        apps.push({
-          app: app,
-          categoryName: category.name,
-        });
-      });
-    });
-
     return (
       <Fragment>
         <div className={classes.Message}>
@@ -244,7 +238,7 @@ const AppTable = (props: ComponentProps): JSX.Element => {
             </p>
           )}
         </div>
-        <DragDropContext onDragEnd={dragEndHanlder}>
+        <DragDropContext onDragEnd={dragEndHandler}>
           <Droppable droppableId="apps">
             {(provided) => (
               <Table

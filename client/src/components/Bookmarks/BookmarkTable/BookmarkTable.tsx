@@ -76,7 +76,7 @@ const BookmarkTable = (props: ComponentProps): JSX.Element => {
     }
   };
 
-  const dragEndHanlder = (result: DropResult): void => {
+  const dragEndHandler = (result: DropResult): void => {
     if (!isCustomOrder) {
       props.createNotification({
         title: "Error",
@@ -110,7 +110,7 @@ const BookmarkTable = (props: ComponentProps): JSX.Element => {
             </p>
           )}
         </div>
-        <DragDropContext onDragEnd={dragEndHanlder}>
+        <DragDropContext onDragEnd={dragEndHandler}>
           <Droppable droppableId="categories">
             {(provided) => (
               <Table headers={["Name", "Actions"]} innerRef={provided.innerRef}>

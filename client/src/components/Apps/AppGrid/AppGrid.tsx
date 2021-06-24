@@ -1,11 +1,12 @@
 import { Link } from 'react-router-dom';
 
-import { Category } from '../../../interfaces';
+import { App, Category } from '../../../interfaces';
 import AppCard from '../AppCard/AppCard';
 import classes from './AppGrid.module.css';
 
 interface ComponentProps {
   categories: Category[];
+  apps: App[]
   totalCategories?: number;
 }
 
@@ -19,6 +20,7 @@ const AppGrid = (props: ComponentProps): JSX.Element => {
           return <AppCard
             key={category.id}
             category={category}
+            apps={props.apps.filter((app: App) => app.categoryId === category.id)}
           />
         })}
       </div>

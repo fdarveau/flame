@@ -5,6 +5,32 @@ import { ApiResponse, App, Category, Config, NewApp, NewCategory } from '../../i
 import { ActionTypes } from './actionTypes';
 import { CreateNotificationAction } from './notification';
 
+export interface GetAppsAction<T> {
+  type:
+    | ActionTypes.getApps
+    | ActionTypes.getAppsSuccess
+    | ActionTypes.getAppsError;
+  payload: T;
+}
+
+export const getApps = () => async (dispatch: Dispatch) => {
+  dispatch<GetAppsAction<undefined>>({
+    type: ActionTypes.getApps,
+    payload: undefined,
+  });
+
+  try {
+    const res = await axios.get<ApiResponse<App[]>>("/api/apps");
+
+    dispatch<GetAppsAction<App[]>>({
+      type: ActionTypes.getAppsSuccess,
+      payload: res.data.data,
+    });
+  } catch (err) {
+    console.log(err);
+  }
+};
+
 export interface GetAppCategoriesAction<T> {
   type:
     | ActionTypes.getAppCategories
@@ -24,7 +50,9 @@ export const getAppCategories = () => async (dispatch: Dispatch) => {
 
     dispatch<GetAppCategoriesAction<Category[]>>({
       type: ActionTypes.getAppCategoriesSuccess,
-      payload: res.data.data.filter((category: Category) => category.type === 'apps'),
+      payload: res.data.data.filter(
+        (category: Category) => category.type === "apps"
+      ),
     });
   } catch (err) {
     console.log(err);
@@ -97,7 +125,7 @@ export const pinApp = (app: App) => async (dispatch: Dispatch) => {
 };
 
 export interface AddAppAction {
-  type: ActionTypes.addApp;
+  type: ActionTypes.addAppSuccess;
   payload: App;
 }
 
@@ -114,7 +142,7 @@ export const addApp = (formData: NewApp) => async (dispatch: Dispatch) => {
     });
 
     await dispatch<AddAppAction>({
-      type: ActionTypes.addApp,
+      type: ActionTypes.addAppSuccess,
       payload: res.data.data,
     });
 
@@ -302,12 +330,13 @@ export const reorderApps = (apps: App[]) => async (dispatch: Dispatch) => {
   try {
     const updateQuery: ReorderAppsQuery = { apps: [] };
 
-    apps.forEach((app, index) =>
+    apps.forEach((app, index) => {
       updateQuery.apps.push({
         id: app.id,
         orderId: index + 1,
-      })
-    );
+      });
+      app.orderId = index + 1;
+    });
 
     await axios.put<ApiResponse<{}>>("/api/apps/0/reorder", updateQuery);
 
