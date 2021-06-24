@@ -47,7 +47,6 @@ const Apps = (props: ComponentProps): JSX.Element => {
     isPinned: false,
     orderId: 0,
     type: 'apps',
-    apps: [],
     bookmarks: [],
     createdAt: new Date(),
     updatedAt: new Date()
@@ -155,7 +154,7 @@ const Apps = (props: ComponentProps): JSX.Element => {
       {loading
         ? <Spinner />
         : (!isInEdit
-          ? <AppGrid categories={categories} />
+          ? <AppGrid categories={categories} apps={apps} />
           : <AppTable
               contentType={tableContentType}
               categories={categories}

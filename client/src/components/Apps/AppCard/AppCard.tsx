@@ -5,6 +5,7 @@ import classes from './AppCard.module.css';
 
 interface ComponentProps {
   category: Category;
+  apps: App[]
   pinHandler?: Function;
 }
 
@@ -13,7 +14,7 @@ const AppCard = (props: ComponentProps): JSX.Element => {
     <div className={classes.AppCard}>
       <h3>{props.category.name}</h3>
       <div className={classes.Apps}>
-        {props.category.apps.map((app: App) => {
+        {props.apps.map((app: App) => {
           const [displayUrl, redirectUrl] = urlParser(app.url);
 
           return (

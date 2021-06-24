@@ -49,6 +49,7 @@ export enum ActionTypes {
   getAppsError = 'GET_APPS_ERROR',
   pinApp = 'PIN_APP',
   addApp = 'ADD_APP',
+  addAppSuccess = 'ADD_APP_SUCCESS',
   deleteApp = 'DELETE_APP',
   updateApp = 'UPDATE_APP',
   reorderApps = 'REORDER_APPS',

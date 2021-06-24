@@ -2,9 +2,9 @@ import { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 
-import { Category } from '../../interfaces';
+import { App, Category } from '../../interfaces';
 import { GlobalState } from '../../interfaces/GlobalState';
-import { getAppCategories, getBookmarkCategories } from '../../store/actions';
+import { getAppCategories, getApps, getBookmarkCategories } from '../../store/actions';
 import { searchConfig } from '../../utility';
 import AppGrid from '../Apps/AppGrid/AppGrid';
 import BookmarkGrid from '../Bookmarks/BookmarkGrid/BookmarkGrid';
@@ -18,21 +18,25 @@ import { greeter } from './functions/greeter';
 import classes from './Home.module.css';
 
 interface ComponentProps {
-  getAppCategories: Function;
-  getBookmarkCategories: Function;
-  appCategoriesLoading: boolean;
+  getApps: () => void;
+  getAppCategories: () => void;
+  getBookmarkCategories: () => void;
+  appsLoading: boolean;
   bookmarkCategoriesLoading: boolean;
   appCategories: Category[];
+  apps: App[];
   bookmarkCategories: Category[];
 }
 
 const Home = (props: ComponentProps): JSX.Element => {
   const {
     getAppCategories,
+    getApps,
     getBookmarkCategories,
     appCategories,
+    apps,
     bookmarkCategories,
-    appCategoriesLoading,
+    appsLoading,
     bookmarkCategoriesLoading
   } = props;
 
@@ -47,6 +51,13 @@ const Home = (props: ComponentProps): JSX.Element => {
       getAppCategories();
     }
   }, [getAppCategories]);
+
+  // Load apps
+  useEffect(() => {
+    if (apps.length === 0) {
+      getApps();
+    }
+  }, [getApps]);
 
   // Load bookmark categories
   useEffect(() => {
@@ -89,10 +100,11 @@ const Home = (props: ComponentProps): JSX.Element => {
       }
       
       <SectionHeadline title='Applications' link='/applications' />
-      {appCategoriesLoading
+      {appsLoading
         ? <Spinner />
         : <AppGrid
             categories={appCategories.filter((category: Category) => category.isPinned)}
+            apps={apps.filter((app: App) => app.isPinned)}
             totalCategories={appCategories.length}
         />
       }
@@ -117,11 +129,12 @@ const Home = (props: ComponentProps): JSX.Element => {
 
 const mapStateToProps = (state: GlobalState) => {
   return {
-    appCategoriesLoading: state.app.loading,
     appCategories: state.app.categories,
+    appsLoading: state.app.loading,
+    apps: state.app.apps,
     bookmarkCategoriesLoading: state.bookmark.loading,
     bookmarkCategories: state.bookmark.categories
   }
 }
 
-export default connect(mapStateToProps, { getAppCategories, getBookmarkCategories })(Home);
+export default connect(mapStateToProps, { getApps, getAppCategories, getBookmarkCategories })(Home);

@@ -70,29 +70,6 @@ const addCategory = (state: State, action: Action): State => {
   };
 };
 
-const addApp = (state: State, action: Action): State => {
-  const categoryIndex = state.categories.findIndex(
-    (category: Category) => category.id === action.payload.categoryId
-  );
-
-  return {
-    ...state,
-    categories: [
-      ...state.categories.slice(0, categoryIndex),
-      {
-        ...state.categories[categoryIndex],
-        apps: [
-          ...state.categories[categoryIndex].apps,
-          {
-            ...action.payload,
-          },
-        ],
-      },
-      ...state.categories.slice(categoryIndex + 1),
-    ],
-  };
-};
-
 const pinCategory = (state: State, action: Action): State => {
   const tmpCategories = [...state.categories];
   const changedCategory = tmpCategories.find(
@@ -110,32 +87,25 @@ const pinCategory = (state: State, action: Action): State => {
 };
 
 const pinApp = (state: State, action: Action): State => {
-  const tmpCategories = [...state.categories];
-  const changedCategory = tmpCategories.find(
-    (category: Category) => category.id === action.payload.id
-  );
+  const tmpApps = [...state.apps];
+  const changedApp = tmpApps.find((app: App) => app.id === action.payload.id);
 
-  if (changedCategory) {
-    const tmpApps = [...changedCategory.apps];
-    const changedApp = tmpApps.find((app: App) => app.id === action.payload.id);
-
-    if (changedApp) {
-      changedApp.isPinned = action.payload.isPinned;
-    }
+  if (changedApp) {
+    changedApp.isPinned = action.payload.isPinned;
   }
 
   return {
     ...state,
-    categories: tmpCategories,
+    apps: tmpApps,
   };
 };
 
-// const addAppSuccess = (state: State, action: Action): State => {
-//   return {
-//     ...state,
-//     apps: [...state.apps, action.payload]
-//   }
-// }
+const addAppSuccess = (state: State, action: Action): State => {
+  return {
+    ...state,
+    apps: [...state.apps, action.payload],
+  };
+};
 
 const deleteCategory = (state: State, action: Action): State => {
   const categoryIndex = state.categories.findIndex(
@@ -168,54 +138,30 @@ const updateCategory = (state: State, action: Action): State => {
 };
 
 const deleteApp = (state: State, action: Action): State => {
-  // const tmpApps = [...state.apps].filter((app: App) => app.id !== action.payload);
-
-  // return {
-  //   ...state,
-  //   apps: tmpApps
-  // }
-
-  const tmpCategories = [...state.categories];
-  const categoryInUpdate = tmpCategories.find(
-    (category: Category) => category.id === action.payload.categoryId
+  const tmpApps = [...state.apps].filter(
+    (app: App) => app.id !== action.payload
   );
-
-  if (categoryInUpdate) {
-    categoryInUpdate.apps = categoryInUpdate.apps.filter(
-      (app: App) => app.id !== action.payload.appId
-    );
-  }
 
   return {
     ...state,
-    categories: tmpCategories,
+    apps: tmpApps,
   };
 };
 
 const updateApp = (state: State, action: Action): State => {
-  let categoryIndex = state.categories.findIndex(
-    (category: Category) => category.id === action.payload.categoryId
-  );
-  let appIndex = state.categories[categoryIndex].apps.findIndex(
-    (app: App) => app.id === action.payload.id
-  );
+  const tmpApps = [...state.apps];
+  const appInUpdate = tmpApps.find((app: App) => app.id === action.payload.id);
+
+  if (appInUpdate) {
+    appInUpdate.name = action.payload.name;
+    appInUpdate.url = action.payload.url;
+    appInUpdate.icon = action.payload.icon;
+    appInUpdate.categoryId = action.payload.categoryId;
+  }
 
   return {
     ...state,
-    categories: [
-      ...state.categories.slice(0, categoryIndex),
-      {
-        ...state.categories[categoryIndex],
-        apps: [
-          ...state.categories[categoryIndex].apps.slice(0, appIndex),
-          {
-            ...action.payload,
-          },
-          ...state.categories[categoryIndex].apps.slice(appIndex + 1),
-        ],
-      },
-      ...state.categories.slice(categoryIndex + 1),
-    ],
+    apps: tmpApps,
   };
 };
 
@@ -236,23 +182,6 @@ const reorderCategories = (state: State, action: Action): State => {
 };
 
 const reorderApps = (state: State, action: Action): State => {
-  // const tmpCategories = [...state.categories];
-  // // const categoryInUpdate = tmpCategories.find((category: Category) => category.id === action.payload.id);
-
-  // action.payload.forEach((updatedApp: App) => {
-  //   const appCategory = tmpCategories.find(
-  //     (category: Category) => category.id === updatedApp.categoryId
-  //   );
-  //   if (appCategory) {
-  //     var appInCategory = appCategory.apps.find(
-  //       (app: App) => app.id === updatedApp.id
-  //     );
-  //     if (appInCategory) {
-  //       appInCategory.orderId = updatedApp.orderId;
-  //     }
-  //   }
-  // });
-
   return {
     ...state,
     apps: action.payload,
@@ -260,15 +189,21 @@ const reorderApps = (state: State, action: Action): State => {
 };
 
 const sortApps = (state: State, action: Action): State => {
-  const tmpCategories = [...state.categories];
+  // const tmpCategories = [...state.categories];
 
-  tmpCategories.forEach((category: Category) => {
-    category.apps = sortData<App>(category.apps, action.payload);
-  });
+  // tmpCategories.forEach((category: Category) => {
+  //   category.apps = sortData<App>(category.apps, action.payload);
+  // });
+
+  // return {
+  //   ...state,
+  //   categories: tmpCategories,
+  // };
+  const sortedApps = sortData<App>(state.apps, action.payload);
 
   return {
     ...state,
-    categories: tmpCategories,
+    apps: sortedApps,
   };
 };
 
@@ -286,8 +221,8 @@ const appReducer = (state = initialState, action: Action) => {
       return getAppsError(state, action);
     case ActionTypes.addAppCategory:
       return addCategory(state, action);
-    case ActionTypes.addApp:
-      return addApp(state, action);
+    case ActionTypes.addAppSuccess:
+      return addAppSuccess(state, action);
     case ActionTypes.pinAppCategory:
       return pinCategory(state, action);
     case ActionTypes.pinApp:

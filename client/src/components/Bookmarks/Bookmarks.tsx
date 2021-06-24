@@ -43,7 +43,6 @@ const Bookmarks = (props: ComponentProps): JSX.Element => {
     isPinned: false,
     orderId: 0,
     type: 'bookmarks',
-    apps: [],
     bookmarks: [],
     createdAt: new Date(),
     updatedAt: new Date()

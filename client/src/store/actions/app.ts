@@ -125,7 +125,7 @@ export const pinApp = (app: App) => async (dispatch: Dispatch) => {
 };
 
 export interface AddAppAction {
-  type: ActionTypes.addApp;
+  type: ActionTypes.addAppSuccess;
   payload: App;
 }
 
@@ -142,7 +142,7 @@ export const addApp = (formData: NewApp) => async (dispatch: Dispatch) => {
     });
 
     await dispatch<AddAppAction>({
-      type: ActionTypes.addApp,
+      type: ActionTypes.addAppSuccess,
       payload: res.data.data,
     });
 
