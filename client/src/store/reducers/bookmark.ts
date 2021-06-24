@@ -143,7 +143,7 @@ const updateBookmark = (state: State, action: Action): State => {
   }
 }
 
-const sortCategories = (state: State, action: Action): State => {
+const sortBookmarkCategories = (state: State, action: Action): State => {
   const sortedCategories = sortData<Category>(state.categories, action.payload);
 
   return {
@@ -170,7 +170,7 @@ const bookmarkReducer = (state = initialState, action: Action) => {
     case ActionTypes.updateBookmarkCategory: return updateCategory(state, action);
     case ActionTypes.deleteBookmark: return deleteBookmark(state, action);
     case ActionTypes.updateBookmark: return updateBookmark(state, action);
-    case ActionTypes.sortBookmarkCategories: return sortCategories(state, action);
+    case ActionTypes.sortBookmarkCategories: return sortBookmarkCategories(state, action);
     case ActionTypes.reorderBookmarkCategories: return reorderCategories(state, action);
     default: return state;
   }

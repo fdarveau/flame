@@ -10,6 +10,7 @@ import {
   DeleteBookmarkAction,
   DeleteBookmarkCategoryAction,
   GetAppCategoriesAction,
+  GetAppsAction,
   GetBookmarkCategoriesAction,
   GetConfigAction,
   PinAppAction,
@@ -42,7 +43,10 @@ export enum ActionTypes {
   updateAppCategory = 'UPDATE_APP_CATEGORY',
   sortAppCategories = 'SORT_APP_CATEGORIES',
   reorderAppCategories = 'REORDER_APP_CATEGORIES',
-  // Apps
+  // Apps 
+  getApps = 'GET_APPS',
+  getAppsSuccess = 'GET_APPS_SUCCESS',
+  getAppsError = 'GET_APPS_ERROR',
   pinApp = 'PIN_APP',
   addApp = 'ADD_APP',
   deleteApp = 'DELETE_APP',
@@ -83,6 +87,7 @@ export type Action =
   SortAppCategoriesAction |
   ReorderAppCategoriesAction |
   // Apps
+  GetAppsAction<any> |
   PinAppAction |
   AddAppAction |
   DeleteAppAction |
