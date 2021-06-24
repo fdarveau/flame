@@ -1,4 +1,4 @@
-import { ChangeEvent, Fragment, SyntheticEvent, useEffect, useState } from 'react';
+import { ChangeEvent, Dispatch, Fragment, SetStateAction, SyntheticEvent, useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 
 import { Bookmark, Category, GlobalState, NewBookmark, NewCategory, NewNotification } from '../../../interfaces';
@@ -117,15 +117,15 @@ const BookmarkForm = (props: ComponentProps): JSX.Element => {
     }
   }
 
-  const inputChangeHandler = (e: ChangeEvent<HTMLInputElement>, data: any): void => {
-    setBookmarkData({
+  const inputChangeHandler = (e: ChangeEvent<HTMLInputElement>, setDataFunction: Dispatch<SetStateAction<any>>, data: any): void => {
+    setDataFunction({
       ...data,
       [e.target.name]: e.target.value
     })
   }
 
-  const selectChangeHandler = (e: ChangeEvent<HTMLSelectElement>, data: any): void => {
-    setBookmarkData({
+  const selectChangeHandler = (e: ChangeEvent<HTMLSelectElement>, setDataFunction: Dispatch<SetStateAction<any>>, data: any): void => {
+    setDataFunction({
       ...data,
       categoryId: parseInt(e.target.value)
     })
@@ -157,12 +157,12 @@ const BookmarkForm = (props: ComponentProps): JSX.Element => {
               <label htmlFor='categoryName'>Category Name</label>
               <input
                 type='text'
-                name='categoryName'
+                name='name'
                 id='categoryName'
                 placeholder='Social Media'
                 required
                 value={categoryData.name}
-                onChange={(e) => inputChangeHandler(e, categoryData)}
+                onChange={(e) => inputChangeHandler(e, setCategoryData, categoryData)}
               />
             </InputGroup>
           </Fragment>
@@ -178,7 +178,7 @@ const BookmarkForm = (props: ComponentProps): JSX.Element => {
                 placeholder='Reddit'
                 required
                 value={bookmarkData.name}
-                onChange={(e) => inputChangeHandler(e, bookmarkData)}
+                onChange={(e) => inputChangeHandler(e, setBookmarkData, bookmarkData)}
               />
             </InputGroup>
             <InputGroup>
@@ -190,7 +190,7 @@ const BookmarkForm = (props: ComponentProps): JSX.Element => {
                 placeholder='reddit.com'
                 required
                 value={bookmarkData.url}
-                onChange={(e) => inputChangeHandler(e, bookmarkData)}
+                onChange={(e) => inputChangeHandler(e, setBookmarkData, bookmarkData)}
               />
               <span>
                 <a
@@ -208,7 +208,7 @@ const BookmarkForm = (props: ComponentProps): JSX.Element => {
                 name='categoryId'
                 id='categoryId'
                 required
-                onChange={(e) => selectChangeHandler(e, bookmarkData)}
+                onChange={(e) => selectChangeHandler(e, setBookmarkData, bookmarkData)}
                 value={bookmarkData.categoryId}
               >
                 <option value={-1}>Select category</option>
@@ -232,7 +232,7 @@ const BookmarkForm = (props: ComponentProps): JSX.Element => {
                 id='icon'
                 placeholder='book-open-outline'
                 value={bookmarkData.icon}
-                onChange={(e) => inputChangeHandler(e, bookmarkData)}
+                onChange={(e) => inputChangeHandler(e, setBookmarkData, bookmarkData)}
               />
               <span>
                 Use icon name from MDI. 

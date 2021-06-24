@@ -1,4 +1,4 @@
-import { ChangeEvent, Fragment, SyntheticEvent, useEffect, useState } from 'react';
+import { ChangeEvent, Dispatch, Fragment, SetStateAction, SyntheticEvent, useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 
 import { App, Category, GlobalState, NewApp, NewCategory, NewNotification } from '../../../interfaces';
@@ -117,15 +117,15 @@ const AppForm = (props: ComponentProps): JSX.Element => {
     }
   }
 
-  const inputChangeHandler = (e: ChangeEvent<HTMLInputElement>, data: any): void => {
-    setAppData({
+  const inputChangeHandler = (e: ChangeEvent<HTMLInputElement>, setDataFunction: Dispatch<SetStateAction<any>>, data: any): void => {
+    setDataFunction({
       ...data,
       [e.target.name]: e.target.value
     })
   }
 
-  const selectChangeHandler = (e: ChangeEvent<HTMLSelectElement>, data: any): void => {
-    setAppData({
+  const selectChangeHandler = (e: ChangeEvent<HTMLSelectElement>, setDataFunction: Dispatch<SetStateAction<any>>, data: any): void => {
+    setDataFunction({
       ...data,
       categoryId: parseInt(e.target.value)
     })
@@ -157,12 +157,12 @@ const AppForm = (props: ComponentProps): JSX.Element => {
               <label htmlFor='categoryName'>Category Name</label>
               <input
                 type='text'
-                name='categoryName'
+                name='name'
                 id='categoryName'
                 placeholder='Social Media'
                 required
                 value={categoryData.name}
-                onChange={(e) => inputChangeHandler(e, categoryData)}
+                onChange={(e) => inputChangeHandler(e, setCategoryData, categoryData)}
               />
             </InputGroup>
           </Fragment>
@@ -178,7 +178,7 @@ const AppForm = (props: ComponentProps): JSX.Element => {
                 placeholder='Bookstack'
                 required
                 value={appData.name}
-                onChange={(e) => inputChangeHandler(e, appData)}
+                onChange={(e) => inputChangeHandler(e, setAppData, appData)}
               />
             </InputGroup>
             <InputGroup>
@@ -190,7 +190,7 @@ const AppForm = (props: ComponentProps): JSX.Element => {
                 placeholder='bookstack.example.com'
                 required
                 value={appData.url}
-                onChange={(e) => inputChangeHandler(e, appData)}
+                onChange={(e) => inputChangeHandler(e, setAppData, appData)}
               />
               <span>
                 <a
@@ -208,7 +208,7 @@ const AppForm = (props: ComponentProps): JSX.Element => {
                 name='categoryId'
                 id='categoryId'
                 required
-                onChange={(e) => selectChangeHandler(e, appData)}
+                onChange={(e) => selectChangeHandler(e, setAppData, appData)}
                 value={appData.categoryId}
               >
                 <option value={-1}>Select category</option>
@@ -232,7 +232,7 @@ const AppForm = (props: ComponentProps): JSX.Element => {
                 id='icon'
                 placeholder='book-open-outline'
                 value={appData.icon}
-                onChange={(e) => inputChangeHandler(e, appData)}
+                onChange={(e) => inputChangeHandler(e, setAppData, appData)}
               />
               <span>
                 Use icon name from MDI. 

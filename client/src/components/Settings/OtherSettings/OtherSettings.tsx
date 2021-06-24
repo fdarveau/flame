@@ -20,8 +20,9 @@ import InputGroup from '../../UI/Forms/InputGroup/InputGroup';
 interface ComponentProps {
   createNotification: (notification: NewNotification) => void;
   updateConfig: (formData: SettingsForm) => void;
+  sortAppCategories: () => void;
   sortApps: () => void;
-  sortCategories: () => void;
+  sortBookmarkCategories: () => void;
   loading: boolean;
 }
 
@@ -56,9 +57,10 @@ const OtherSettings = (props: ComponentProps): JSX.Element => {
     // Update local page title
     document.title = formData.customTitle;
 
-    // Sort apps and categories with new settings
+    // Apply new sort settings
+    props.sortAppCategories();
     props.sortApps();
-    props.sortCategories();
+    props.sortBookmarkCategories();
   }
 
   // Input handler

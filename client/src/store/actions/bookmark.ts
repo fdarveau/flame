@@ -24,7 +24,7 @@ export const getBookmarkCategories = () => async (dispatch: Dispatch) => {
 
     dispatch<GetBookmarkCategoriesAction<Category[]>>({
       type: ActionTypes.getBookmarkCategoriesSuccess,
-      payload: res.data.data
+      payload: res.data.data.filter((category: Category) => category.type === 'bookmarks'),
     })
   } catch (err) {
     console.log(err);
