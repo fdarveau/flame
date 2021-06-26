@@ -5,6 +5,8 @@ export interface Bookmark extends Model {
   url: string;
   categoryId: number;
   icon: string;
+  isPinned: boolean;
+  orderId: number;
 }
 
 export interface NewBookmark {
