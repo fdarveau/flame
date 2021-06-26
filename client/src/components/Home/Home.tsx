@@ -2,9 +2,9 @@ import { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 
-import { App, Category } from '../../interfaces';
+import { App, Bookmark, Category } from '../../interfaces';
 import { GlobalState } from '../../interfaces/GlobalState';
-import { getAppCategories, getApps, getBookmarkCategories } from '../../store/actions';
+import { getAppCategories, getApps, getBookmarkCategories, getBookmarks } from '../../store/actions';
 import { searchConfig } from '../../utility';
 import AppGrid from '../Apps/AppGrid/AppGrid';
 import BookmarkGrid from '../Bookmarks/BookmarkGrid/BookmarkGrid';
@@ -20,12 +20,14 @@ import classes from './Home.module.css';
 interface ComponentProps {
   getApps: () => void;
   getAppCategories: () => void;
+  getBookmarks: () => void;
   getBookmarkCategories: () => void;
   appsLoading: boolean;
   bookmarkCategoriesLoading: boolean;
   appCategories: Category[];
   apps: App[];
   bookmarkCategories: Category[];
+  bookmarks: Bookmark[];
 }
 
 const Home = (props: ComponentProps): JSX.Element => {
@@ -33,17 +35,19 @@ const Home = (props: ComponentProps): JSX.Element => {
     getAppCategories,
     getApps,
     getBookmarkCategories,
+    getBookmarks,
     appCategories,
     apps,
     bookmarkCategories,
+    bookmarks,
     appsLoading,
-    bookmarkCategoriesLoading
+    bookmarkCategoriesLoading,
   } = props;
 
   const [header, setHeader] = useState({
     dateTime: dateTime(),
-    greeting: greeter()
-  })
+    greeting: greeter(),
+  });
 
   // Load app categories
   useEffect(() => {
@@ -66,66 +70,83 @@ const Home = (props: ComponentProps): JSX.Element => {
     }
   }, [getBookmarkCategories]);
 
+  // Load bookmarks
+  useEffect(() => {
+    if (bookmarks.length === 0) {
+      getBookmarks();
+    }
+  }, [getBookmarks]);
+
   // Refresh greeter and time
   useEffect(() => {
     let interval: any;
 
     // Start interval only when hideHeader is false
-    if (searchConfig('hideHeader', 0) !== 1) {
+    if (searchConfig("hideHeader", 0) !== 1) {
       interval = setInterval(() => {
         setHeader({
           dateTime: dateTime(),
-          greeting: greeter()
-        })
+          greeting: greeter(),
+        });
       }, 1000);
     }
 
     return () => clearInterval(interval);
-  }, [])
-  
+  }, []);
+
   return (
     <Container>
-      {searchConfig('hideHeader', 0) !== 1
-        ? (
-          <header className={classes.Header}>
-            <p>{header.dateTime}</p>
-            <Link to='/settings' className={classes.SettingsLink}>Go to Settings</Link>
-            <span className={classes.HeaderMain}>
-              <h1>{header.greeting}</h1>
-              <WeatherWidget />
-            </span>
-          </header>
-          )
-        : <div></div>
-      }
-      
-      <SectionHeadline title='Applications' link='/applications' />
-      {appsLoading
-        ? <Spinner />
-        : <AppGrid
-            categories={appCategories.filter((category: Category) => category.isPinned)}
-            apps={apps.filter((app: App) => app.isPinned)}
-            totalCategories={appCategories.length}
+      {searchConfig("hideHeader", 0) !== 1 ? (
+        <header className={classes.Header}>
+          <p>{header.dateTime}</p>
+          <Link to="/settings" className={classes.SettingsLink}>
+            Go to Settings
+          </Link>
+          <span className={classes.HeaderMain}>
+            <h1>{header.greeting}</h1>
+            <WeatherWidget />
+          </span>
+        </header>
+      ) : (
+        <div></div>
+      )}
+
+      <SectionHeadline title="Applications" link="/applications" />
+      {appsLoading ? (
+        <Spinner />
+      ) : (
+        <AppGrid
+          categories={appCategories.filter(
+            (category: Category) => category.isPinned
+          )}
+          apps={apps.filter((app: App) => app.isPinned)}
+          totalCategories={appCategories.length}
         />
-      }
+      )}
 
       <div className={classes.HomeSpace}></div>
 
-      <SectionHeadline title='Bookmarks' link='/bookmarks' />
-      {bookmarkCategoriesLoading
-        ? <Spinner />
-        : <BookmarkGrid
-            categories={bookmarkCategories.filter((category: Category) => category.isPinned)}
-            totalCategories={bookmarkCategories.length}
+      <SectionHeadline title="Bookmarks" link="/bookmarks" />
+      {bookmarkCategoriesLoading ? (
+        <Spinner />
+      ) : (
+        <BookmarkGrid
+          categories={bookmarkCategories.filter(
+            (category: Category) => category.isPinned
+          )}
+          bookmarks={bookmarks.filter(
+            (bookmark: Bookmark) => bookmark.isPinned
+          )}
+          totalCategories={bookmarkCategories.length}
         />
-      }
+      )}
 
-      <Link to='/settings' className={classes.SettingsButton}>
-        <Icon icon='mdiCog' color='var(--color-background)' />
+      <Link to="/settings" className={classes.SettingsButton}>
+        <Icon icon="mdiCog" color="var(--color-background)" />
       </Link>
     </Container>
-  )
-}
+  );
+};
 
 const mapStateToProps = (state: GlobalState) => {
   return {
@@ -133,8 +154,14 @@ const mapStateToProps = (state: GlobalState) => {
     appsLoading: state.app.loading,
     apps: state.app.apps,
     bookmarkCategoriesLoading: state.bookmark.loading,
-    bookmarkCategories: state.bookmark.categories
-  }
-}
+    bookmarkCategories: state.bookmark.categories,
+    bookmarks: state.bookmark.bookmarks,
+  };
+};
 
-export default connect(mapStateToProps, { getApps, getAppCategories, getBookmarkCategories })(Home);
+export default connect(mapStateToProps, {
+  getApps,
+  getAppCategories,
+  getBookmarks,
+  getBookmarkCategories,
+})(Home);
