@@ -88,7 +88,9 @@ const pinCategory = (state: State, action: Action): State => {
 
 const pinApp = (state: State, action: Action): State => {
   const tmpApps = [...state.apps];
-  const changedApp = tmpApps.find((app: App) => app.id === action.payload.id);
+  const changedApp = tmpApps.find(
+    (app: App) => app.id === action.payload.id
+  );
 
   if (changedApp) {
     changedApp.isPinned = action.payload.isPinned;
@@ -243,16 +245,6 @@ const reorderApps = (state: State, action: Action): State => {
 };
 
 const sortApps = (state: State, action: Action): State => {
-  // const tmpCategories = [...state.categories];
-
-  // tmpCategories.forEach((category: Category) => {
-  //   category.apps = sortData<App>(category.apps, action.payload);
-  // });
-
-  // return {
-  //   ...state,
-  //   categories: tmpCategories,
-  // };
   const sortedApps = sortData<App>(state.apps, action.payload);
 
   return {
