@@ -12,17 +12,21 @@ import {
   GetAppCategoriesAction,
   GetAppsAction,
   GetBookmarkCategoriesAction,
+  GetBookmarksAction,
   GetConfigAction,
   PinAppAction,
   PinAppCategoryAction,
+  PinBookmarkAction,
   PinBookmarkCategoryAction,
   ReorderAppCategoriesAction,
   ReorderAppsAction,
   ReorderBookmarkCategoriesAction,
+  ReorderBookmarksAction,
   SetThemeAction,
   SortAppCategoriesAction,
   SortAppsAction,
   SortBookmarkCategoriesAction,
+  SortBookmarksAction,
   UpdateAppAction,
   UpdateAppCategoryAction,
   UpdateBookmarkAction,
@@ -65,9 +69,16 @@ export enum ActionTypes {
   sortBookmarkCategories = 'SORT_BOOKMARK_CATEGORIES',
   reorderBookmarkCategories = 'REORDER_BOOKMARK_CATEGORIES',
   // Bookmarks
+  getBookmarks = 'GET_BOOKMARKS',
+  getBookmarksSuccess = 'GET_BOOKMARKS_SUCCESS',
+  getBookmarksError = 'GET_BOOKMARKS_ERROR',
+  pinBookmark = 'PIN_BOOKMARK',
   addBookmark = 'ADD_BOOKMARK',
+  addBookmarkSuccess = 'ADD_BOOKMARK_SUCCESS',
   deleteBookmark = 'DELETE_BOOKMARK',
   updateBookmark = 'UPDATE_BOOKMARK',
+  reorderBookmarks = 'REORDER_BOOKMARKS',
+  sortBookmarks = 'SORT_BOOKMARKS',
   // Notifications
   createNotification = 'CREATE_NOTIFICATION',
   clearNotification = 'CLEAR_NOTIFICATION',
@@ -104,9 +115,13 @@ export type Action =
   SortBookmarkCategoriesAction |
   ReorderBookmarkCategoriesAction |
   // Bookmarks
+  GetBookmarksAction<any> |
+  PinBookmarkAction |
   AddBookmarkAction |
   DeleteBookmarkAction |
   UpdateBookmarkAction |
+  ReorderBookmarksAction |
+  SortBookmarksAction |
   // Notifications
   CreateNotificationAction |
   ClearNotificationAction |
