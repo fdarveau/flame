@@ -24,35 +24,39 @@ interface ComponentProps {
 
 export enum ContentType {
   category,
-  app,
+  app
 }
 
 const Apps = (props: ComponentProps): JSX.Element => {
-  const { apps, getApps, getAppCategories, categories, loading } = props;
+  const {
+    apps,
+    getApps,
+    getAppCategories,
+    categories,
+    loading
+  } = props;
 
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [formContentType, setFormContentType] = useState(ContentType.category);
   const [isInEdit, setIsInEdit] = useState(false);
-  const [tableContentType, setTableContentType] = useState(
-    ContentType.category
-  );
+  const [tableContentType, setTableContentType] = useState(ContentType.category);
   const [isInUpdate, setIsInUpdate] = useState(false);
   const [categoryInUpdate, setCategoryInUpdate] = useState<Category>({
-    name: "",
+    name: '',
     id: -1,
     isPinned: false,
     orderId: 0,
-    type: "apps",
+    type: 'apps',
     apps: [],
     bookmarks: [],
     createdAt: new Date(),
-    updatedAt: new Date(),
-  });
+    updatedAt: new Date()
+  })
   const [appInUpdate, setAppInUpdate] = useState<App>({
-    name: "string",
-    url: "string",
+    name: 'string',
+    url: 'string',
     categoryId: -1,
-    icon: "string",
+    icon: 'string',
     isPinned: false,
     orderId: 0,
     id: 0,
@@ -111,44 +115,38 @@ const Apps = (props: ComponentProps): JSX.Element => {
   return (
     <Container>
       <Modal isOpen={modalIsOpen} setIsOpen={toggleModal}>
-        {!isInUpdate ? (
-          <AppForm modalHandler={toggleModal} contentType={formContentType} />
-        ) : formContentType === ContentType.category ? (
-          <AppForm
-            modalHandler={toggleModal}
-            contentType={formContentType}
-            category={categoryInUpdate}
-          />
-        ) : (
-          <AppForm
-            modalHandler={toggleModal}
-            contentType={formContentType}
-            app={appInUpdate}
-          />
-        )}
+        {!isInUpdate
+          ? <AppForm modalHandler={toggleModal} contentType={formContentType} />
+          : formContentType === ContentType.category
+            ? <AppForm modalHandler={toggleModal} contentType={formContentType} category={categoryInUpdate} />
+            : <AppForm modalHandler={toggleModal} contentType={formContentType} app={appInUpdate} />
+        }
       </Modal>
 
-      <Headline title="All Apps" subtitle={<Link to="/">Go back</Link>} />
-
+      <Headline
+        title='All Apps'
+        subtitle={(<Link to='/'>Go back</Link>)}
+      />
+      
       <div className={classes.ActionsContainer}>
         <ActionButton
-          name="Add Category"
-          icon="mdiPlusBox"
+          name='Add Category'
+          icon='mdiPlusBox'
           handler={() => addActionHandler(ContentType.category)}
         />
         <ActionButton
-          name="Add App"
-          icon="mdiPlusBox"
+          name='Add App'
+          icon='mdiPlusBox'
           handler={() => addActionHandler(ContentType.app)}
         />
         <ActionButton
-          name="Edit Categories"
-          icon="mdiPencil"
+          name='Edit Categories'
+          icon='mdiPencil'
           handler={() => editActionHandler(ContentType.category)}
         />
         <ActionButton
-          name="Edit Apps"
-          icon="mdiPencil"
+          name='Edit Apps'
+          icon='mdiPencil'
           handler={() => editActionHandler(ContentType.app)}
         />
       </div>

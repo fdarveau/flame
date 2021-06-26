@@ -16,17 +16,13 @@ const AppGrid = (props: ComponentProps): JSX.Element => {
   if (props.categories.length > 0) {
     apps = (
       <div className={classes.AppGrid}>
-        {props.categories.map(
-          (category: Category): JSX.Element => (
-            <AppCard
-              key={category.id}
-              category={category}
-              apps={props.apps.filter(
-                (app: App) => app.categoryId === category.id
-              )}
-            />
-          )
-        )}
+        {props.categories.map((category: Category): JSX.Element => {
+          return <AppCard
+            key={category.id}
+            category={category}
+            apps={props.apps.filter((app: App) => app.categoryId === category.id)}
+          />
+        })}
       </div>
     );
   } else {
