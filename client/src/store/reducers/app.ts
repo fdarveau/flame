@@ -88,7 +88,9 @@ const pinCategory = (state: State, action: Action): State => {
 
 const pinApp = (state: State, action: Action): State => {
   const tmpApps = [...state.apps];
-  const changedApp = tmpApps.find((app: App) => app.id === action.payload.id);
+  const changedApp = tmpApps.find(
+    (app: App) => app.id === action.payload.id
+  );
 
   if (changedApp) {
     changedApp.isPinned = action.payload.isPinned;
@@ -101,8 +103,25 @@ const pinApp = (state: State, action: Action): State => {
 };
 
 const addAppSuccess = (state: State, action: Action): State => {
+  const categoryIndex = state.categories.findIndex(
+    (category: Category) => category.id === action.payload.categoryId
+  );
+
   return {
     ...state,
+    categories: [
+      ...state.categories.slice(0, categoryIndex),
+      {
+        ...state.categories[categoryIndex],
+        apps: [
+          ...state.categories[categoryIndex].apps,
+          {
+            ...action.payload,
+          },
+        ],
+      },
+      ...state.categories.slice(categoryIndex + 1),
+    ],
     apps: [...state.apps, action.payload],
   };
 };
@@ -139,18 +158,33 @@ const updateCategory = (state: State, action: Action): State => {
 
 const deleteApp = (state: State, action: Action): State => {
   const tmpApps = [...state.apps].filter(
-    (app: App) => app.id !== action.payload
+    (app: App) => app.id !== action.payload.appId
   );
+
+  const tmpCategories = [...state.categories];
+  const categoryInUpdate = tmpCategories.find(
+    (category: Category) => category.id === action.payload.categoryId
+  );
+
+  if (categoryInUpdate) {
+    categoryInUpdate.apps = categoryInUpdate.apps.filter(
+      (app: App) => app.id !== action.payload.appId
+    );
+  }
 
   return {
     ...state,
+    categories: tmpCategories,
     apps: tmpApps,
   };
 };
 
 const updateApp = (state: State, action: Action): State => {
+  // Update global apps collection
   const tmpApps = [...state.apps];
-  const appInUpdate = tmpApps.find((app: App) => app.id === action.payload.id);
+  const appInUpdate = tmpApps.find(
+    (app: App) => app.id === action.payload.id
+  );
 
   if (appInUpdate) {
     appInUpdate.name = action.payload.name;
@@ -159,8 +193,30 @@ const updateApp = (state: State, action: Action): State => {
     appInUpdate.categoryId = action.payload.categoryId;
   }
 
+  //update category apps collection
+  let categoryIndex = state.categories.findIndex(
+    (category: Category) => category.id === action.payload.categoryId
+  );
+  let appIndex = state.categories[categoryIndex].apps.findIndex(
+    (app: App) => app.id === action.payload.id
+  );
+
   return {
     ...state,
+    categories: [
+      ...state.categories.slice(0, categoryIndex),
+      {
+        ...state.categories[categoryIndex],
+        apps: [
+          ...state.categories[categoryIndex].apps.slice(0, appIndex),
+          {
+            ...action.payload,
+          },
+          ...state.categories[categoryIndex].apps.slice(appIndex + 1),
+        ],
+      },
+      ...state.categories.slice(categoryIndex + 1),
+    ],
     apps: tmpApps,
   };
 };
@@ -189,16 +245,6 @@ const reorderApps = (state: State, action: Action): State => {
 };
 
 const sortApps = (state: State, action: Action): State => {
-  // const tmpCategories = [...state.categories];
-
-  // tmpCategories.forEach((category: Category) => {
-  //   category.apps = sortData<App>(category.apps, action.payload);
-  // });
-
-  // return {
-  //   ...state,
-  //   categories: tmpCategories,
-  // };
   const sortedApps = sortData<App>(state.apps, action.payload);
 
   return {

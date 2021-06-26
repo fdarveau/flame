@@ -17,6 +17,15 @@ const Bookmark = sequelize.define('Bookmark', {
   icon: {
     type: DataTypes.STRING,
     defaultValue: ''
+  },
+  isPinned: {
+    type: DataTypes.BOOLEAN,
+    defaultValue: false
+  },
+  orderId: {
+    type: DataTypes.INTEGER,
+    allowNull: true,
+    defaultValue: null
   }
 }, {
   tableName: 'bookmarks'

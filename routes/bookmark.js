@@ -6,7 +6,8 @@ const {
   getBookmarks,
   getBookmark,
   updateBookmark,
-  deleteBookmark
+  deleteBookmark,
+  reorderBookmarks
 } = require('../controllers/bookmark');
 
 router
@@ -19,5 +20,9 @@ router
   .get(getBookmark)
   .put(updateBookmark)
   .delete(deleteBookmark);
+
+  router
+    .route('/0/reorder')
+    .put(reorderBookmarks);
 
 module.exports = router;
