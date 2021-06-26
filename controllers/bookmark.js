@@ -28,7 +28,7 @@ exports.createBookmark = asyncWrapper(async (req, res, next) => {
         isPinned: true
       })
     } else {
-      bookmark = await Bookmark.create(req.body);
+      bookmark = await Bookmark.create(_body);
     }
   }
 

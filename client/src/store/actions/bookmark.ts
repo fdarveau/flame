@@ -339,8 +339,7 @@ export const updateBookmark =
       });
 
       // Check if category was changed
-      const categoryWasChanged =
-        res.data.data.categoryId !== previousCategoryId;
+      const categoryWasChanged = res.data.data.categoryId !== previousCategoryId;
 
       if (categoryWasChanged) {
         // Delete bookmark from old category
