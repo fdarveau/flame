@@ -156,11 +156,8 @@ const BookmarkForm = (props: ComponentProps): JSX.Element => {
     setCustomIcon(null);
   };
 
-  const inputChangeHandler = (
-    e: ChangeEvent<HTMLInputElement>,
-    setDataFunction: Dispatch<SetStateAction<any>>,
-    data: any
-  ): void => {
+  const inputChangeHandler = (e: ChangeEvent<HTMLInputElement>, setDataFunction: Dispatch<SetStateAction<any>>, data: any): void => {
+
     setDataFunction({
       ...data,
       [e.target.name]: e.target.value,
