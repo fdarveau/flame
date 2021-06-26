@@ -31,11 +31,14 @@ export const getApps = () => async (dispatch: Dispatch) => {
   }
 };
 
+/**
+ * GET CATEGORIES
+ */
 export interface GetAppCategoriesAction<T> {
   type:
     | ActionTypes.getAppCategories
     | ActionTypes.getAppCategoriesSuccess
-    | ActionTypes.getAppCategoriesSuccess;
+    | ActionTypes.getAppCategoriesError;
   payload: T;
 }
 
@@ -59,6 +62,9 @@ export const getAppCategories = () => async (dispatch: Dispatch) => {
   }
 };
 
+/**
+ * ADD CATEGORY
+ */
 export interface AddAppCategoryAction {
   type: ActionTypes.addAppCategory;
   payload: Category;
@@ -124,6 +130,9 @@ export const pinApp = (app: App) => async (dispatch: Dispatch) => {
   }
 };
 
+/**
+ * ADD APP
+ */ 
 export interface AddAppAction {
   type: ActionTypes.addAppSuccess;
   payload: App;
@@ -255,42 +264,56 @@ export const updateAppCategory =
     }
   };
 
+/**
+ * DELETE APP
+ */
 export interface DeleteAppAction {
   type: ActionTypes.deleteApp;
-  payload: number;
+  payload: {
+    appId: number;
+    categoryId: number;
+  };
 }
 
-export const deleteApp = (id: number) => async (dispatch: Dispatch) => {
-  try {
-    await axios.delete<ApiResponse<{}>>(`/api/apps/${id}`);
+export const deleteApp =
+  (appId: number, categoryId: number) => async (dispatch: Dispatch) => {
+    try {
+      await axios.delete<ApiResponse<{}>>(`/api/apps/${appId}`);
 
-    dispatch<CreateNotificationAction>({
-      type: ActionTypes.createNotification,
-      payload: {
-        title: "Success",
-        message: "App deleted",
-      },
-    });
+      dispatch<CreateNotificationAction>({
+        type: ActionTypes.createNotification,
+        payload: {
+          title: "Success",
+          message: "App deleted",
+        },
+      });
 
-    dispatch<DeleteAppAction>({
-      type: ActionTypes.deleteApp,
-      payload: id,
-    });
-  } catch (err) {
-    console.log(err);
-  }
-};
+      dispatch<DeleteAppAction>({
+        type: ActionTypes.deleteApp,
+        payload: {
+          appId,
+          categoryId,
+        },
+      });
+    } catch (err) {
+      console.log(err);
+    }
+  };
 
+/**
+ * UPDATE APP
+ */
 export interface UpdateAppAction {
   type: ActionTypes.updateApp;
   payload: App;
 }
 
 export const updateApp =
-  (id: number, formData: NewApp) => async (dispatch: Dispatch) => {
+  (appId: number, formData: NewApp, previousCategoryId: number) =>
+  async (dispatch: Dispatch) => {
     try {
       const res = await axios.put<ApiResponse<App>>(
-        `/api/apps/${id}`,
+        `/api/apps/${appId}`,
         formData
       );
 
@@ -302,13 +325,31 @@ export const updateApp =
         },
       });
 
-      await dispatch<UpdateAppAction>({
-        type: ActionTypes.updateApp,
-        payload: res.data.data,
-      });
+      // Check if category was changed
+      const categoryWasChanged = formData.categoryId !== previousCategoryId;
 
-      // Sort apps
-      dispatch<any>(sortApps());
+      if (categoryWasChanged) {
+        // Delete app from old category
+        dispatch<DeleteAppAction>({
+          type: ActionTypes.deleteApp,
+          payload: {
+            appId,
+            categoryId: previousCategoryId,
+          },
+        });
+
+        // Add app to the new category
+        dispatch<AddAppAction>({
+          type: ActionTypes.addAppSuccess,
+          payload: res.data.data,
+        });
+      } else {
+        // Else update only name/url
+        dispatch<UpdateAppAction>({
+          type: ActionTypes.updateApp,
+          payload: res.data.data,
+        });
+      }
     } catch (err) {
       console.log(err);
     }
