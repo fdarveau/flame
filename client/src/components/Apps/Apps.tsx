@@ -25,7 +25,7 @@ interface ComponentProps {
 
 export enum ContentType {
   category,
-  app
+  app,
 }
 
 const Apps = (props: ComponentProps): JSX.Element => {
