@@ -191,9 +191,7 @@ const BookmarkTable = (props: ComponentProps): JSX.Element => {
                                   </div>
                                   <div
                                     className={classes.TableAction}
-                                    onClick={() =>
-                                      props.pinBookmarkCategory(category)
-                                    }
+                                    onClick={() => props.pinBookmarkCategory(category)}
                                     onKeyDown={(e) =>
                                       keyboardActionHandler(
                                         e,
