@@ -132,7 +132,7 @@ export const pinApp = (app: App) => async (dispatch: Dispatch) => {
 
 /**
  * ADD APP
- */
+ */ 
 export interface AddAppAction {
   type: ActionTypes.addAppSuccess;
   payload: App;
