@@ -1,52 +1,43 @@
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
+import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 
-// Redux
-import { connect } from 'react-redux';
-import { getApps, getCategories } from '../../store/actions';
-
-// Typescript
-import { GlobalState } from '../../interfaces/GlobalState';
 import { App, Category } from '../../interfaces';
-
-// UI
-import Icon from '../UI/Icons/Icon/Icon';
-import { Container } from '../UI/Layout/Layout';
-import SectionHeadline from '../UI/Headlines/SectionHeadline/SectionHeadline';
-import Spinner from '../UI/Spinner/Spinner';
-
-// CSS
-import classes from './Home.module.css';
-
-// Components
+import { GlobalState } from '../../interfaces/GlobalState';
+import { getAppCategories, getApps, getBookmarkCategories } from '../../store/actions';
+import { searchConfig } from '../../utility';
 import AppGrid from '../Apps/AppGrid/AppGrid';
 import BookmarkGrid from '../Bookmarks/BookmarkGrid/BookmarkGrid';
+import SectionHeadline from '../UI/Headlines/SectionHeadline/SectionHeadline';
+import Icon from '../UI/Icons/Icon/Icon';
+import { Container } from '../UI/Layout/Layout';
+import Spinner from '../UI/Spinner/Spinner';
 import WeatherWidget from '../Widgets/WeatherWidget/WeatherWidget';
-
-// Functions
-import { greeter } from './functions/greeter';
 import { dateTime } from './functions/dateTime';
-
-// Utils
-import { searchConfig } from '../../utility';
+import { greeter } from './functions/greeter';
+import classes from './Home.module.css';
 
 interface ComponentProps {
-  getApps: Function;
-  getCategories: Function;
+  getApps: () => void;
+  getAppCategories: () => void;
+  getBookmarkCategories: () => void;
   appsLoading: boolean;
+  bookmarkCategoriesLoading: boolean;
+  appCategories: Category[];
   apps: App[];
-  categoriesLoading: boolean;
-  categories: Category[];
+  bookmarkCategories: Category[];
 }
 
 const Home = (props: ComponentProps): JSX.Element => {
   const {
+    getAppCategories,
     getApps,
+    getBookmarkCategories,
+    appCategories,
     apps,
+    bookmarkCategories,
     appsLoading,
-    getCategories,
-    categories,
-    categoriesLoading
+    bookmarkCategoriesLoading
   } = props;
 
   const [header, setHeader] = useState({
@@ -54,7 +45,14 @@ const Home = (props: ComponentProps): JSX.Element => {
     greeting: greeter()
   })
 
-  // Load applications
+  // Load app categories
+  useEffect(() => {
+    if (appCategories.length === 0) {
+      getAppCategories();
+    }
+  }, [getAppCategories]);
+
+  // Load apps
   useEffect(() => {
     if (apps.length === 0) {
       getApps();
@@ -63,10 +61,10 @@ const Home = (props: ComponentProps): JSX.Element => {
 
   // Load bookmark categories
   useEffect(() => {
-    if (categories.length === 0) {
-      getCategories();
+    if (bookmarkCategories.length === 0) {
+      getBookmarkCategories();
     }
-  }, [getCategories]);
+  }, [getBookmarkCategories]);
 
   // Refresh greeter and time
   useEffect(() => {
@@ -105,19 +103,20 @@ const Home = (props: ComponentProps): JSX.Element => {
       {appsLoading
         ? <Spinner />
         : <AppGrid
-          apps={apps.filter((app: App) => app.isPinned)}
-          totalApps={apps.length}
+            categories={appCategories.filter((category: Category) => category.isPinned)}
+            apps={apps.filter((app: App) => app.isPinned)}
+            totalCategories={appCategories.length}
         />
       }
 
       <div className={classes.HomeSpace}></div>
 
       <SectionHeadline title='Bookmarks' link='/bookmarks' />
-      {categoriesLoading
+      {bookmarkCategoriesLoading
         ? <Spinner />
         : <BookmarkGrid
-            categories={categories.filter((category: Category) => category.isPinned)}
-            totalCategories={categories.length}
+            categories={bookmarkCategories.filter((category: Category) => category.isPinned)}
+            totalCategories={bookmarkCategories.length}
         />
       }
 
@@ -130,11 +129,12 @@ const Home = (props: ComponentProps): JSX.Element => {
 
 const mapStateToProps = (state: GlobalState) => {
   return {
+    appCategories: state.app.categories,
     appsLoading: state.app.loading,
     apps: state.app.apps,
-    categoriesLoading: state.bookmark.loading,
-    categories: state.bookmark.categories
+    bookmarkCategoriesLoading: state.bookmark.loading,
+    bookmarkCategories: state.bookmark.categories
   }
 }
 
-export default connect(mapStateToProps, { getApps, getCategories })(Home);
+export default connect(mapStateToProps, { getApps, getAppCategories, getBookmarkCategories })(Home);
