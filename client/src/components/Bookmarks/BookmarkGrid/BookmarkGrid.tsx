@@ -1,10 +1,8 @@
 import { Link } from 'react-router-dom';
 
-import classes from './BookmarkGrid.module.css';
-
 import { Category } from '../../../interfaces';
-
 import BookmarkCard from '../BookmarkCard/BookmarkCard';
+import classes from './BookmarkGrid.module.css';
 
 interface ComponentProps {
   categories: Category[];
@@ -37,7 +35,7 @@ const BookmarkGrid = (props: ComponentProps): JSX.Element => {
     if (props.totalCategories) {
       bookmarks = (
         <p className={classes.BookmarksMessage}>
-          There are no pinned categories. You can pin them from the{' '}
+          There are no pinned bookmark categories. You can pin them from the{' '}
           <Link to="/bookmarks">/bookmarks</Link> menu
         </p>
       );

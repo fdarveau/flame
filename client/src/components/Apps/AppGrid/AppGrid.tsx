@@ -1,28 +1,29 @@
-import classes from './AppGrid.module.css';
 import { Link } from 'react-router-dom';
-import { App } from '../../../interfaces/App';
 
+import { App, Category } from '../../../interfaces';
 import AppCard from '../AppCard/AppCard';
+import classes from './AppGrid.module.css';
 
 interface ComponentProps {
-  apps: App[];
-  totalApps?: number;
+  categories: Category[];
+  apps: App[]
+  totalCategories?: number;
   searching: boolean;
 }
 
 const AppGrid = (props: ComponentProps): JSX.Element => {
   let apps: JSX.Element;
 
-  if (props.apps.length > 0) {
+  if (props.categories.length > 0) {
     apps = (
       <div className={classes.AppGrid}>
-        {props.apps.map((app: App): JSX.Element => {
-          return <AppCard key={app.id} app={app} />;
+        {props.categories.map((category: Category): JSX.Element => {
+          return <AppCard key={category.id} category={category} apps={props.apps.filter((app: App) => app.categoryId === category.id)} />
         })}
       </div>
     );
   } else {
-    if (props.totalApps) {
+    if (props.totalCategories) {
       if (props.searching) {
         apps = (
           <p className={classes.AppsMessage}>
@@ -32,7 +33,7 @@ const AppGrid = (props: ComponentProps): JSX.Element => {
       } else {
         apps = (
           <p className={classes.AppsMessage}>
-            There are no pinned applications. You can pin them from the{' '}
+            There are no pinned application categories. You can pin them from the{' '}
             <Link to="/applications">/applications</Link> menu
           </p>
         );
@@ -40,7 +41,7 @@ const AppGrid = (props: ComponentProps): JSX.Element => {
     } else {
       apps = (
         <p className={classes.AppsMessage}>
-          You don't have any applications. You can add a new one from{' '}
+          You don't have any applications. You can add a new one from the{' '}
           <Link to="/applications">/applications</Link> menu
         </p>
       );

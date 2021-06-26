@@ -1,25 +1,23 @@
 import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
-import { getCategories } from '../../store/actions';
+import { Link } from 'react-router-dom';
 
-import classes from './Bookmarks.module.css';
-
-import { Container } from '../UI/Layout/Layout';
-import Headline from '../UI/Headlines/Headline/Headline';
+import { Bookmark, Category, GlobalState } from '../../interfaces';
+import { getBookmarkCategories } from '../../store/actions';
 import ActionButton from '../UI/Buttons/ActionButton/ActionButton';
-
-import BookmarkGrid from './BookmarkGrid/BookmarkGrid';
-import { Category, GlobalState, Bookmark } from '../../interfaces';
-import Spinner from '../UI/Spinner/Spinner';
+import Headline from '../UI/Headlines/Headline/Headline';
+import { Container } from '../UI/Layout/Layout';
 import Modal from '../UI/Modal/Modal';
+import Spinner from '../UI/Spinner/Spinner';
 import BookmarkForm from './BookmarkForm/BookmarkForm';
+import BookmarkGrid from './BookmarkGrid/BookmarkGrid';
+import classes from './Bookmarks.module.css';
 import BookmarkTable from './BookmarkTable/BookmarkTable';
 
 interface ComponentProps {
   loading: boolean;
   categories: Category[];
-  getCategories: () => void;
+  getBookmarkCategories: () => void;
   searching: boolean;
 }
 
@@ -29,7 +27,7 @@ export enum ContentType {
 }
 
 const Bookmarks = (props: ComponentProps): JSX.Element => {
-  const { getCategories, categories, loading, searching = false } = props;
+  const { getBookmarkCategories, categories, loading, searching = false } = props;
 
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [formContentType, setFormContentType] = useState(ContentType.category);
@@ -43,6 +41,7 @@ const Bookmarks = (props: ComponentProps): JSX.Element => {
     id: -1,
     isPinned: false,
     orderId: 0,
+    type: 'bookmarks',
     bookmarks: [],
     createdAt: new Date(),
     updatedAt: new Date(),
@@ -59,9 +58,9 @@ const Bookmarks = (props: ComponentProps): JSX.Element => {
 
   useEffect(() => {
     if (categories.length === 0) {
-      getCategories();
+      getBookmarkCategories();
     }
-  }, [getCategories]);
+  }, [getBookmarkCategories]);
 
   const toggleModal = (): void => {
     setModalIsOpen(!modalIsOpen);
@@ -169,4 +168,4 @@ const mapStateToProps = (state: GlobalState) => {
   };
 };
 
-export default connect(mapStateToProps, { getCategories })(Bookmarks);
+export default connect(mapStateToProps, { getBookmarkCategories })(Bookmarks);

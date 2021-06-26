@@ -1,53 +1,44 @@
-import { useState, useEffect, Fragment } from 'react';
+import { Fragment, useEffect, useState } from 'react';
+import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 
-// Redux
-import { connect } from 'react-redux';
-import { getApps, getCategories } from '../../store/actions';
-
-// Typescript
+import { App, Bookmark, Category } from '../../interfaces';
 import { GlobalState } from '../../interfaces/GlobalState';
-import { App, Category } from '../../interfaces';
-
-// UI
-import Icon from '../UI/Icons/Icon/Icon';
-import { Container } from '../UI/Layout/Layout';
-import SectionHeadline from '../UI/Headlines/SectionHeadline/SectionHeadline';
-import Spinner from '../UI/Spinner/Spinner';
-
-// CSS
-import classes from './Home.module.css';
-
-// Components
+import { getAppCategories, getApps, getBookmarkCategories } from '../../store/actions';
+import { searchConfig } from '../../utility';
 import AppGrid from '../Apps/AppGrid/AppGrid';
 import BookmarkGrid from '../Bookmarks/BookmarkGrid/BookmarkGrid';
-import WeatherWidget from '../Widgets/WeatherWidget/WeatherWidget';
 import SearchBar from '../SearchBar/SearchBar';
-
-// Functions
-import { greeter } from './functions/greeter';
+import SectionHeadline from '../UI/Headlines/SectionHeadline/SectionHeadline';
+import Icon from '../UI/Icons/Icon/Icon';
+import { Container } from '../UI/Layout/Layout';
+import Spinner from '../UI/Spinner/Spinner';
+import WeatherWidget from '../Widgets/WeatherWidget/WeatherWidget';
 import { dateTime } from './functions/dateTime';
-
-// Utils
-import { searchConfig } from '../../utility';
+import { greeter } from './functions/greeter';
+import classes from './Home.module.css';
 
 interface ComponentProps {
-  getApps: Function;
-  getCategories: Function;
+  getApps: () => void;
+  getAppCategories: () => void;
+  getBookmarkCategories: () => void;
   appsLoading: boolean;
+  bookmarkCategoriesLoading: boolean;
+  appCategories: Category[];
   apps: App[];
-  categoriesLoading: boolean;
-  categories: Category[];
+  bookmarkCategories: Category[];
 }
 
 const Home = (props: ComponentProps): JSX.Element => {
   const {
+    getAppCategories,
     getApps,
+    getBookmarkCategories,
+    appCategories,
     apps,
+    bookmarkCategories,
     appsLoading,
-    getCategories,
-    categories,
-    categoriesLoading,
+    bookmarkCategoriesLoading,
   } = props;
 
   const [header, setHeader] = useState({
@@ -58,7 +49,14 @@ const Home = (props: ComponentProps): JSX.Element => {
   // Local search query
   const [localSearch, setLocalSearch] = useState<null | string>(null);
 
-  // Load applications
+  // Load app categories
+  useEffect(() => {
+    if (appCategories.length === 0) {
+      getAppCategories();
+    }
+  }, [getAppCategories]);
+
+  // Load apps
   useEffect(() => {
     if (apps.length === 0) {
       getApps();
@@ -67,10 +65,10 @@ const Home = (props: ComponentProps): JSX.Element => {
 
   // Load bookmark categories
   useEffect(() => {
-    if (categories.length === 0) {
-      getCategories();
+    if (bookmarkCategories.length === 0) {
+      getBookmarkCategories();
     }
-  }, [getCategories]);
+  }, [getBookmarkCategories]);
 
   // Refresh greeter and time
   useEffect(() => {
@@ -90,13 +88,20 @@ const Home = (props: ComponentProps): JSX.Element => {
   }, []);
 
   // Search bookmarks
-  const searchBookmarks = (query: string): Category[] => {
-    const category = { ...categories[0] };
-    category.name = 'Search Results';
-    category.bookmarks = categories
-      .map(({ bookmarks }) => bookmarks)
-      .flat()
-      .filter(({ name }) => new RegExp(query, 'i').test(name));
+  const searchBookmarks = (query: string, categoriesToSearch: Category[]): Category[] => {
+    const category: Category = {
+      name: "Search Results",
+      type: categoriesToSearch[0].type,
+      isPinned: true,
+      bookmarks: categoriesToSearch
+        .map((c: Category) => c.bookmarks)
+        .flat()
+        .filter((bookmark: Bookmark) => new RegExp(query, 'i').test(bookmark.name)),
+      id: 0,
+      orderId: 0,
+      createdAt: new Date(),
+      updatedAt: new Date(),        
+    };
 
     return [category];
   };
@@ -131,14 +136,15 @@ const Home = (props: ComponentProps): JSX.Element => {
             <Spinner />
           ) : (
             <AppGrid
+              categories={appCategories.filter((category: Category) => category.isPinned)}
               apps={
                 !localSearch
-                  ? apps.filter(({ isPinned }) => isPinned)
-                  : apps.filter(({ name }) =>
-                      new RegExp(localSearch, 'i').test(name)
+                  ? apps.filter((app: App) => app.isPinned)
+                  : apps.filter((app: App) =>
+                      new RegExp(localSearch, 'i').test(app.name)
                     )
               }
-              totalApps={apps.length}
+              totalCategories={appCategories.length}
               searching={!!localSearch}
             />
           )}
@@ -151,16 +157,16 @@ const Home = (props: ComponentProps): JSX.Element => {
       {searchConfig('hideCategories', 0) !== 1 ? (
         <Fragment>
           <SectionHeadline title="Bookmarks" link="/bookmarks" />
-          {categoriesLoading ? (
+          {bookmarkCategoriesLoading ? (
             <Spinner />
           ) : (
             <BookmarkGrid
               categories={
                 !localSearch
-                  ? categories.filter(({ isPinned }) => isPinned)
-                  : searchBookmarks(localSearch)
+                  ? bookmarkCategories.filter((category: Category) => category.isPinned)
+                  : searchBookmarks(localSearch, bookmarkCategories)
               }
-              totalCategories={categories.length}
+              totalCategories={bookmarkCategories.length}
               searching={!!localSearch}
             />
           )}
@@ -178,11 +184,12 @@ const Home = (props: ComponentProps): JSX.Element => {
 
 const mapStateToProps = (state: GlobalState) => {
   return {
+    appCategories: state.app.categories,
     appsLoading: state.app.loading,
     apps: state.app.apps,
-    categoriesLoading: state.bookmark.loading,
-    categories: state.bookmark.categories,
-  };
-};
+    bookmarkCategoriesLoading: state.bookmark.loading,
+    bookmarkCategories: state.bookmark.categories,
+  }
+}
 
-export default connect(mapStateToProps, { getApps, getCategories })(Home);
+export default connect(mapStateToProps, { getApps, getAppCategories, getBookmarkCategories })(Home);
