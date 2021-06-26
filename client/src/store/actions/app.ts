@@ -138,30 +138,29 @@ export interface AddAppAction {
   payload: App;
 }
 
-export const addApp =
-  (formData: NewApp | FormData) => async (dispatch: Dispatch) => {
-    try {
-      const res = await axios.post<ApiResponse<App>>("/api/apps", formData);
+export const addApp = (formData: NewApp | FormData) => async (dispatch: Dispatch) => {
+  try {
+    const res = await axios.post<ApiResponse<App>>("/api/apps", formData);
 
-      dispatch<CreateNotificationAction>({
-        type: ActionTypes.createNotification,
-        payload: {
-          title: "Success",
-          message: `App ${res.data.data.name} added`,
-        },
-      });
+    dispatch<CreateNotificationAction>({
+      type: ActionTypes.createNotification,
+      payload: {
+        title: "Success",
+        message: `App ${res.data.data.name} added`,
+      },
+    });
 
-      await dispatch<AddAppAction>({
-        type: ActionTypes.addAppSuccess,
-        payload: res.data.data,
-      });
+    await dispatch<AddAppAction>({
+      type: ActionTypes.addAppSuccess,
+      payload: res.data.data,
+    });
 
-      // Sort apps
-      dispatch<any>(sortApps());
-    } catch (err) {
-      console.log(err);
-    }
-  };
+    // Sort apps
+    dispatch<any>(sortApps());
+  } catch (err) {
+    console.log(err);
+  }
+};
 
 /**
  * PIN CATEGORY
