@@ -1,7 +1,8 @@
-import { Model, Bookmark } from '.';
+import { Bookmark, Model } from '.';
 
 export interface Category extends Model {
   name: string;
+  type: string;
   isPinned: boolean;
   orderId: number;
   bookmarks: Bookmark[];
@@ -9,4 +10,5 @@ export interface Category extends Model {
 
 export interface NewCategory {
   name: string;
+  type: string;
 }
