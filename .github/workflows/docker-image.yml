@@ -1,9 +1,9 @@
 name: Docker Image CI
 on:
   push:
-    branches: [ docker ]
+    branches: [ master ]
   pull_request:
-    branches: [ docker ]
+    branches: [ master ]
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -18,7 +18,7 @@ jobs:
       - name: Prepare
         id: prep
         run: |
-          DOCKER_IMAGE=ghcr.io/fdarveau/flame
+          DOCKER_IMAGE=ghcr.io/${{ github.repository }}
           VERSION=latest
           if [[ $GITHUB_REF == refs/tags/* ]]; then
             VERSION=${GITHUB_REF#refs/tags/v}
