@@ -57,6 +57,13 @@ const Home = (props: ComponentProps): JSX.Element => {
     }
   }, [getAppCategories]);
 
+  // Load app categories
+  useEffect(() => {
+    if (appCategories.length === 0) {
+      getAppCategories();
+    }
+  }, [getAppCategories]);
+
   // Load apps
   useEffect(() => {
     if (apps.length === 0) {

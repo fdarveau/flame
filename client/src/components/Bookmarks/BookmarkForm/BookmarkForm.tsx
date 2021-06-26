@@ -37,15 +37,15 @@ const BookmarkForm = (props: ComponentProps): JSX.Element => {
   const [useCustomIcon, setUseCustomIcon] = useState<boolean>(false);
   const [customIcon, setCustomIcon] = useState<File | null>(null);
   const [categoryData, setCategoryData] = useState<NewCategory>({
-    name: "",
-    type: "bookmarks",
+    name: '',
+    type: 'bookmarks',
   });
 
   const [bookmarkData, setBookmarkData] = useState<NewBookmark>({
-    name: "",
-    url: "",
+    name: '',
+    url: '',
     categoryId: -1,
-    icon: "",
+    icon: '',
   });
 
   // Load category data if provided for editing
@@ -53,7 +53,7 @@ const BookmarkForm = (props: ComponentProps): JSX.Element => {
     if (props.category) {
       setCategoryData({ name: props.category.name, type: props.category.type });
     } else {
-      setCategoryData({ name: "", type: "bookmarks" });
+      setCategoryData({ name: '', type: 'bookmarks' });
     }
   }, [props.category]);
 
@@ -68,8 +68,8 @@ const BookmarkForm = (props: ComponentProps): JSX.Element => {
       });
     } else {
       setBookmarkData({
-        name: "",
-        url: "",
+        name: '',
+        url: '',
         categoryId: -1,
         icon: "",
       });
@@ -157,7 +157,6 @@ const BookmarkForm = (props: ComponentProps): JSX.Element => {
   };
 
   const inputChangeHandler = (e: ChangeEvent<HTMLInputElement>, setDataFunction: Dispatch<SetStateAction<any>>, data: any): void => {
-
     setDataFunction({
       ...data,
       [e.target.name]: e.target.value,
@@ -248,7 +247,7 @@ const BookmarkForm = (props: ComponentProps): JSX.Element => {
             />
             <span>
               <a
-                href="https://github.com/pawelmalak/flame#supported-url-formats-for-bookmarklications-and-bookmarks"
+                href="https://github.com/pawelmalak/flame#supported-url-formats-for-applications-and-bookmarks"
                 target="_blank"
                 rel="noreferrer"
               >
