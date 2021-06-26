@@ -29,7 +29,7 @@ interface ComponentProps {
   reorderAppCategories: (categories: Category[]) => void;
   updateHandler: (data: Category | App) => void;
   pinApp: (app: App) => void;
-  deleteApp: (id: number) => void;
+  deleteApp: (id: number, categoryId: number) => void;
   reorderApps: (apps: App[]) => void;
   updateConfig: (formData: any) => void;
   createNotification: (notification: NewNotification) => void;
@@ -75,7 +75,7 @@ const AppTable = (props: ComponentProps): JSX.Element => {
     );
 
     if (proceed) {
-      props.deleteApp(app.id);
+      props.deleteApp(app.id, app.categoryId);
     }
   };
 

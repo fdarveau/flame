@@ -25,6 +25,10 @@
       "value": true
     },
     {
+      "key": "pinBookmarksByDefault",
+      "value": true
+    },
+    {
       "key": "pinCategoriesByDefault",
       "value": true
     },
@@ -53,7 +57,7 @@
       "value": false
     },
     {
-      "key": "hideCategories",
+      "key": "hideBookmarks",
       "value": false
     },
     {

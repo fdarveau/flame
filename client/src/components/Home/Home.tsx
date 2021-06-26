@@ -2,9 +2,8 @@ import { Fragment, useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 
-import { App, Bookmark, Category } from '../../interfaces';
-import { GlobalState } from '../../interfaces/GlobalState';
-import { getAppCategories, getApps, getBookmarkCategories } from '../../store/actions';
+import { App, Bookmark, Category, GlobalState } from '../../interfaces';
+import { getAppCategories, getApps, getBookmarkCategories, getBookmarks } from '../../store/actions';
 import { searchConfig } from '../../utility';
 import AppGrid from '../Apps/AppGrid/AppGrid';
 import BookmarkGrid from '../Bookmarks/BookmarkGrid/BookmarkGrid';
@@ -21,12 +20,14 @@ import classes from './Home.module.css';
 interface ComponentProps {
   getApps: () => void;
   getAppCategories: () => void;
+  getBookmarks: () => void;
   getBookmarkCategories: () => void;
   appsLoading: boolean;
   bookmarkCategoriesLoading: boolean;
   appCategories: Category[];
   apps: App[];
   bookmarkCategories: Category[];
+  bookmarks: Bookmark[];
 }
 
 const Home = (props: ComponentProps): JSX.Element => {
@@ -34,9 +35,11 @@ const Home = (props: ComponentProps): JSX.Element => {
     getAppCategories,
     getApps,
     getBookmarkCategories,
+    getBookmarks,
     appCategories,
     apps,
     bookmarkCategories,
+    bookmarks,
     appsLoading,
     bookmarkCategoriesLoading,
   } = props;
@@ -70,12 +73,19 @@ const Home = (props: ComponentProps): JSX.Element => {
     }
   }, [getBookmarkCategories]);
 
+  // Load bookmarks
+  useEffect(() => {
+    if (bookmarks.length === 0) {
+      getBookmarks();
+    }
+  }, [getBookmarks]);
+
   // Refresh greeter and time
   useEffect(() => {
     let interval: any;
 
     // Start interval only when hideHeader is false
-    if (searchConfig('hideHeader', 0) !== 1) {
+    if (searchConfig("hideHeader", 0) !== 1) {
       interval = setInterval(() => {
         setHeader({
           dateTime: dateTime(),
@@ -87,12 +97,16 @@ const Home = (props: ComponentProps): JSX.Element => {
     return () => clearInterval(interval);
   }, []);
 
-  // Search bookmarks
-  const searchBookmarks = (query: string, categoriesToSearch: Category[]): Category[] => {
+  // Search categories
+  const searchInCategories = (query: string, categoriesToSearch: Category[]): Category[] => {
     const category: Category = {
       name: "Search Results",
       type: categoriesToSearch[0].type,
       isPinned: true,
+      apps: categoriesToSearch
+        .map((c: Category) => c.apps)
+        .flat()
+        .filter((app: App) => new RegExp(query, 'i').test(app.name)),
       bookmarks: categoriesToSearch
         .map((c: Category) => c.bookmarks)
         .flat()
@@ -136,7 +150,11 @@ const Home = (props: ComponentProps): JSX.Element => {
             <Spinner />
           ) : (
             <AppGrid
-              categories={appCategories.filter((category: Category) => category.isPinned)}
+              categories={
+                  !localSearch
+                    ? appCategories.filter((category: Category) => category.isPinned)
+                    : searchInCategories(localSearch, appCategories)
+              }
               apps={
                 !localSearch
                   ? apps.filter((app: App) => app.isPinned)
@@ -154,7 +172,7 @@ const Home = (props: ComponentProps): JSX.Element => {
         <div></div>
       )}
 
-      {searchConfig('hideCategories', 0) !== 1 ? (
+      {searchConfig('hideBookmarks', 0) !== 1 ? (
         <Fragment>
           <SectionHeadline title="Bookmarks" link="/bookmarks" />
           {bookmarkCategoriesLoading ? (
@@ -164,7 +182,14 @@ const Home = (props: ComponentProps): JSX.Element => {
               categories={
                 !localSearch
                   ? bookmarkCategories.filter((category: Category) => category.isPinned)
-                  : searchBookmarks(localSearch, bookmarkCategories)
+                  : searchInCategories(localSearch, bookmarkCategories)
+              }
+              bookmarks={
+                !localSearch
+                  ? bookmarks.filter((bookmark: Bookmark) => bookmark.isPinned)
+                  : bookmarks.filter((bookmark: Bookmark) =>
+                      new RegExp(localSearch, 'i').test(bookmark.name)
+                    )
               }
               totalCategories={bookmarkCategories.length}
               searching={!!localSearch}
@@ -189,7 +214,8 @@ const mapStateToProps = (state: GlobalState) => {
     apps: state.app.apps,
     bookmarkCategoriesLoading: state.bookmark.loading,
     bookmarkCategories: state.bookmark.categories,
+    bookmarks: state.bookmark.bookmarks,
   }
 }
 
-export default connect(mapStateToProps, { getApps, getAppCategories, getBookmarkCategories })(Home);
+export default connect(mapStateToProps, { getApps, getAppCategories, getBookmarks, getBookmarkCategories })(Home);

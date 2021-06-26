@@ -1,11 +1,12 @@
 import { Link } from 'react-router-dom';
 
-import { Category } from '../../../interfaces';
+import { Bookmark, Category } from '../../../interfaces';
 import BookmarkCard from '../BookmarkCard/BookmarkCard';
 import classes from './BookmarkGrid.module.css';
 
 interface ComponentProps {
   categories: Category[];
+  bookmarks: Bookmark[];
   totalCategories?: number;
   searching: boolean;
 }
@@ -25,7 +26,7 @@ const BookmarkGrid = (props: ComponentProps): JSX.Element => {
         <div className={classes.BookmarkGrid}>
           {props.categories.map(
             (category: Category): JSX.Element => (
-              <BookmarkCard category={category} key={category.id} />
+              <BookmarkCard key={category.id} category={category} bookmarks={props.bookmarks.filter( (bookmark: Bookmark) => bookmark.categoryId === category.id)} />
             )
           )}
         </div>

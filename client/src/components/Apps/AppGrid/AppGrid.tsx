@@ -6,7 +6,7 @@ import classes from './AppGrid.module.css';
 
 interface ComponentProps {
   categories: Category[];
-  apps: App[]
+  apps: App[];
   totalCategories?: number;
   searching: boolean;
 }

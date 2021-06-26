@@ -14,7 +14,7 @@ import AppGrid from './AppGrid/AppGrid';
 import classes from './Apps.module.css';
 import AppTable from './AppTable/AppTable';
 
-interface ComponentProps {  
+interface ComponentProps {
   loading: boolean;
   categories: Category[];
   getAppCategories: () => void;
@@ -25,23 +25,18 @@ interface ComponentProps {
 
 export enum ContentType {
   category,
-  app
+  app,
 }
 
 const Apps = (props: ComponentProps): JSX.Element => {
-  const {
-    apps,
-    getApps,
-    getAppCategories,
-    categories,
-    loading,
-    searching = false 
-  } = props;
+  const { apps, getApps, getAppCategories, categories, loading, searching = false } = props;
 
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [formContentType, setFormContentType] = useState(ContentType.category);
   const [isInEdit, setIsInEdit] = useState(false);
-  const [tableContentType, setTableContentType] = useState(ContentType.category);
+  const [tableContentType, setTableContentType] = useState(
+    ContentType.category
+  );
   const [isInUpdate, setIsInUpdate] = useState(false);
   const [categoryInUpdate, setCategoryInUpdate] = useState<Category>({
     name: "",
@@ -49,10 +44,11 @@ const Apps = (props: ComponentProps): JSX.Element => {
     isPinned: false,
     orderId: 0,
     type: "apps",
+    apps: [],
     bookmarks: [],
     createdAt: new Date(),
-    updatedAt: new Date()
-  })
+    updatedAt: new Date(),
+  });
   const [appInUpdate, setAppInUpdate] = useState<App>({
     name: "string",
     url: "string",
@@ -75,18 +71,17 @@ const Apps = (props: ComponentProps): JSX.Element => {
     if (categories.length === 0) {
       getAppCategories();
     }
-  }, [getAppCategories])
+  }, [getAppCategories]);
 
   const toggleModal = (): void => {
     setModalIsOpen(!modalIsOpen);
-    // setIsInUpdate(false);
-  }
+  };
 
   const addActionHandler = (contentType: ContentType) => {
     setFormContentType(contentType);
     setIsInUpdate(false);
     toggleModal();
-  }
+  };
 
   const editActionHandler = (contentType: ContentType) => {
     // We"re in the edit mode and the same button was clicked - go back to list
@@ -96,11 +91,11 @@ const Apps = (props: ComponentProps): JSX.Element => {
       setIsInEdit(true);
       setTableContentType(contentType);
     }
-  }
+  };
 
   const instanceOfCategory = (object: any): object is Category => {
     return "apps" in object;
-  }
+  };
 
   const goToUpdateMode = (data: Category | App): void => {
     setIsInUpdate(true);
@@ -112,7 +107,7 @@ const Apps = (props: ComponentProps): JSX.Element => {
       setAppInUpdate(data);
     }
     toggleModal();
-  }
+  };
 
   return (
     <Container>
@@ -157,7 +152,7 @@ const mapStateToProps = (state: GlobalState) => {
     loading: state.app.loading,
     categories: state.app.categories,
     apps: state.app.apps,
-  }
-}
+  };
+};
 
 export default connect(mapStateToProps, { getApps, getAppCategories })(Apps);

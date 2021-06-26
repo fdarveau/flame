@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 
 import { Bookmark, Category, GlobalState } from '../../interfaces';
-import { getBookmarkCategories } from '../../store/actions';
+import { getBookmarkCategories, getBookmarks } from '../../store/actions';
 import ActionButton from '../UI/Buttons/ActionButton/ActionButton';
 import Headline from '../UI/Headlines/Headline/Headline';
 import { Container } from '../UI/Layout/Layout';
@@ -18,6 +18,8 @@ interface ComponentProps {
   loading: boolean;
   categories: Category[];
   getBookmarkCategories: () => void;
+  bookmarks: Bookmark[];
+  getBookmarks: () => void;
   searching: boolean;
 }
 
@@ -27,7 +29,7 @@ export enum ContentType {
 }
 
 const Bookmarks = (props: ComponentProps): JSX.Element => {
-  const { getBookmarkCategories, categories, loading, searching = false } = props;
+  const { bookmarks, getBookmarks, getBookmarkCategories, categories, loading, searching = false } = props;
 
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [formContentType, setFormContentType] = useState(ContentType.category);
@@ -37,24 +39,33 @@ const Bookmarks = (props: ComponentProps): JSX.Element => {
   );
   const [isInUpdate, setIsInUpdate] = useState(false);
   const [categoryInUpdate, setCategoryInUpdate] = useState<Category>({
-    name: '',
+    name: "",
     id: -1,
     isPinned: false,
     orderId: 0,
-    type: 'bookmarks',
+    type: "bookmarks",
+    apps: [],
     bookmarks: [],
     createdAt: new Date(),
     updatedAt: new Date(),
   });
   const [bookmarkInUpdate, setBookmarkInUpdate] = useState<Bookmark>({
-    name: '',
-    url: '',
+    name: "",
+    url: "",
     categoryId: -1,
-    icon: '',
-    id: -1,
+    icon: "",
+    isPinned: false,
+    orderId: 0,
+    id: 0,
     createdAt: new Date(),
     updatedAt: new Date(),
   });
+
+  useEffect(() => {
+    if (bookmarks.length === 0) {
+      getBookmarks();
+    }
+  }, [getBookmarks]);
 
   useEffect(() => {
     if (categories.length === 0) {
@@ -83,7 +94,7 @@ const Bookmarks = (props: ComponentProps): JSX.Element => {
   };
 
   const instanceOfCategory = (object: any): object is Category => {
-    return 'bookmarks' in object;
+    return "bookmarks" in object;
   };
 
   const goToUpdateMode = (data: Category | Bookmark): void => {
@@ -149,11 +160,12 @@ const Bookmarks = (props: ComponentProps): JSX.Element => {
       {loading ? (
         <Spinner />
       ) : !isInEdit ? (
-        <BookmarkGrid categories={categories} searching />
+        <BookmarkGrid categories={categories} bookmarks={bookmarks} searching />
       ) : (
         <BookmarkTable
           contentType={tableContentType}
           categories={categories}
+          bookmarks={bookmarks}
           updateHandler={goToUpdateMode}
         />
       )}
@@ -168,4 +180,4 @@ const mapStateToProps = (state: GlobalState) => {
   };
 };
 
-export default connect(mapStateToProps, { getBookmarkCategories })(Bookmarks);
+export default connect(mapStateToProps, { getBookmarks, getBookmarkCategories })(Bookmarks);

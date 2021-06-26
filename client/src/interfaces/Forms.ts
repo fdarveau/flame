@@ -8,10 +8,11 @@ export interface WeatherForm {
 export interface SettingsForm {
   customTitle: string;
   pinAppsByDefault: number;
+  pinBookmarksByDefault: number;
   pinCategoriesByDefault: number;
   hideHeader: number;
   hideApps: number;
-  hideCategories: number;
+  hideBookmarks: number;
   hideSearch: number;
   defaultSearchProvider: string;
   useOrdering: string;

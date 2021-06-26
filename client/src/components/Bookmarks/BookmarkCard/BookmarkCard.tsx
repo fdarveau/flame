@@ -1,12 +1,14 @@
-import { Bookmark, Category } from '../../../interfaces';
-import classes from './BookmarkCard.module.css';
-
-import Icon from '../../UI/Icons/Icon/Icon';
-import { iconParser, urlParser, searchConfig } from '../../../utility';
 import { Fragment } from 'react';
+
+import { Bookmark, Category } from '../../../interfaces';
+import { iconParser, searchConfig, urlParser } from '../../../utility';
+import Icon from '../../UI/Icons/Icon/Icon';
+import classes from './BookmarkCard.module.css';
 
 interface ComponentProps {
   category: Category;
+  bookmarks: Bookmark[]
+  pinHandler?: Function;
 }
 
 const BookmarkCard = (props: ComponentProps): JSX.Element => {
@@ -14,7 +16,7 @@ const BookmarkCard = (props: ComponentProps): JSX.Element => {
     <div className={classes.BookmarkCard}>
       <h3>{props.category.name}</h3>
       <div className={classes.Bookmarks}>
-        {props.category.bookmarks.map((bookmark: Bookmark) => {
+        {props.bookmarks.map((bookmark: Bookmark) => {
           const redirectUrl = urlParser(bookmark.url)[1];
 
           let iconEl: JSX.Element = <Fragment></Fragment>;
