@@ -245,16 +245,6 @@ const reorderApps = (state: State, action: Action): State => {
 };
 
 const sortApps = (state: State, action: Action): State => {
-  // const tmpCategories = [...state.categories];
-
-  // tmpCategories.forEach((category: Category) => {
-  //   category.apps = sortData<App>(category.apps, action.payload);
-  // });
-
-  // return {
-  //   ...state,
-  //   categories: tmpCategories,
-  // };
   const sortedApps = sortData<App>(state.apps, action.payload);
 
   return {

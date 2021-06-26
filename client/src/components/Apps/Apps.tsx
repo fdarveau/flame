@@ -24,17 +24,11 @@ interface ComponentProps {
 
 export enum ContentType {
   category,
-  app
+  app,
 }
 
 const Apps = (props: ComponentProps): JSX.Element => {
-  const {
-    apps,
-    getApps,
-    getAppCategories,
-    categories,
-    loading
-  } = props;
+  const { apps, getApps, getAppCategories, categories, loading } = props;
 
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [formContentType, setFormContentType] = useState(ContentType.category);
