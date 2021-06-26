@@ -1,5 +1,5 @@
 import { App, Category } from '../../../interfaces';
-import { iconParser, urlParser } from '../../../utility';
+import { iconParser, searchConfig, urlParser } from '../../../utility';
 import Icon from '../../UI/Icons/Icon/Icon';
 import classes from './AppCard.module.css';
 
@@ -45,7 +45,7 @@ const AppCard = (props: ComponentProps): JSX.Element => {
           return (
             <a
               href={redirectUrl}
-              target='_blank'
+              target={searchConfig('appsSameTab', false) ? '' : '_blank'}
               rel='noreferrer'
               key={`app-${app.id}`}>              
               <div className={classes.AppCardIcon}>{iconEl}</div>

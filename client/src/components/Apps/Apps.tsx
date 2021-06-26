@@ -25,7 +25,7 @@ interface ComponentProps {
 
 export enum ContentType {
   category,
-  app,
+  app
 }
 
 const Apps = (props: ComponentProps): JSX.Element => {
@@ -34,26 +34,24 @@ const Apps = (props: ComponentProps): JSX.Element => {
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [formContentType, setFormContentType] = useState(ContentType.category);
   const [isInEdit, setIsInEdit] = useState(false);
-  const [tableContentType, setTableContentType] = useState(
-    ContentType.category
-  );
+  const [tableContentType, setTableContentType] = useState(ContentType.category);
   const [isInUpdate, setIsInUpdate] = useState(false);
   const [categoryInUpdate, setCategoryInUpdate] = useState<Category>({
-    name: "",
+    name: '',
     id: -1,
     isPinned: false,
     orderId: 0,
-    type: "apps",
+    type: 'apps',
     apps: [],
     bookmarks: [],
     createdAt: new Date(),
-    updatedAt: new Date(),
-  });
+    updatedAt: new Date()
+  })
   const [appInUpdate, setAppInUpdate] = useState<App>({
-    name: "string",
-    url: "string",
+    name: 'string',
+    url: 'string',
     categoryId: -1,
-    icon: "string",
+    icon: 'string',
     isPinned: false,
     orderId: 0,
     id: 0,
