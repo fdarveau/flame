@@ -37,13 +37,13 @@ const BookmarkForm = (props: ComponentProps): JSX.Element => {
   const [useCustomIcon, setUseCustomIcon] = useState<boolean>(false);
   const [customIcon, setCustomIcon] = useState<File | null>(null);
   const [categoryData, setCategoryData] = useState<NewCategory>({
-    name: "",
-    type: "bookmarks",
+    name: '',
+    type: 'bookmarks',
   });
 
   const [bookmarkData, setBookmarkData] = useState<NewBookmark>({
-    name: "",
-    url: "",
+    name: '',
+    url: '',
     categoryId: -1,
     icon: ''
   });
@@ -53,7 +53,7 @@ const BookmarkForm = (props: ComponentProps): JSX.Element => {
     if (props.category) {
       setCategoryData({ name: props.category.name, type: props.category.type });
     } else {
-      setCategoryData({ name: "", type: "bookmarks" });
+      setCategoryData({ name: '', type: 'bookmarks' });
     }
   }, [props.category]);
 
@@ -68,8 +68,8 @@ const BookmarkForm = (props: ComponentProps): JSX.Element => {
       });
     } else {
       setBookmarkData({
-        name: "",
-        url: "",
+        name: '',
+        url: '',
         categoryId: -1,
         icon: ''
       });
