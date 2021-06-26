@@ -8,8 +8,11 @@ import {
   createNotification,
   deleteBookmark,
   deleteBookmarkCategory,
+  pinBookmark,
   pinBookmarkCategory,
   reorderBookmarkCategories,
+  reorderBookmarks,
+  updateConfig,
 } from '../../../store/actions';
 import { searchConfig } from '../../../utility';
 import Icon from '../../UI/Icons/Icon/Icon';
@@ -20,22 +23,32 @@ import classes from './BookmarkTable.module.css';
 interface ComponentProps {
   contentType: ContentType;
   categories: Category[];
+  bookmarks: Bookmark[];
   pinBookmarkCategory: (category: Category) => void;
   deleteBookmarkCategory: (id: number) => void;
-  updateHandler: (data: Category | Bookmark) => void;
-  deleteBookmark: (bookmarkId: number, categoryId: number) => void;
-  createNotification: (notification: NewNotification) => void;
   reorderBookmarkCategories: (categories: Category[]) => void;
+  updateHandler: (data: Category | Bookmark) => void;
+  pinBookmark: (bookmark: Bookmark) => void;
+  deleteBookmark: (id: number, categoryId: number) => void;
+  reorderBookmarks: (bookmarks: Bookmark[]) => void;
+  updateConfig: (formData: any) => void;
+  createNotification: (notification: NewNotification) => void;
 }
 
 const BookmarkTable = (props: ComponentProps): JSX.Element => {
   const [localCategories, setLocalCategories] = useState<Category[]>([]);
+  const [localBookmarks, setLocalBookmarks] = useState<Bookmark[]>([]);
   const [isCustomOrder, setIsCustomOrder] = useState<boolean>(false);
 
   // Copy categories array
   useEffect(() => {
     setLocalCategories([...props.categories]);
   }, [props.categories]);
+
+  // Copy bookmarks array
+  useEffect(() => {
+    setLocalBookmarks([...props.bookmarks]);
+  }, [props.bookmarks]);
 
   // Check ordering
   useEffect(() => {
@@ -66,13 +79,14 @@ const BookmarkTable = (props: ComponentProps): JSX.Element => {
     }
   };
 
+  // Support keyboard navigation for actions
   const keyboardActionHandler = (
     e: KeyboardEvent,
-    category: Category,
+    object: any,
     handler: Function
   ) => {
     if (e.key === "Enter") {
-      handler(category);
+      handler(object);
     }
   };
 
@@ -89,12 +103,21 @@ const BookmarkTable = (props: ComponentProps): JSX.Element => {
       return;
     }
 
-    const tmpCategories = [...localCategories];
-    const [movedCategory] = tmpCategories.splice(result.source.index, 1);
-    tmpCategories.splice(result.destination.index, 0, movedCategory);
+    if (props.contentType === ContentType.bookmark) {
+      const tmpBookmarks = [...localBookmarks];
+      const [movedBookmark] = tmpBookmarks.splice(result.source.index, 1);
+      tmpBookmarks.splice(result.destination.index, 0, movedBookmark);
 
-    setLocalCategories(tmpCategories);
-    props.reorderBookmarkCategories(tmpCategories);
+      setLocalBookmarks(tmpBookmarks);
+      props.reorderBookmarks(tmpBookmarks);
+    } else if (props.contentType === ContentType.category) {
+      const tmpCategories = [...localCategories];
+      const [movedCategory] = tmpCategories.splice(result.source.index, 1);
+      tmpCategories.splice(result.destination.index, 0, movedCategory);
+
+      setLocalCategories(tmpCategories);
+      props.reorderBookmarkCategories(tmpCategories);
+    }
   };
 
   if (props.contentType === ContentType.category) {
@@ -168,7 +191,9 @@ const BookmarkTable = (props: ComponentProps): JSX.Element => {
                                   </div>
                                   <div
                                     className={classes.TableAction}
-                                    onClick={() => props.pinBookmarkCategory(category)}
+                                    onClick={() =>
+                                      props.pinBookmarkCategory(category)
+                                    }
                                     onKeyDown={(e) =>
                                       keyboardActionHandler(
                                         e,
@@ -203,47 +228,132 @@ const BookmarkTable = (props: ComponentProps): JSX.Element => {
       </Fragment>
     );
   } else {
-    const bookmarks: { bookmark: Bookmark; categoryName: string }[] = [];
-    props.categories.forEach((category: Category) => {
-      category.bookmarks.forEach((bookmark: Bookmark) => {
-        bookmarks.push({
-          bookmark,
-          categoryName: category.name,
-        });
-      });
-    });
-
     return (
-      <Table headers={["Name", "URL", "Icon", "Category", "Actions"]}>
-        {bookmarks.map(
-          (bookmark: { bookmark: Bookmark; categoryName: string }) => {
-            return (
-              <tr key={bookmark.bookmark.id}>
-                <td>{bookmark.bookmark.name}</td>
-                <td>{bookmark.bookmark.url}</td>
-                <td>{bookmark.bookmark.icon}</td>
-                <td>{bookmark.categoryName}</td>
-                <td className={classes.TableActions}>
-                  <div
-                    className={classes.TableAction}
-                    onClick={() => deleteBookmarkHandler(bookmark.bookmark)}
-                    tabIndex={0}
-                  >
-                    <Icon icon="mdiDelete" />
-                  </div>
-                  <div
-                    className={classes.TableAction}
-                    onClick={() => props.updateHandler(bookmark.bookmark)}
-                    tabIndex={0}
-                  >
-                    <Icon icon="mdiPencil" />
-                  </div>
-                </td>
-              </tr>
-            );
-          }
-        )}
-      </Table>
+      <Fragment>
+        <div className={classes.Message}>
+          {isCustomOrder ? (
+            <p>You can drag and drop single rows to reorder bookmarklication</p>
+          ) : (
+            <p>
+              Custom order is disabled. You can change it in{" "}
+              <Link to="/settings/other">settings</Link>
+            </p>
+          )}
+        </div>
+        <DragDropContext onDragEnd={dragEndHandler}>
+          <Droppable droppableId="bookmarks">
+            {(provided) => (
+              <Table
+                headers={["Name", "URL", "Icon", "Category", "Actions"]}
+                innerRef={provided.innerRef}
+              >
+                {localBookmarks.map(
+                  (bookmark: Bookmark, index): JSX.Element => {
+                    return (
+                      <Draggable
+                        key={bookmark.id}
+                        draggableId={bookmark.id.toString()}
+                        index={index}
+                      >
+                        {(provided, snapshot) => {
+                          const style = {
+                            border: snapshot.isDragging
+                              ? "1px solid var(--color-accent)"
+                              : "none",
+                            borderRadius: "4px",
+                            ...provided.draggableProps.style,
+                          };
+
+                          const category = localCategories.find(
+                            (category: Category) =>
+                              category.id === bookmark.categoryId
+                          );
+                          const categoryName = category?.name;
+
+                          return (
+                            <tr
+                              {...provided.draggableProps}
+                              {...provided.dragHandleProps}
+                              ref={provided.innerRef}
+                              style={style}
+                            >
+                              <td style={{ width: "200px" }}>
+                                {bookmark.name}
+                              </td>
+                              <td style={{ width: "200px" }}>{bookmark.url}</td>
+                              <td style={{ width: "200px" }}>
+                                {bookmark.icon}
+                              </td>
+                              <td style={{ width: "200px" }}>{categoryName}</td>
+                              {!snapshot.isDragging && (
+                                <td className={classes.TableActions}>
+                                  <div
+                                    className={classes.TableAction}
+                                    onClick={() =>
+                                      deleteBookmarkHandler(bookmark)
+                                    }
+                                    onKeyDown={(e) =>
+                                      keyboardActionHandler(
+                                        e,
+                                        bookmark,
+                                        deleteBookmarkHandler
+                                      )
+                                    }
+                                    tabIndex={0}
+                                  >
+                                    <Icon icon="mdiDelete" />
+                                  </div>
+                                  <div
+                                    className={classes.TableAction}
+                                    onClick={() =>
+                                      props.updateHandler(bookmark)
+                                    }
+                                    onKeyDown={(e) =>
+                                      keyboardActionHandler(
+                                        e,
+                                        bookmark,
+                                        props.updateHandler
+                                      )
+                                    }
+                                    tabIndex={0}
+                                  >
+                                    <Icon icon="mdiPencil" />
+                                  </div>
+                                  <div
+                                    className={classes.TableAction}
+                                    onClick={() => props.pinBookmark(bookmark)}
+                                    onKeyDown={(e) =>
+                                      keyboardActionHandler(
+                                        e,
+                                        bookmark,
+                                        props.pinBookmark
+                                      )
+                                    }
+                                    tabIndex={0}
+                                  >
+                                    {bookmark.isPinned ? (
+                                      <Icon
+                                        icon="mdiPinOff"
+                                        color="var(--color-accent)"
+                                      />
+                                    ) : (
+                                      <Icon icon="mdiPin" />
+                                    )}
+                                  </div>
+                                </td>
+                              )}
+                            </tr>
+                          );
+                        }}
+                      </Draggable>
+                    );
+                  }
+                )}
+              </Table>
+            )}
+          </Droppable>
+        </DragDropContext>
+      </Fragment>
     );
   }
 };
@@ -251,9 +361,12 @@ const BookmarkTable = (props: ComponentProps): JSX.Element => {
 const actions = {
   pinBookmarkCategory,
   deleteBookmarkCategory,
-  deleteBookmark,
-  createNotification,
   reorderBookmarkCategories,
+  pinBookmark,
+  deleteBookmark,
+  reorderBookmarks,
+  updateConfig,
+  createNotification,
 };
 
 export default connect(null, actions)(BookmarkTable);
