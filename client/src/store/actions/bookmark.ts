@@ -1,29 +1,30 @@
 import axios from 'axios';
 import { Dispatch } from 'redux';
+
+import { ApiResponse, Bookmark, Category, Config, NewBookmark, NewCategory } from '../../interfaces';
 import { ActionTypes } from './actionTypes';
-import { Category, ApiResponse, NewCategory, Bookmark, NewBookmark, Config } from '../../interfaces';
 import { CreateNotificationAction } from './notification';
 
 /**
  * GET CATEGORIES
  */
-export interface GetCategoriesAction<T> {
-  type: ActionTypes.getCategories | ActionTypes.getCategoriesSuccess | ActionTypes.getCategoriesError;
+export interface GetBookmarkCategoriesAction<T> {
+  type: ActionTypes.getBookmarkCategories | ActionTypes.getBookmarkCategoriesSuccess | ActionTypes.getBookmarkCategoriesError;
   payload: T;
 }
 
-export const getCategories = () => async (dispatch: Dispatch) => {
-  dispatch<GetCategoriesAction<undefined>>({
-    type: ActionTypes.getCategories,
+export const getBookmarkCategories = () => async (dispatch: Dispatch) => {
+  dispatch<GetBookmarkCategoriesAction<undefined>>({
+    type: ActionTypes.getBookmarkCategories,
     payload: undefined
   })
 
   try {
     const res = await axios.get<ApiResponse<Category[]>>('/api/categories');
 
-    dispatch<GetCategoriesAction<Category[]>>({
-      type: ActionTypes.getCategoriesSuccess,
-      payload: res.data.data
+    dispatch<GetBookmarkCategoriesAction<Category[]>>({
+      type: ActionTypes.getBookmarkCategoriesSuccess,
+      payload: res.data.data.filter((category: Category) => category.type === 'bookmarks'),
     })
   } catch (err) {
     console.log(err);
@@ -33,12 +34,12 @@ export const getCategories = () => async (dispatch: Dispatch) => {
 /**
  * ADD CATEGORY
  */
-export interface AddCategoryAction {
-  type: ActionTypes.addCategory,
+export interface AddBookmarkCategoryAction {
+  type: ActionTypes.addBookmarkCategory,
   payload: Category
 }
 
-export const addCategory = (formData: NewCategory) => async (dispatch: Dispatch) => {
+export const addBookmarkCategory = (formData: NewCategory) => async (dispatch: Dispatch) => {
   try {
     const res = await axios.post<ApiResponse<Category>>('/api/categories', formData);
 
@@ -50,12 +51,12 @@ export const addCategory = (formData: NewCategory) => async (dispatch: Dispatch)
       }
     })
 
-    dispatch<AddCategoryAction>({
-      type: ActionTypes.addCategory,
+    dispatch<AddBookmarkCategoryAction>({
+      type: ActionTypes.addBookmarkCategory,
       payload: res.data.data
     })
 
-    dispatch<any>(sortCategories());
+    dispatch<any>(sortBookmarkCategories());
   } catch (err) {
     console.log(err);
   }
@@ -93,12 +94,12 @@ export const addBookmark = (formData: NewBookmark) => async (dispatch: Dispatch)
 /**
  * PIN CATEGORY
  */
-export interface PinCategoryAction {
-  type: ActionTypes.pinCategory,
+export interface PinBookmarkCategoryAction {
+  type: ActionTypes.pinBookmarkCategory,
   payload: Category
 }
 
-export const pinCategory = (category: Category) => async (dispatch: Dispatch) => {
+export const pinBookmarkCategory = (category: Category) => async (dispatch: Dispatch) => {
   try {
     const { id, isPinned, name } = category;
     const res = await axios.put<ApiResponse<Category>>(`/api/categories/${id}`, { isPinned: !isPinned });
@@ -113,8 +114,8 @@ export const pinCategory = (category: Category) => async (dispatch: Dispatch) =>
       }
     })
 
-    dispatch<PinCategoryAction>({
-      type: ActionTypes.pinCategory,
+    dispatch<PinBookmarkCategoryAction>({
+      type: ActionTypes.pinBookmarkCategory,
       payload: res.data.data
     })
   } catch (err) {
@@ -125,12 +126,12 @@ export const pinCategory = (category: Category) => async (dispatch: Dispatch) =>
 /**
  * DELETE CATEGORY
  */
-export interface DeleteCategoryAction {
-  type: ActionTypes.deleteCategory,
+export interface DeleteBookmarkCategoryAction {
+  type: ActionTypes.deleteBookmarkCategory,
   payload: number
 }
 
-export const deleteCategory = (id: number) => async (dispatch: Dispatch) => {
+export const deleteBookmarkCategory = (id: number) => async (dispatch: Dispatch) => {
   try {
     await axios.delete<ApiResponse<{}>>(`/api/categories/${id}`);
 
@@ -142,8 +143,8 @@ export const deleteCategory = (id: number) => async (dispatch: Dispatch) => {
       }
     })
 
-    dispatch<DeleteCategoryAction>({
-      type: ActionTypes.deleteCategory,
+    dispatch<DeleteBookmarkCategoryAction>({
+      type: ActionTypes.deleteBookmarkCategory,
       payload: id
     })
   } catch (err) {
@@ -154,12 +155,12 @@ export const deleteCategory = (id: number) => async (dispatch: Dispatch) => {
 /**
  * UPDATE CATEGORY
  */
-export interface UpdateCategoryAction {
-  type: ActionTypes.updateCategory,
+export interface UpdateBookmarkCategoryAction {
+  type: ActionTypes.updateBookmarkCategory,
   payload: Category
 }
 
-export const updateCategory = (id: number, formData: NewCategory) => async (dispatch: Dispatch) => {
+export const updateBookmarkCategory = (id: number, formData: NewCategory) => async (dispatch: Dispatch) => {
   try {
     const res = await axios.put<ApiResponse<Category>>(`/api/categories/${id}`, formData);
 
@@ -171,12 +172,12 @@ export const updateCategory = (id: number, formData: NewCategory) => async (disp
       }
     })
 
-    dispatch<UpdateCategoryAction>({
-      type: ActionTypes.updateCategory,
+    dispatch<UpdateBookmarkCategoryAction>({
+      type: ActionTypes.updateBookmarkCategory,
       payload: res.data.data
     })
 
-    dispatch<any>(sortCategories());
+    dispatch<any>(sortBookmarkCategories());
   } catch (err) {
     console.log(err);
   }
@@ -270,17 +271,17 @@ export const updateBookmark = (bookmarkId: number, formData: NewBookmark, previo
 /**
  * SORT CATEGORIES
  */
-export interface SortCategoriesAction {
-  type: ActionTypes.sortCategories;
+export interface SortBookmarkCategoriesAction {
+  type: ActionTypes.sortBookmarkCategories;
   payload: string;
 }
 
-export const sortCategories = () => async (dispatch: Dispatch) => {
+export const sortBookmarkCategories = () => async (dispatch: Dispatch) => {
   try {
     const res = await axios.get<ApiResponse<Config>>('/api/config/useOrdering');
 
-    dispatch<SortCategoriesAction>({
-      type: ActionTypes.sortCategories,
+    dispatch<SortBookmarkCategoriesAction>({
+      type: ActionTypes.sortBookmarkCategories,
       payload: res.data.data.value
     })
   } catch (err) {
@@ -291,8 +292,8 @@ export const sortCategories = () => async (dispatch: Dispatch) => {
 /**
  * REORDER CATEGORIES
  */
-export interface ReorderCategoriesAction {
-  type: ActionTypes.reorderCategories;
+export interface ReorderBookmarkCategoriesAction {
+  type: ActionTypes.reorderBookmarkCategories;
   payload: Category[];
 }
 
@@ -303,7 +304,7 @@ interface ReorderQuery {
   }[]
 }
 
-export const reorderCategories = (categories: Category[]) => async (dispatch: Dispatch) => {
+export const reorderBookmarkCategories = (categories: Category[]) => async (dispatch: Dispatch) => {
   try {
     const updateQuery: ReorderQuery = { categories: [] }
 
@@ -314,8 +315,8 @@ export const reorderCategories = (categories: Category[]) => async (dispatch: Di
 
     await axios.put<ApiResponse<{}>>('/api/categories/0/reorder', updateQuery);
 
-    dispatch<ReorderCategoriesAction>({
-      type: ActionTypes.reorderCategories,
+    dispatch<ReorderBookmarkCategoriesAction>({
+      type: ActionTypes.reorderBookmarkCategories,
       payload: categories
     })
   } catch (err) {
