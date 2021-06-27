@@ -12,7 +12,8 @@ const App = sequelize.define('App', {
   },
   categoryId: {
     type: DataTypes.INTEGER,
-    allowNull: false
+    allowNull: false,
+    defaultValue: -1  // Default value for database migration only
   },
   icon: {
     type: DataTypes.STRING,
