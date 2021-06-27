@@ -136,13 +136,14 @@ export const pinBookmark =
 
 /**
  * ADD BOOKMARK
- */ export interface AddBookmarkAction {
+ */
+export interface AddBookmarkAction {
   type: ActionTypes.addBookmarkSuccess;
   payload: Bookmark;
 }
 
 export const addBookmark =
-  (formData: NewBookmark) => async (dispatch: Dispatch) => {
+  (formData: NewBookmark | FormData) => async (dispatch: Dispatch) => {
     try {
       const res = await axios.post<ApiResponse<Bookmark>>(
         "/api/bookmarks",
@@ -153,7 +154,7 @@ export const addBookmark =
         type: ActionTypes.createNotification,
         payload: {
           title: "Success",
-          message: `Bookmark ${formData.name} created`,
+          message: `Bookmark ${res.data.data.name} added`,
         },
       });
 
@@ -317,7 +318,11 @@ export interface UpdateBookmarkAction {
 }
 
 export const updateBookmark =
-  (bookmarkId: number, formData: NewBookmark, previousCategoryId: number) =>
+  (
+    bookmarkId: number,
+    formData: NewBookmark | FormData,
+    previousCategoryId: number
+  ) =>
   async (dispatch: Dispatch) => {
     try {
       const res = await axios.put<ApiResponse<Bookmark>>(
@@ -329,12 +334,13 @@ export const updateBookmark =
         type: ActionTypes.createNotification,
         payload: {
           title: "Success",
-          message: `Bookmark ${formData.name} updated`,
+          message: `Bookmark ${res.data.data.name} updated`,
         },
       });
 
       // Check if category was changed
-      const categoryWasChanged = formData.categoryId !== previousCategoryId;
+      const categoryWasChanged =
+        res.data.data.categoryId !== previousCategoryId;
 
       if (categoryWasChanged) {
         // Delete bookmark from old category
@@ -446,7 +452,7 @@ export interface ReorderBookmarkCategoriesAction {
   payload: Category[];
 }
 
-interface ReorderReorderCategoriesQueryuery {
+interface ReorderCategoriesQuery {
   categories: {
     id: number;
     orderId: number;
@@ -456,7 +462,7 @@ interface ReorderReorderCategoriesQueryuery {
 export const reorderBookmarkCategories =
   (categories: Category[]) => async (dispatch: Dispatch) => {
     try {
-      const updateQuery: ReorderReorderCategoriesQueryuery = { categories: [] };
+      const updateQuery: ReorderCategoriesQuery = { categories: [] };
 
       categories.forEach((category, index) =>
         updateQuery.categories.push({
