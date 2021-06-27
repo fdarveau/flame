@@ -14,11 +14,17 @@ exports.createApp = asyncWrapper(async (req, res, next) => {
   });
 
   let app;
+  let _body = { ...req.body };
+
+  if (req.file) {
+    _body.icon = req.file.filename;
+  }
+
 
   if (pinApps) {
     if (parseInt(pinApps.value)) {
       app = await App.create({
-        ...req.body,
+        ..._body,
         isPinned: true
       })
     } else {
@@ -28,7 +34,9 @@ exports.createApp = asyncWrapper(async (req, res, next) => {
 
   res.status(201).json({
     success: true,
-    data: app
+    data: await App.findOne({
+      where: { id: app.id }
+    })
   })
 })
 
@@ -94,7 +102,9 @@ exports.updateApp = asyncWrapper(async (req, res, next) => {
 
   res.status(200).json({
     success: true,
-    data: app
+    data: await App.findOne({
+      where: { id: req.params.id }
+    })
   })
 })
 

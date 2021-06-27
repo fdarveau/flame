@@ -81,6 +81,28 @@ Follow instructions from wiki: [Installation without Docker](https://github.com/
 ![Homescreen screenshot](./github/_themes.png)
 
 ## Usage
+### Search bar
+#### Searching
+To use search bar you need to type your search query with selected prefix. For example, to search for "what is docker" using google search you would type: `/g what is docker`.
+
+> You can change where to open search results (same/new tab) in the settings
+
+#### Supported search engines
+| Name       | Prefix | Search URL                          |
+|------------|--------|-------------------------------------|
+| Disroot    | /ds    | http://search.disroot.org/search?q= |
+| DuckDuckGo | /d     | https://duckduckgo.com/?q=          |
+| Google     | /g     | https://www.google.com/search?q=    |
+
+#### Supported services
+| Name               | Prefix | Search URL                                    |
+|--------------------|--------|-----------------------------------------------|
+| IMDb               | /im    | https://www.imdb.com/find?q=                  |
+| Reddit             | /r     | https://www.reddit.com/search?q=              |
+| Spotify            | /sp    | https://open.spotify.com/search/              |
+| The Movie Database | /mv    | https://www.themoviedb.org/search?query=      |
+| Youtube            | /yt    | https://www.youtube.com/results?search_query= |
+
 ### Setting up weather module
 1. Obtain API Key from [Weather API](https://www.weatherapi.com/pricing.aspx).
    > Free plan allows for 1M calls per month. Flame is making less then 3K API calls per month.
@@ -98,6 +120,11 @@ Follow instructions from wiki: [Installation without Docker](https://github.com/
 - URL without protocol
   - Format: `www.domain.com`, `domain.com`, `sub.domain.com`, `local`, `ip`, `ip:port`
   - Redirect: `http://{dest}`
+
+### Custom CSS
+> This is an experimental feature. Its behaviour might change in the future.
+> 
+Follow instructions from wiki: [Custom CSS](https://github.com/pawelmalak/flame/wiki/Custom-CSS)
 
 ## Support
 If you want to support development of Flame and my upcoming self-hosted and open source projects you can use the following link:

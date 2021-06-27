@@ -30,7 +30,9 @@ exports.createCategory = asyncWrapper(async (req, res, next) => {
 
   res.status(201).json({
     success: true,
-    data: category,
+    data: await Category.findOne({
+      where: { id: category.id },
+    }),
   });
 });
 
@@ -136,7 +138,9 @@ exports.updateCategory = asyncWrapper(async (req, res, next) => {
 
   res.status(200).json({
     success: true,
-    data: category,
+    data: await Category.findOne({
+      where: { id: req.params.id },
+    }),
   });
 });
 

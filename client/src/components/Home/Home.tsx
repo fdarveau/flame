@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { Fragment, useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 
@@ -8,6 +8,7 @@ import { getAppCategories, getApps, getBookmarkCategories, getBookmarks } from '
 import { searchConfig } from '../../utility';
 import AppGrid from '../Apps/AppGrid/AppGrid';
 import BookmarkGrid from '../Bookmarks/BookmarkGrid/BookmarkGrid';
+import SearchBar from '../SearchBar/SearchBar';
 import SectionHeadline from '../UI/Headlines/SectionHeadline/SectionHeadline';
 import Icon from '../UI/Icons/Icon/Icon';
 import { Container } from '../UI/Layout/Layout';
@@ -96,6 +97,8 @@ const Home = (props: ComponentProps): JSX.Element => {
 
   return (
     <Container>
+      {searchConfig("hideSearch", 0) !== 1 ? <SearchBar /> : <div></div>}
+
       {searchConfig("hideHeader", 0) !== 1 ? (
         <header className={classes.Header}>
           <p>{header.dateTime}</p>
@@ -111,34 +114,46 @@ const Home = (props: ComponentProps): JSX.Element => {
         <div></div>
       )}
 
-      <SectionHeadline title="Applications" link="/applications" />
-      {appsLoading ? (
-        <Spinner />
-      ) : (
-        <AppGrid
-          categories={appCategories.filter(
-            (category: Category) => category.isPinned
+      {searchConfig("hideApps", 0) !== 1 ? (
+        <Fragment>
+          <SectionHeadline title="Applications" link="/applications" />
+          {appsLoading ? (
+            <Spinner />
+          ) : (
+            <AppGrid
+              categories={appCategories.filter(
+                (category: Category) => category.isPinned
+              )}
+              apps={apps.filter((app: App) => app.isPinned)}
+              totalCategories={appCategories.length}
+            />
           )}
-          apps={apps.filter((app: App) => app.isPinned)}
-          totalCategories={appCategories.length}
-        />
+
+          <div className={classes.HomeSpace}></div>
+        </Fragment>
+      ) : (
+        <div></div>
       )}
 
-      <div className={classes.HomeSpace}></div>
-
-      <SectionHeadline title="Bookmarks" link="/bookmarks" />
-      {bookmarkCategoriesLoading ? (
-        <Spinner />
+      {searchConfig("hideCategories", 0) !== 1 ? (
+        <Fragment>
+          <SectionHeadline title="Bookmarks" link="/bookmarks" />
+          {bookmarkCategoriesLoading ? (
+            <Spinner />
+          ) : (
+            <BookmarkGrid
+              categories={bookmarkCategories.filter(
+                (category: Category) => category.isPinned
+              )}
+              bookmarks={bookmarks.filter(
+                (bookmark: Bookmark) => bookmark.isPinned
+              )}
+              totalCategories={bookmarkCategories.length}
+            />
+          )}
+        </Fragment>
       ) : (
-        <BookmarkGrid
-          categories={bookmarkCategories.filter(
-            (category: Category) => category.isPinned
-          )}
-          bookmarks={bookmarks.filter(
-            (bookmark: Bookmark) => bookmark.isPinned
-          )}
-          totalCategories={bookmarkCategories.length}
-        />
+        <div></div>
       )}
 
       <Link to="/settings" className={classes.SettingsButton}>
