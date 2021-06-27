@@ -42,8 +42,8 @@ const BookmarkForm = (props: ComponentProps): JSX.Element => {
   });
 
   const [bookmarkData, setBookmarkData] = useState<NewBookmark>({
-    name: '',
-    url: '',
+    name: "",
+    url: "",
     categoryId: -1,
     icon: ''
   });
@@ -68,8 +68,8 @@ const BookmarkForm = (props: ComponentProps): JSX.Element => {
       });
     } else {
       setBookmarkData({
-        name: '',
-        url: '',
+        name: "",
+        url: "",
         categoryId: -1,
         icon: ''
       });
@@ -113,7 +113,6 @@ const BookmarkForm = (props: ComponentProps): JSX.Element => {
         } else {
           props.addBookmark(bookmarkData);
         }
-
         setBookmarkData({
           name: "",
           url: "",
