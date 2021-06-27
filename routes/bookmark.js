@@ -22,8 +22,8 @@ router
   .put(upload, updateBookmark)
   .delete(deleteBookmark);
 
-  router
-    .route('/0/reorder')
-    .put(reorderBookmarks);
+router
+  .route('/0/reorder')
+  .put(reorderBookmarks);
 
 module.exports = router;
