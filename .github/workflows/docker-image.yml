@@ -24,6 +24,7 @@ jobs:
             VERSION=${{github.head_ref}}
           fi
           TAGS="${DOCKER_IMAGE}:${VERSION},${DOCKER_IMAGE}:${{ steps.date.outputs.date }}"
+          echo ${TAGS}
           echo ::set-output name=tags::${TAGS}
           
       - name: Set up QEMU
