@@ -8,7 +8,8 @@ const Category = sequelize.define('Category', {
   },
   type: {
     type: DataTypes.STRING,
-    allowNull: false
+    allowNull: false,
+    defaultValue: 'bookmark' // Default value for database migration only
   },
   isPinned: {
     type: DataTypes.BOOLEAN,
