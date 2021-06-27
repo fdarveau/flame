@@ -49,10 +49,10 @@ const Bookmarks = (props: ComponentProps): JSX.Element => {
     updatedAt: new Date(),
   });
   const [bookmarkInUpdate, setBookmarkInUpdate] = useState<Bookmark>({
-    name: "",
-    url: "",
+    name: "string",
+    url: "string",
     categoryId: -1,
-    icon: "",
+    icon: "string",
     isPinned: false,
     orderId: 0,
     id: 0,
