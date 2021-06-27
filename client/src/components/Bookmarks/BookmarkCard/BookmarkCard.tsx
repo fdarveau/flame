@@ -3,10 +3,11 @@ import { Fragment } from 'react';
 import { Bookmark, Category } from '../../../interfaces';
 import { iconParser, searchConfig, urlParser } from '../../../utility';
 import Icon from '../../UI/Icons/Icon/Icon';
+import classes from './BookmarkCard.module.css';
 
 interface ComponentProps {
   category: Category;
-  bookmarks: Bookmark[]
+  bookmarks: Bookmark[];
   pinHandler?: Function;
 }
 

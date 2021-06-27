@@ -28,13 +28,7 @@ export enum ContentType {
 }
 
 const Bookmarks = (props: ComponentProps): JSX.Element => {
-  const {
-    bookmarks,
-    getBookmarks,
-    getBookmarkCategories,
-    categories,
-    loading,
-  } = props;
+  const { bookmarks, getBookmarks, getBookmarkCategories, categories, loading } = props;
 
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [formContentType, setFormContentType] = useState(ContentType.category);
@@ -55,10 +49,10 @@ const Bookmarks = (props: ComponentProps): JSX.Element => {
     updatedAt: new Date(),
   });
   const [bookmarkInUpdate, setBookmarkInUpdate] = useState<Bookmark>({
-    name: "",
-    url: "",
+    name: "string",
+    url: "string",
     categoryId: -1,
-    icon: "",
+    icon: "string",
     isPinned: false,
     orderId: 0,
     id: 0,
@@ -118,10 +112,7 @@ const Bookmarks = (props: ComponentProps): JSX.Element => {
     <Container>
       <Modal isOpen={modalIsOpen} setIsOpen={toggleModal}>
         {!isInUpdate ? (
-          <BookmarkForm
-            modalHandler={toggleModal}
-            contentType={formContentType}
-          />
+          <BookmarkForm modalHandler={toggleModal} contentType={formContentType} />
         ) : formContentType === ContentType.category ? (
           <BookmarkForm
             modalHandler={toggleModal}
@@ -186,7 +177,4 @@ const mapStateToProps = (state: GlobalState) => {
   };
 };
 
-export default connect(mapStateToProps, {
-  getBookmarks,
-  getBookmarkCategories,
-})(Bookmarks);
+export default connect(mapStateToProps, { getBookmarks, getBookmarkCategories })(Bookmarks);

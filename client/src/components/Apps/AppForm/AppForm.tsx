@@ -30,7 +30,7 @@ interface ComponentProps {
 }
 
 const AppForm = (props: ComponentProps): JSX.Element => {
-  const [useCustomIcon, toggleUseCustomIcon] = useState<boolean>(false);
+  const [useCustomIcon, setUseCustomIcon] = useState<boolean>(false);
   const [customIcon, setCustomIcon] = useState<File | null>(null);
   const [categoryData, setCategoryData] = useState<NewCategory>({
     name: '',
@@ -77,12 +77,12 @@ const AppForm = (props: ComponentProps): JSX.Element => {
 
     const createFormData = (): FormData => {
       const data = new FormData();
+      Object.entries(appData).forEach((entry: [string, any]) => {
+        data.append(entry[0], entry[1]);
+      });
       if (customIcon) {
         data.append('icon', customIcon);
       }
-      data.append('name', appData.name);
-      data.append('url', appData.url);
-      data.append('categoryId', appData.categoryId.toString());
 
       return data;
     };
@@ -142,6 +142,11 @@ const AppForm = (props: ComponentProps): JSX.Element => {
       setCustomIcon(null);
     }
   }
+
+  const toggleUseCustomIcon = (): void => {
+    setUseCustomIcon(!useCustomIcon);
+    setCustomIcon(null);
+  };
 
   const inputChangeHandler = (e: ChangeEvent<HTMLInputElement>, setDataFunction: Dispatch<SetStateAction<any>>, data: any): void => {
     setDataFunction({
@@ -278,7 +283,7 @@ const AppForm = (props: ComponentProps): JSX.Element => {
                     </a>
                   </span>
                   <span
-                    onClick={() => toggleUseCustomIcon(!useCustomIcon)}
+                    onClick={() => toggleUseCustomIcon()}
                     className={classes.Switch}>
                     Switch to custom icon upload
                   </span>
@@ -295,7 +300,7 @@ const AppForm = (props: ComponentProps): JSX.Element => {
                     accept='.jpg,.jpeg,.png'
                   />
                   <span
-                    onClick={() => toggleUseCustomIcon(!useCustomIcon)}
+                    onClick={() => toggleUseCustomIcon()}
                     className={classes.Switch}>
                     Switch to MDI
                   </span>
