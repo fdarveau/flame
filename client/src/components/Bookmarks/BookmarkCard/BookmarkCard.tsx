@@ -5,7 +5,7 @@ import classes from './BookmarkCard.module.css';
 
 interface ComponentProps {
   category: Category;
-  bookmarks: Bookmark[]
+  bookmarks: Bookmark[];
   pinHandler?: Function;
 }
 
@@ -20,28 +20,29 @@ const BookmarkCard = (props: ComponentProps): JSX.Element => {
           return (
             <a
               href={redirectUrl}
-              target={searchConfig('bookmarksSameTab', false) ? '' : '_blank'}
-              rel='noreferrer'
-              key={`bookmark-${bookmark.id}`}>
+              target={searchConfig("bookmarksSameTab", false) ? "" : "_blank"}
+              rel="noreferrer"
+              key={`bookmark-${bookmark.id}`}
+            >
               {bookmark.icon && (
-                <div className={classes.BookmarkIcon}>
-                  {(/.(jpeg|jpg|png)$/i).test(bookmark.icon)
-                    ? <img
-                        src={`/uploads/${bookmark.icon}`}
-                        alt={`${bookmark.name} icon`}
-                        className={classes.CustomIcon}
-                      />
-                    : <Icon icon={iconParser(bookmark.icon)} />
+                <div className={classes.BookmarkCardIcon}>
+                  {(/.(jpeg|jpg|png)$/i).test(bookmark.icon) ? 
+                    <img
+                      src={`/uploads/${bookmark.icon}`}
+                      alt={`${bookmark.name} icon`}
+                      className={classes.CustomIcon}
+                    />
+                   : <Icon icon={iconParser(bookmark.icon)} />
                   }
                 </div>
               )}
               {bookmark.name}
             </a>
-          )
+          );
         })}
       </div>
     </div>
-  )
-}
+  );
+};
 
 export default BookmarkCard;
