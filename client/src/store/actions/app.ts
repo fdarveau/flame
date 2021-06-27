@@ -132,35 +132,36 @@ export const pinApp = (app: App) => async (dispatch: Dispatch) => {
 
 /**
  * ADD APP
- */ 
+ */
 export interface AddAppAction {
   type: ActionTypes.addAppSuccess;
   payload: App;
 }
 
-export const addApp = (formData: NewApp | FormData) => async (dispatch: Dispatch) => {
-  try {
-    const res = await axios.post<ApiResponse<App>>("/api/apps", formData);
+export const addApp =
+  (formData: NewApp | FormData) => async (dispatch: Dispatch) => {
+    try {
+      const res = await axios.post<ApiResponse<App>>("/api/apps", formData);
 
-    dispatch<CreateNotificationAction>({
-      type: ActionTypes.createNotification,
-      payload: {
-        title: "Success",
-        message: `App ${res.data.data.name} added`,
-      },
-    });
+      dispatch<CreateNotificationAction>({
+        type: ActionTypes.createNotification,
+        payload: {
+          title: "Success",
+          message: `App ${res.data.data.name} added`,
+        },
+      });
 
-    await dispatch<AddAppAction>({
-      type: ActionTypes.addAppSuccess,
-      payload: res.data.data,
-    });
+      await dispatch<AddAppAction>({
+        type: ActionTypes.addAppSuccess,
+        payload: res.data.data,
+      });
 
-    // Sort apps
-    dispatch<any>(sortApps());
-  } catch (err) {
-    console.log(err);
-  }
-};
+      // Sort apps
+      dispatch<any>(sortApps());
+    } catch (err) {
+      console.log(err);
+    }
+  };
 
 /**
  * PIN CATEGORY
@@ -326,7 +327,8 @@ export const updateApp =
       });
 
       // Check if category was changed
-      const categoryWasChanged = (res.data.data.categoryId as number !== previousCategoryId);
+      const categoryWasChanged =
+        res.data.data.categoryId !== previousCategoryId;
 
       if (categoryWasChanged) {
         // Delete app from old category

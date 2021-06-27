@@ -34,7 +34,7 @@ const AppForm = (props: ComponentProps): JSX.Element => {
     name: "",
     type: "apps",
   });
-  const [useCustomIcon, toggleUseCustomIcon] = useState<boolean>(false);
+  const [useCustomIcon, setUseCustomIcon] = useState<boolean>(false);
   const [customIcon, setCustomIcon] = useState<File | null>(null);
 
   const [appData, setAppData] = useState<NewApp>({
@@ -94,7 +94,7 @@ const AppForm = (props: ComponentProps): JSX.Element => {
         if (customIcon) {
           const data = new FormData();
           Object.entries(appData).forEach((entry: [string, any]) => {
-            data.append(entry[0], entry[1]);            
+            data.append(entry[0], entry[1]);
           });
 
           data.append("icon", customIcon);
@@ -129,6 +129,11 @@ const AppForm = (props: ComponentProps): JSX.Element => {
 
       props.modalHandler();
     }
+  };
+
+  const toggleUseCustomIcon = (): void => {
+    setUseCustomIcon(!useCustomIcon);
+    setCustomIcon(null);
   };
 
   const inputChangeHandler = (
@@ -271,7 +276,7 @@ const AppForm = (props: ComponentProps): JSX.Element => {
                 </a>
               </span>
               <span
-                onClick={() => toggleUseCustomIcon(!useCustomIcon)}
+                onClick={(e) => toggleUseCustomIcon()}
                 className={classes.Switch}
               >
                 Switch to custom icon upload
@@ -290,7 +295,7 @@ const AppForm = (props: ComponentProps): JSX.Element => {
                 accept=".jpg,.jpeg,.png"
               />
               <span
-                onClick={() => toggleUseCustomIcon(!useCustomIcon)}
+                onClick={(e) => toggleUseCustomIcon()}
                 className={classes.Switch}
               >
                 Switch to MDI
