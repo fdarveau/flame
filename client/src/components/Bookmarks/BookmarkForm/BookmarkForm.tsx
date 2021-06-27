@@ -42,8 +42,8 @@ const BookmarkForm = (props: ComponentProps): JSX.Element => {
   });
 
   const [bookmarkData, setBookmarkData] = useState<NewBookmark>({
-    name: '',
-    url: '',
+    name: "",
+    url: "",
     categoryId: -1,
     icon: '',
   });
@@ -68,8 +68,8 @@ const BookmarkForm = (props: ComponentProps): JSX.Element => {
       });
     } else {
       setBookmarkData({
-        name: '',
-        url: '',
+        name: "",
+        url: "",
         categoryId: -1,
         icon: "",
       });
@@ -113,7 +113,6 @@ const BookmarkForm = (props: ComponentProps): JSX.Element => {
         } else {
           props.addBookmark(bookmarkData);
         }
-
         setBookmarkData({
           name: "",
           url: "",
@@ -156,7 +155,11 @@ const BookmarkForm = (props: ComponentProps): JSX.Element => {
     setCustomIcon(null);
   };
 
-  const inputChangeHandler = (e: ChangeEvent<HTMLInputElement>, setDataFunction: Dispatch<SetStateAction<any>>, data: any): void => {
+  const inputChangeHandler = (
+    e: ChangeEvent<HTMLInputElement>,
+    setDataFunction: Dispatch<SetStateAction<any>>,
+    data: any
+  ): void => {
     setDataFunction({
       ...data,
       [e.target.name]: e.target.value,
@@ -180,7 +183,7 @@ const BookmarkForm = (props: ComponentProps): JSX.Element => {
     });
   };
 
-  let button = <Button>Submit</Button>
+  let button = <Button>Submit</Button>;
 
   if (!props.category && !props.bookmark) {
     if (props.contentType === ContentType.category) {

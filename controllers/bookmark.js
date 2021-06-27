@@ -13,6 +13,12 @@ exports.createBookmark = asyncWrapper(async (req, res, next) => {
   });  
 
   let bookmark;
+  let _body = { ...req.body };
+
+  if (req.file) {
+    _body.icon = req.file.filename;
+  }
+
 
   let _body = {
     ...req.body,
