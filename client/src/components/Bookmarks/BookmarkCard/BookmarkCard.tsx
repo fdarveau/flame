@@ -1,5 +1,5 @@
 import { Bookmark, Category } from '../../../interfaces';
-import { iconParser, urlParser } from '../../../utility';
+import { iconParser, searchConfig, urlParser } from '../../../utility';
 import Icon from '../../UI/Icons/Icon/Icon';
 import classes from './BookmarkCard.module.css';
 
@@ -20,7 +20,7 @@ const BookmarkCard = (props: ComponentProps): JSX.Element => {
           return (
             <a
               href={redirectUrl}
-              target='_blank'
+              target={searchConfig('bookmarksSameTab', false) ? '' : '_blank'}
               rel='noreferrer'
               key={`bookmark-${bookmark.id}`}>
               {bookmark.icon && (

@@ -138,7 +138,7 @@ export interface AddAppAction {
   payload: App;
 }
 
-export const addApp = (formData: NewApp) => async (dispatch: Dispatch) => {
+export const addApp = (formData: NewApp | FormData) => async (dispatch: Dispatch) => {
   try {
     const res = await axios.post<ApiResponse<App>>("/api/apps", formData);
 
@@ -146,7 +146,7 @@ export const addApp = (formData: NewApp) => async (dispatch: Dispatch) => {
       type: ActionTypes.createNotification,
       payload: {
         title: "Success",
-        message: `App ${formData.name} added`,
+        message: `App ${res.data.data.name} added`,
       },
     });
 
@@ -309,7 +309,7 @@ export interface UpdateAppAction {
 }
 
 export const updateApp =
-  (appId: number, formData: NewApp, previousCategoryId: number) =>
+  (appId: number, formData: NewApp | FormData, previousCategoryId: number) =>
   async (dispatch: Dispatch) => {
     try {
       const res = await axios.put<ApiResponse<App>>(
@@ -321,12 +321,12 @@ export const updateApp =
         type: ActionTypes.createNotification,
         payload: {
           title: "Success",
-          message: `App ${formData.name} updated`,
+          message: `App ${res.data.data.name} updated`,
         },
       });
 
       // Check if category was changed
-      const categoryWasChanged = formData.categoryId !== previousCategoryId;
+      const categoryWasChanged = (res.data.data.categoryId as number !== previousCategoryId);
 
       if (categoryWasChanged) {
         // Delete app from old category

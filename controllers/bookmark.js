@@ -28,7 +28,9 @@ exports.createBookmark = asyncWrapper(async (req, res, next) => {
 
   res.status(201).json({
     success: true,
-    data: bookmark
+    data: await Bookmark.findOne({
+      where: { id: bookmark.id }
+    })
   })
 })
 
@@ -94,7 +96,9 @@ exports.updateBookmark = asyncWrapper(async (req, res, next) => {
 
   res.status(200).json({
     success: true,
-    data: bookmark
+    data: await Bookmark.findOne({
+      where: { id: req.params.id }
+    })
   })
 })
 

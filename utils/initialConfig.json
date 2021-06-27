@@ -38,7 +38,31 @@
     },
     {
       "key": "useOrdering",
-      "value": "createdAt"
+      "value": "orderId"
+    },
+    {
+      "key": "appsSameTab",
+      "value": false
+    },
+    {
+      "key": "bookmarksSameTab",
+      "value": false
+    },
+    {
+      "key": "searchSameTab",
+      "value": false
+    },
+    {
+      "key": "hideApps",
+      "value": false
+    },
+    {
+      "key": "hideCategories",
+      "value": false
+    },
+    {
+      "key": "hideSearch",
+      "value": false
     }
   ]
 }

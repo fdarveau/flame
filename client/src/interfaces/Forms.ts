@@ -11,5 +11,11 @@ export interface SettingsForm {
   pinBookmarksByDefault: number;
   pinCategoriesByDefault: number;
   hideHeader: number;
+  hideApps: number;
+  hideCategories: number;
+  hideSearch: number;
   useOrdering: string;
+  appsSameTab: number;
+  bookmarksSameTab: number;
+  searchSameTab: number;
 }

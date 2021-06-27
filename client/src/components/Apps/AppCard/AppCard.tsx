@@ -1,11 +1,11 @@
 import { App, Category } from '../../../interfaces';
-import { iconParser, urlParser } from '../../../utility';
+import { iconParser, searchConfig, urlParser } from '../../../utility';
 import Icon from '../../UI/Icons/Icon/Icon';
 import classes from './AppCard.module.css';
 
 interface ComponentProps {
   category: Category;
-  apps: App[]
+  apps: App[];
   pinHandler?: Function;
 }
 
@@ -20,24 +20,33 @@ const AppCard = (props: ComponentProps): JSX.Element => {
           return (
             <a
               href={redirectUrl}
-              target='_blank'
-              rel='noreferrer'
-              key={`app-${app.id}`}>
+              target={searchConfig("appsSameTab", false) ? "" : "_blank"}
+              rel="noreferrer"
+              key={`app-${app.id}`}
+            >
               {app.icon && (
                 <div className={classes.AppCardIcon}>
-                  <Icon icon={iconParser(app.icon)} />
+                  {/.(jpeg|jpg|png)$/.test(app.icon) ? (
+                    <img
+                      src={`/uploads/${app.icon}`}
+                      alt={`${app.name} icon`}
+                      className={classes.CustomIcon}
+                    />
+                  ) : (
+                    <Icon icon={iconParser(app.icon)} />
+                  )}
                 </div>
               )}
               <div className={classes.AppCardDetails}>
-                  <h5>{app.name}</h5>
-                  <span>{displayUrl}</span>
-                </div>
+                <h5>{app.name}</h5>
+                <span>{displayUrl}</span>
+              </div>
             </a>
-          )
+          );
         })}
       </div>
     </div>
-  )
-}
+  );
+};
 
 export default AppCard;
