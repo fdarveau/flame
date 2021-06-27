@@ -30,7 +30,7 @@ interface ComponentProps {
 }
 
 const AppForm = (props: ComponentProps): JSX.Element => {
-  const [useCustomIcon, toggleUseCustomIcon] = useState<boolean>(false);
+  const [useCustomIcon, setUseCustomIcon] = useState<boolean>(false);
   const [customIcon, setCustomIcon] = useState<File | null>(null);
   const [categoryData, setCategoryData] = useState<NewCategory>({
     name: '',
@@ -77,12 +77,12 @@ const AppForm = (props: ComponentProps): JSX.Element => {
 
     const createFormData = (): FormData => {
       const data = new FormData();
+      Object.entries(appData).forEach((entry: [string, any]) => {
+        data.append(entry[0], entry[1]);
+      });
       if (customIcon) {
         data.append('icon', customIcon);
       }
-      data.append('name', appData.name);
-      data.append('url', appData.url);
-      data.append('categoryId', appData.categoryId.toString());
 
       return data;
     };
@@ -149,6 +149,11 @@ const AppForm = (props: ComponentProps): JSX.Element => {
       [e.target.name]: e.target.value
     })
   }
+  
+  const toggleUseCustomIcon = (): void => {
+    setUseCustomIcon(!useCustomIcon);
+    setCustomIcon(null);
+  };
 
   const fileChangeHandler = (e: ChangeEvent<HTMLInputElement>): void => {
     if (e.target.files) {
@@ -271,7 +276,7 @@ const AppForm = (props: ComponentProps): JSX.Element => {
                     </a>
                   </span>
                   <span
-                    onClick={() => toggleUseCustomIcon(!useCustomIcon)}
+                    onClick={() => toggleUseCustomIcon()}
                     className={classes.Switch}>
                     Switch to custom icon upload
                   </span>
@@ -285,10 +290,10 @@ const AppForm = (props: ComponentProps): JSX.Element => {
                     id='icon'
                     required
                     onChange={e => fileChangeHandler(e)}
-                    accept='.jpg,.jpeg,.png'
+                    accept='.jpg,.jpeg,.png,.svg'
                   />
                   <span
-                    onClick={() => toggleUseCustomIcon(!useCustomIcon)}
+                    onClick={() => toggleUseCustomIcon()}
                     className={classes.Switch}>
                     Switch to MDI
                   </span>

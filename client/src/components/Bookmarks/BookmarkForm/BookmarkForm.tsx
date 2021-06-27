@@ -26,12 +26,10 @@ interface ComponentProps {
   addBookmark: (formData: NewBookmark | FormData) => void;
   updateBookmarkCategory: (id: number, formData: NewCategory) => void;
   updateBookmark: (
-    id: number, 
-    formData: NewBookmark | FormData, 
-    category: {
-      prev: number,
-      curr: number
-    }) => void;
+    id: number,
+    formData: NewBookmark | FormData,
+    previousCategoryId: number
+  ) => void;
   createNotification: (notification: NewNotification) => void;
 }
 
@@ -39,13 +37,13 @@ const BookmarkForm = (props: ComponentProps): JSX.Element => {
   const [useCustomIcon, setUseCustomIcon] = useState<boolean>(false);
   const [customIcon, setCustomIcon] = useState<File | null>(null);
   const [categoryData, setCategoryData] = useState<NewCategory>({
-    name: '',
-    type: 'bookmarks'
-  })
+    name: "",
+    type: "bookmarks",
+  });
 
   const [bookmarkData, setBookmarkData] = useState<NewBookmark>({
-    name: '',
-    url: '',
+    name: "",
+    url: "",
     categoryId: -1,
     icon: ''
   });
@@ -55,7 +53,7 @@ const BookmarkForm = (props: ComponentProps): JSX.Element => {
     if (props.category) {
       setCategoryData({ name: props.category.name, type: props.category.type });
     } else {
-      setCategoryData({ name: '', type: "bookmarks" });
+      setCategoryData({ name: "", type: "bookmarks" });
     }
   }, [props.category]);
 
@@ -70,8 +68,8 @@ const BookmarkForm = (props: ComponentProps): JSX.Element => {
       });
     } else {
       setBookmarkData({
-        name: '',
-        url: '',
+        name: "",
+        url: "",
         categoryId: -1,
         icon: ''
       });
@@ -86,9 +84,9 @@ const BookmarkForm = (props: ComponentProps): JSX.Element => {
       if (customIcon) {
         data.append('icon', customIcon);
       }
-      data.append('name', bookmarkData.name);
-      data.append('url', bookmarkData.url);
-      data.append('categoryId', `${bookmarkData.categoryId}`);
+      Object.entries(bookmarkData).forEach((entry: [string, any]) => {
+        data.append(entry[0], entry[1]);
+      });
 
       return data;
     };
@@ -98,7 +96,7 @@ const BookmarkForm = (props: ComponentProps): JSX.Element => {
       if (props.contentType === ContentType.category) {
         // Add category
         props.addBookmarkCategory(categoryData);
-        setCategoryData({ name: '', type: 'bookmarks' });
+        setCategoryData({ name: "", type: "bookmarks" });
       } else if (props.contentType === ContentType.bookmark) {
         // Add bookmark
         if (bookmarkData.categoryId === -1) {
@@ -115,10 +113,10 @@ const BookmarkForm = (props: ComponentProps): JSX.Element => {
         } else {
           props.addBookmark(bookmarkData);
         }
-        
+
         setBookmarkData({
-          name: '',
-          url: '',
+          name: "",
+          url: "",
           categoryId: bookmarkData.categoryId,
           icon: ''
         });
@@ -130,33 +128,18 @@ const BookmarkForm = (props: ComponentProps): JSX.Element => {
       if (props.contentType === ContentType.category && props.category) {
         // Update category
         props.updateBookmarkCategory(props.category.id, categoryData);
-        setCategoryData({ name: '', type: 'bookmarks' });
+        setCategoryData({ name: "", type: "bookmarks" });
       } else if (props.contentType === ContentType.bookmark && props.bookmark) {
         // Update bookmark
-        if (customIcon) {
-          const data = createFormData();
-          props.updateBookmark(
-            props.bookmark.id,
-            data,
-            {
-              prev: props.bookmark.categoryId,
-              curr: bookmarkData.categoryId
-            }
-          )
-        } else {
-          props.updateBookmark(
-            props.bookmark.id,
-            bookmarkData,
-            {
-              prev: props.bookmark.categoryId,
-              curr: bookmarkData.categoryId
-            }
-          );
-        }
-
+        props.updateBookmark(
+          props.bookmark.id,
+          createFormData(),
+          props.bookmark.categoryId
+        );
+        
         setBookmarkData({
-          name: '',
-          url: '',
+          name: "",
+          url: "",
           categoryId: -1,
           icon: ''
         });

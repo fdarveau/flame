@@ -7,7 +7,7 @@ import classes from './BookmarkCard.module.css';
 
 interface ComponentProps {
   category: Category;
-  bookmarks: Bookmark[]
+  bookmarks: Bookmark[];
   pinHandler?: Function;
 }
 

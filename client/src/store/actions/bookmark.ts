@@ -136,7 +136,8 @@ export const pinBookmark =
 
 /**
  * ADD BOOKMARK
- */ export interface AddBookmarkAction {
+ */
+export interface AddBookmarkAction {
   type: ActionTypes.addBookmarkSuccess;
   payload: Bookmark;
 }
@@ -442,7 +443,7 @@ export interface ReorderBookmarkCategoriesAction {
   payload: Category[];
 }
 
-interface ReorderReorderCategoriesQueryuery {
+interface ReorderCategoriesQuery {
   categories: {
     id: number;
     orderId: number;
@@ -452,7 +453,7 @@ interface ReorderReorderCategoriesQueryuery {
 export const reorderBookmarkCategories =
   (categories: Category[]) => async (dispatch: Dispatch) => {
     try {
-      const updateQuery: ReorderReorderCategoriesQueryuery = { categories: [] };
+      const updateQuery: ReorderCategoriesQuery = { categories: [] };
 
       categories.forEach((category, index) =>
         updateQuery.categories.push({

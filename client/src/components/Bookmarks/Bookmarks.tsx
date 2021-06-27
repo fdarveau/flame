@@ -50,10 +50,10 @@ const Bookmarks = (props: ComponentProps): JSX.Element => {
     updatedAt: new Date(),
   });
   const [bookmarkInUpdate, setBookmarkInUpdate] = useState<Bookmark>({
-    name: "",
-    url: "",
+    name: "string",
+    url: "string",
     categoryId: -1,
-    icon: "",
+    icon: "string",
     isPinned: false,
     orderId: 0,
     id: 0,
@@ -113,10 +113,7 @@ const Bookmarks = (props: ComponentProps): JSX.Element => {
     <Container>
       <Modal isOpen={modalIsOpen} setIsOpen={toggleModal}>
         {!isInUpdate ? (
-          <BookmarkForm
-            modalHandler={toggleModal}
-            contentType={formContentType}
-          />
+          <BookmarkForm modalHandler={toggleModal} contentType={formContentType} />
         ) : formContentType === ContentType.category ? (
           <BookmarkForm
             modalHandler={toggleModal}
