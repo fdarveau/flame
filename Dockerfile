@@ -14,15 +14,10 @@ RUN mkdir -p /app/client && cp -a /tmp_client/node_modules /app/client/
 
 WORKDIR /app
 
-#COPY package*.json ./
-
-#RUN npm install --production
-
 COPY . /app
 
 RUN mkdir -p ./public ./data \
     && cd ./client \
-    #&& npm install --production \
     && npm run build \
     && cd .. \
     && mv ./client/build/* ./public \
