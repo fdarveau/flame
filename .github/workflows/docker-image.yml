@@ -20,10 +20,10 @@ jobs:
         run: |
           DOCKER_IMAGE=ghcr.io/${{ github.repository }}
           VERSION=latest
-          if [[ $GITHUB_REF == refs/tags/* ]]; then
-            VERSION=${GITHUB_REF#refs/tags/v}
+          if [[ '${{ github.head_ref }}' != 'master' ]]; then
+            VERSION=${{github.head_ref}}
           fi
-          TAGS="${DOCKER_IMAGE}:latest,${DOCKER_IMAGE}:${{ steps.date.outputs.date }}"
+          TAGS="${DOCKER_IMAGE}:${VERSION},${DOCKER_IMAGE}:${{ steps.date.outputs.date }}"
           echo ::set-output name=tags::${TAGS}
           
       - name: Set up QEMU
