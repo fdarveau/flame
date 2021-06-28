@@ -23,8 +23,8 @@ jobs:
 
     # Step 2: run this sync action - specify the upstream repo, upstream branch to sync with, and target sync branch
     - name: Sync-Fork-action
-      uses: XueMoMo/Sync-Fork-action@v1.0.6
-      #uses: aormsby/Fork-Sync-With-Upstream-action@v2.3
+      #uses: XueMoMo/Sync-Fork-action@v1.0.6
+      uses: aormsby/Fork-Sync-With-Upstream-action@v2.3
       with:
         upstream_repository: pawelmalak/flame
         upstream_branch: master
