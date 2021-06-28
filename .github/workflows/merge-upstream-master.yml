@@ -23,12 +23,12 @@ jobs:
     # Step 2: run this sync action - specify the upstream repo, upstream branch to sync with, and target sync branch
     - name: Sync-Fork-action
       uses: XueMoMo/Sync-Fork-action@v1.0.6
-      #uses: XueMoMo/Fork-Sync-With-Upstream-action@v2.3
+      #uses: aormsby/Fork-Sync-With-Upstream-action@v2.3
       with:
         upstream_repository: pawelmalak/flame
         upstream_branch: master
         target_branch: master
-        git_pull_rebase_config: true
+        #git_pull_rebase_config: true
         # git_pull_args: --ff-only                    # optional arg use, defaults to simple 'pull'
         # github_token: ${{ secrets.GITHUB_TOKEN }}   # optional, for accessing repos that require authentication
 
