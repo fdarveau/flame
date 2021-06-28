@@ -15,9 +15,10 @@ jobs:
     steps:
       # Step 1: run a standard checkout action, provided by github
     - name: Checkout main
-      uses: actions/checkout@v2
+      uses: actions/checkout@v2.3.4
       with:
         ref: master
+        fetch-depth: 0
         # submodules: 'recursive'     ### may be needed in your situation
 
     # Step 2: run this sync action - specify the upstream repo, upstream branch to sync with, and target sync branch
