@@ -1,6 +1,6 @@
 export const urlParser = (url: string): string[] => {
-  let parsedUrl: string;
   let displayUrl: string;
+  let parsedUrl: string;
 
   if (/https?:\/\//.test(url)) {
     // Url starts with http[s]:// -> leave it as it is

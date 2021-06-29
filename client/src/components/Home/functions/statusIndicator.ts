@@ -1,5 +1,7 @@
 import axios from 'axios';
 
+import { urlParser } from '../../../utility/';
+
 export const initializeStatusIndicators = () => {
   updateAllStatusIndicators();
   setInterval(function () {
@@ -24,7 +26,7 @@ const updateAllStatusIndicators = () => {
 
 const getStatus = (url: string, statusIndicator: Element) => {
   axios
-    .head(url)
+    .options(urlParser(url)[1])
     .then((data) => {
       clearStatus(statusIndicator);
       statusIndicator.setAttribute("positive", "positive");
@@ -33,31 +35,6 @@ const getStatus = (url: string, statusIndicator: Element) => {
       clearStatus(statusIndicator);
       statusIndicator.setAttribute("negative", "negative");
     });
-
-  // ajax(url)
-  //   .done((data: any, xhr: any, res: any) => {
-  //     var status = res.status;
-  //     selector
-  //       .find(".status-indicator")
-  //       .removeAttr("active")
-  //       .attr("positive", "positive");
-  //   })
-  //   .fail(function (data, xhr, res) {
-  //     var status = res.status;
-  //     selector
-  //       .find(".status-indicator")
-  //       .removeAttr("active")
-  //       .attr("negative", "negative");
-  //   })
-  //   .always(function (data, xhr, res) {
-  //     var status = res.status;
-  //     if (status === 200) {
-  //       selector
-  //         .find(".status-indicator")
-  //         .removeAttr("active")
-  //         .attr("positive", "positive");
-  //     }
-  //   });
 };
 
 const clearStatus = (statusIndicator: Element) => {
