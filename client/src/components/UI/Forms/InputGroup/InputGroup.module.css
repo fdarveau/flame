@@ -32,9 +32,16 @@
 
 .InputGroup label {
   color: var(--color-primary);
+  display: inline;
 }
 
 .InputGroup textarea {
   resize: none;
   height: 50vh;
+}
+
+.InputGroup input[type="checkbox"] {
+  display: inline;
+  vertical-align: middle;
+  width: 50px;
 }

@@ -49,6 +49,10 @@
       "value": false
     },
     {
+      "key": "appStatusIndicatorEnabledByDefault",
+      "value": true
+    },
+    {
       "key": "searchSameTab",
       "value": false
     },

@@ -28,6 +28,10 @@ const App = sequelize.define('App', {
     type: DataTypes.INTEGER,
     allowNull: true,
     defaultValue: null
+  },
+  statusIndicatorEnabled: {
+    type: DataTypes.BOOLEAN,
+    defaultValue: false
   }
 }, {
   tableName: 'apps'

@@ -37,6 +37,7 @@ const OtherSettings = (props: ComponentProps): JSX.Element => {
     useOrdering: 'createdAt',
     appsSameTab: 0,
     bookmarksSameTab: 0,
+    appStatusIndicatorEnabledByDefault: 1,
     searchSameTab: 0
   })
 
@@ -54,7 +55,8 @@ const OtherSettings = (props: ComponentProps): JSX.Element => {
       useOrdering: searchConfig('useOrdering', 'createdAt'),
       appsSameTab: searchConfig('appsSameTab', 0),
       bookmarksSameTab: searchConfig('bookmarksSameTab', 0),
-      searchSameTab: searchConfig('searchSameTab', 0)
+      searchSameTab: searchConfig('searchSameTab', 0),
+      appStatusIndicatorEnabledByDefault: searchConfig('appStatusIndicatorEnabledByDefault', 1)
     })
   }, [props.loading]);
 
@@ -185,6 +187,18 @@ const OtherSettings = (props: ComponentProps): JSX.Element => {
           id='bookmarksSameTab'
           name='bookmarksSameTab'
           value={formData.bookmarksSameTab}
+          onChange={(e) => inputChangeHandler(e, true)}
+        >
+          <option value={1}>True</option>
+          <option value={0}>False</option>
+        </select>
+      </InputGroup>
+      <InputGroup>
+        <label htmlFor='appStatusIndicatorEnabledByDefault'>Default status indicator setting for applications</label>
+        <select
+          id='appStatusIndicatorEnabledByDefault'
+          name='appStatusIndicatorEnabledByDefault'
+          value={formData.appStatusIndicatorEnabledByDefault}
           onChange={(e) => inputChangeHandler(e, true)}
         >
           <option value={1}>True</option>

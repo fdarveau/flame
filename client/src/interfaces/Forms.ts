@@ -17,5 +17,6 @@ export interface SettingsForm {
   useOrdering: string;
   appsSameTab: number;
   bookmarksSameTab: number;
+  appStatusIndicatorEnabledByDefault: number;
   searchSameTab: number;
 }

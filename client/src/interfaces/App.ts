@@ -7,6 +7,7 @@ export interface App extends Model {
   icon: string;
   isPinned: boolean;
   orderId: number;
+  statusIndicatorEnabled: boolean;
 }
 
 export interface NewApp {
@@ -14,4 +15,5 @@ export interface NewApp {
   url: string;
   categoryId: number;
   icon: string;
+  statusIndicatorEnabled: boolean;
 }
