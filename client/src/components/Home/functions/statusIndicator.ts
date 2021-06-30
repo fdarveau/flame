@@ -3,7 +3,7 @@ import axios from 'axios';
 import { urlParser } from '../../../utility/';
 
 export const initializeStatusIndicators = () => {
-  updateAllStatusIndicators();
+  //updateAllStatusIndicators();
   return setInterval(function () {
     updateAllStatusIndicators();
   }, 300000); // Every 5 minutes
@@ -26,7 +26,7 @@ const updateAllStatusIndicators = () => {
 
 const getStatus = (url: string, statusIndicator: Element) => {
   axios
-    .options(urlParser(url)[1].replace('http:', window.location.protocol))
+    .head(urlParser(url)[1].replace('http:', window.location.protocol))
     .then((data) => {
       clearStatus(statusIndicator);
       statusIndicator.setAttribute("positive", "positive");
