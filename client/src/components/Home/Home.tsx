@@ -97,8 +97,9 @@ const Home = (props: ComponentProps): JSX.Element => {
   }, []);
 
   // Initialize status indicator refreshes
-  useEffect(() => {
-    initializeStatusIndicators();
+  useEffect(() => {    
+    let interval = initializeStatusIndicators();
+    return () => clearInterval(interval);
   });
 
   return (

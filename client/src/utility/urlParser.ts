@@ -7,7 +7,7 @@ export const urlParser = (url: string): string[] => {
     parsedUrl = url;
   } else {
     // No protocol -> apply http:// prefix
-    parsedUrl = `http://${url}`;
+    parsedUrl = `https://${url}`;
   }
 
   // Create simplified url to display as text
