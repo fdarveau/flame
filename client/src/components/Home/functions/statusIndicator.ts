@@ -1,5 +1,3 @@
-import axios from 'axios';
-
 import { urlParser } from '../../../utility/';
 
 export const initializeStatusIndicators = () => {
@@ -25,11 +23,27 @@ const updateAllStatusIndicators = () => {
 };
 
 const getStatus = (url: string, statusIndicator: Element) => {
-  axios
-    .head(urlParser(url)[1].replace('http:', window.location.protocol), {withCredentials: true})
-    .then((data) => {
-      clearStatus(statusIndicator);
-      statusIndicator.setAttribute("positive", "positive");
+  const finalUrl = urlParser(url)[1].replace("http:", window.location.protocol);
+  const myInit: RequestInit = {
+    method: "HEAD",
+    mode: "cors",
+    cache: "no-store",
+    credentials: "include",
+  };
+
+  let myRequest = new Request(finalUrl);
+
+  fetch(myRequest, myInit)
+    // axios
+    //   .head(finalUrl, {withCredentials: true})
+    .then((response) => {
+      if (response.ok) {
+        clearStatus(statusIndicator);
+        statusIndicator.setAttribute("positive", "positive");
+      } else {
+        clearStatus(statusIndicator);
+        statusIndicator.setAttribute("negative", "negative");
+      }
     })
     .catch((err) => {
       clearStatus(statusIndicator);
