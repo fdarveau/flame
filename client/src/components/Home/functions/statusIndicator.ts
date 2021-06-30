@@ -26,7 +26,7 @@ const updateAllStatusIndicators = () => {
 
 const getStatus = (url: string, statusIndicator: Element) => {
   axios
-    .head(urlParser(url)[1].replace('http:', window.location.protocol))
+    .head(urlParser(url)[1].replace('http:', window.location.protocol), {withCredentials: true})
     .then((data) => {
       clearStatus(statusIndicator);
       statusIndicator.setAttribute("positive", "positive");
