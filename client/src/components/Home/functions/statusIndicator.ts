@@ -3,7 +3,7 @@ import axios from 'axios';
 import { urlParser } from '../../../utility/';
 
 export const initializeStatusIndicators = () => {
-  //updateAllStatusIndicators();
+  updateAllStatusIndicators();
   return setInterval(function () {
     updateAllStatusIndicators();
   }, 300000); // Every 5 minutes
