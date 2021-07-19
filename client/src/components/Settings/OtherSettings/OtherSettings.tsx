@@ -1,7 +1,7 @@
 import { ChangeEvent, FormEvent, useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 
-import { GlobalState, NewNotification, SettingsForm } from '../../../interfaces';
+import { GlobalState, NewNotification, Query, SettingsForm } from '../../../interfaces';
 import {
   createNotification,
   sortAppCategories,
@@ -10,6 +10,7 @@ import {
   updateConfig,
 } from '../../../store/actions';
 import { searchConfig } from '../../../utility';
+import { queries } from '../../../utility/searchQueries.json';
 import Button from '../../UI/Buttons/Button/Button';
 import InputGroup from '../../UI/Forms/InputGroup/InputGroup';
 import classes from './OtherSettings.module.css';
@@ -34,6 +35,7 @@ const OtherSettings = (props: ComponentProps): JSX.Element => {
     hideApps: 0,
     hideCategories: 0,
     hideSearch: 0,
+    defaultSearchProvider: 'd',
     useOrdering: 'createdAt',
     appsSameTab: 0,
     bookmarksSameTab: 0,
@@ -52,6 +54,7 @@ const OtherSettings = (props: ComponentProps): JSX.Element => {
       hideApps: searchConfig('hideApps', 0),
       hideCategories: searchConfig('hideCategories', 0),
       hideSearch: searchConfig('hideSearch', 0),
+      defaultSearchProvider: searchConfig('defaultSearchProvider', 'd'),
       useOrdering: searchConfig('useOrdering', 'createdAt'),
       appsSameTab: searchConfig('appsSameTab', 0),
       bookmarksSameTab: searchConfig('bookmarksSameTab', 0),
@@ -155,6 +158,17 @@ const OtherSettings = (props: ComponentProps): JSX.Element => {
           <option value='createdAt'>By creation date</option>
           <option value='name'>Alphabetical order</option>
           <option value='orderId'>Custom order</option>
+        </select>
+      </InputGroup>
+      <InputGroup>
+        <label htmlFor='defaultSearchProvider'>Default Search Provider</label>
+        <select
+          id='defaultSearchProvider'
+          name='defaultSearchProvider'
+          value={formData.defaultSearchProvider}
+          onChange={(e) => inputChangeHandler(e)}
+        >
+          {queries.map((query: Query) => (<option value={query.prefix}>{query.name}</option>))}
         </select>
       </InputGroup>
       <InputGroup>
