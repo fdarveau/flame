@@ -10,14 +10,14 @@ const { Sequelize } = require('sequelize');
 exports.createBookmark = asyncWrapper(async (req, res, next) => {
   const pinBookmarks = await Config.findOne({
     where: { key: 'pinBookmarksByDefault' }
-  });  
+  });
 
   let bookmark;
 
   let _body = {
     ...req.body,
     categoryId: parseInt(req.body.categoryId),
-    isPinned = (pinBookmarks && parseInt(pinBookmarks.value))
+    isPinned: (pinBookmarks && parseInt(pinBookmarks.value))
   };
 
   if (req.file) {
