@@ -1,6 +1,6 @@
 FROM node:14-alpine
 
-RUN apk update && apk add --no-cache nano
+RUN apk update && apk add --no-cache nano curl
 
 # Get package.json and install modules
 COPY package*.json /tmp/package.json

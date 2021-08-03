@@ -19,7 +19,7 @@ router
 router
   .route('/:id')
   .get(getBookmark)
-  .put(updateBookmark)
+  .put(upload, updateBookmark)
   .delete(deleteBookmark);
 
 router

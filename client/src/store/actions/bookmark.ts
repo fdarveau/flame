@@ -63,7 +63,7 @@ export const getBookmarkCategories = () => async (dispatch: Dispatch) => {
 };
 
 /**
- * ADD CATEGORY
+ * GET CATEGORIES
  */
 export interface AddBookmarkCategoryAction {
   type: ActionTypes.addBookmarkCategory;
@@ -135,28 +135,24 @@ export const pinBookmark =
   };
 
 /**
- * ADD BOOKMARK
+ * ADD CATEGORY
  */
 export interface AddBookmarkAction {
   type: ActionTypes.addBookmarkSuccess;
   payload: Bookmark;
 }
 
-export const addBookmark =
-  (formData: NewBookmark | FormData) => async (dispatch: Dispatch) => {
-    try {
-      const res = await axios.post<ApiResponse<Bookmark>>(
-        "/api/bookmarks",
-        formData
-      );
+export const addBookmark = (formData: NewBookmark | FormData) => async (dispatch: Dispatch) => {
+  try {
+    const res = await axios.post<ApiResponse<Bookmark>>('/api/bookmarks', formData);
 
-      dispatch<CreateNotificationAction>({
-        type: ActionTypes.createNotification,
-        payload: {
-          title: "Success",
-          message: `Bookmark ${res.data.data.name} added`,
-        },
-      });
+    dispatch<CreateNotificationAction>({
+      type: ActionTypes.createNotification,
+      payload: {
+        title: 'Success',
+        message: `Bookmark ${res.data.data.name} created`,
+      }
+    })
 
       await dispatch<AddBookmarkAction>({
         type: ActionTypes.addBookmarkSuccess,
@@ -171,7 +167,7 @@ export const addBookmark =
   };
 
 /**
- * PIN CATEGORY
+ * ADD BOOKMARK
  */
 export interface PinBookmarkCategoryAction {
   type: ActionTypes.pinBookmarkCategory;
@@ -318,11 +314,7 @@ export interface UpdateBookmarkAction {
 }
 
 export const updateBookmark =
-  (
-    bookmarkId: number,
-    formData: NewBookmark | FormData,
-    previousCategoryId: number
-  ) =>
+  (bookmarkId: number, formData: NewBookmark | FormData, previousCategoryId: number) =>
   async (dispatch: Dispatch) => {
     try {
       const res = await axios.put<ApiResponse<Bookmark>>(

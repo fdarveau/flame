@@ -36,7 +36,7 @@ const AppForm = (props: ComponentProps): JSX.Element => {
   const [categoryData, setCategoryData] = useState<NewCategory>({
     name: '',
     type: 'apps'
-  })
+  });
 
   const [appData, setAppData] = useState<NewApp>({
     name: '',
@@ -44,7 +44,7 @@ const AppForm = (props: ComponentProps): JSX.Element => {
     categoryId: -1,
     icon: '',
     statusIndicatorEnabled: searchConfig('appStatusIndicatorEnabledByDefault', true)
-  })
+  });
 
   // Load category data if provided for editing
   useEffect(() => {
@@ -53,7 +53,7 @@ const AppForm = (props: ComponentProps): JSX.Element => {
     } else {
       setCategoryData({ name: '', type: "apps" });
     }
-  }, [props.category])
+  }, [props.category]);
 
   // Load app data if provided for editing
   useEffect(() => {
@@ -74,10 +74,22 @@ const AppForm = (props: ComponentProps): JSX.Element => {
         statusIndicatorEnabled: searchConfig('appStatusIndicatorEnabledByDefault', true)
       })
     }
-  }, [props.app])
+  }, [props.app]);
 
   const formSubmitHandler = (e: SyntheticEvent<HTMLFormElement>): void => {
     e.preventDefault();
+
+    const createFormData = (): FormData => {
+      const data = new FormData();
+      Object.entries(appData).forEach((entry: [string, any]) => {
+        data.append(entry[0], entry[1]);
+      });
+      if (customIcon) {
+        data.append('icon', customIcon);
+      }
+
+      return data;
+    }
 
     if (!props.category && !props.app) {
       // Add new
@@ -95,24 +107,11 @@ const AppForm = (props: ComponentProps): JSX.Element => {
           return;
         }
         if (customIcon) {
-          const data = new FormData();
-          Object.entries(appData).forEach((entry: [string, any]) => {
-            data.append(entry[0], entry[1]);
-          });
-
-          data.append("icon", customIcon);
-
+          const data = createFormData();
           props.addApp(data);
         } else {
           props.addApp(appData);
         }
-        setAppData({
-          name: '',
-          url: '',
-          categoryId: appData.categoryId,
-          icon: '',
-          statusIndicatorEnabled: appData.statusIndicatorEnabled
-        })
       }
     } else {
       // Update
@@ -122,18 +121,25 @@ const AppForm = (props: ComponentProps): JSX.Element => {
         setCategoryData({ name: '', type: 'apps' });
       } else if (props.contentType === ContentType.app && props.app) {
         // Update app
-        props.updateApp(props.app.id, appData, props.app.categoryId);
-        setAppData({
-          name: '',
-          url: '',
-          categoryId: -1,
-          icon: '',
-          statusIndicatorEnabled: searchConfig('appStatusIndicatorEnabledByDefault', true)
-        })
+        if (customIcon) {          
+          const data = createFormData();
+          props.updateApp(props.app.id, data, props.app.categoryId);
+        } else {
+          props.updateApp(props.app.id, appData, props.app.categoryId);
+          props.modalHandler();
+        }
       }
-
-      props.modalHandler();
     }
+
+    setAppData({
+      name: '',
+      url: '',
+      categoryId: -1,
+      icon: '',
+      statusIndicatorEnabled: searchConfig('appStatusIndicatorEnabledByDefault', true)
+    });
+      
+    setCustomIcon(null);
   }
 
   const toggleUseCustomIcon = (): void => {

@@ -48,7 +48,7 @@ const Home = (props: ComponentProps): JSX.Element => {
 
   const [header, setHeader] = useState({
     dateTime: dateTime(),
-    greeting: greeter()
+    greeting: greeter(),
   });
 
   // Load app categories

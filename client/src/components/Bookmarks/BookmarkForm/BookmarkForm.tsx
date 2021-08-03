@@ -27,25 +27,25 @@ interface ComponentProps {
   updateBookmarkCategory: (id: number, formData: NewCategory) => void;
   updateBookmark: (
     id: number,
-    formData: NewBookmark,
+    formData: NewBookmark | FormData,
     previousCategoryId: number
   ) => void;
   createNotification: (notification: NewNotification) => void;
 }
 
 const BookmarkForm = (props: ComponentProps): JSX.Element => {
-  const [categoryData, setCategoryData] = useState<NewCategory>({
-    name: "",
-    type: "bookmarks",
-  });
   const [useCustomIcon, setUseCustomIcon] = useState<boolean>(false);
   const [customIcon, setCustomIcon] = useState<File | null>(null);
+  const [categoryData, setCategoryData] = useState<NewCategory>({
+    name: '',
+    type: 'bookmarks',
+  });
 
   const [bookmarkData, setBookmarkData] = useState<NewBookmark>({
     name: "",
     url: "",
     categoryId: -1,
-    icon: "",
+    icon: '',
   });
 
   // Load category data if provided for editing
@@ -53,7 +53,7 @@ const BookmarkForm = (props: ComponentProps): JSX.Element => {
     if (props.category) {
       setCategoryData({ name: props.category.name, type: props.category.type });
     } else {
-      setCategoryData({ name: "", type: "bookmarks" });
+      setCategoryData({ name: '', type: 'bookmarks' });
     }
   }, [props.category]);
 
@@ -79,6 +79,18 @@ const BookmarkForm = (props: ComponentProps): JSX.Element => {
   const formSubmitHandler = (e: SyntheticEvent<HTMLFormElement>): void => {
     e.preventDefault();
 
+    const createFormData = (): FormData => {
+      const data = new FormData();
+      if (customIcon) {
+        data.append('icon', customIcon);
+      }
+      Object.entries(bookmarkData).forEach((entry: [string, any]) => {
+        data.append(entry[0], entry[1]);
+      });
+
+      return data;
+    }
+
     if (!props.category && !props.bookmark) {
       // Add new
       if (props.contentType === ContentType.category) {
@@ -96,13 +108,7 @@ const BookmarkForm = (props: ComponentProps): JSX.Element => {
         }
 
         if (customIcon) {
-          const data = new FormData();
-          Object.entries(bookmarkData).forEach((entry: [string, any]) => {
-            data.append(entry[0], entry[1]);
-          });
-
-          data.append("icon", customIcon);
-
+          const data = createFormData();
           props.addBookmark(data);
         } else {
           props.addBookmark(bookmarkData);
@@ -111,8 +117,10 @@ const BookmarkForm = (props: ComponentProps): JSX.Element => {
           name: "",
           url: "",
           categoryId: bookmarkData.categoryId,
-          icon: "",
+          icon: ''
         });
+
+        setCustomIcon(null);
       }
     } else {
       // Update
@@ -124,15 +132,18 @@ const BookmarkForm = (props: ComponentProps): JSX.Element => {
         // Update bookmark
         props.updateBookmark(
           props.bookmark.id,
-          bookmarkData,
+          createFormData(),
           props.bookmark.categoryId
         );
+        
         setBookmarkData({
           name: "",
           url: "",
           categoryId: -1,
-          icon: "",
+          icon: ''
         });
+
+        setCustomIcon(null);
       }
 
       props.modalHandler();
@@ -236,7 +247,7 @@ const BookmarkForm = (props: ComponentProps): JSX.Element => {
             />
             <span>
               <a
-                href="https://github.com/pawelmalak/flame#supported-url-formats-for-bookmarklications-and-bookmarks"
+                href="https://github.com/pawelmalak/flame#supported-url-formats-for-applications-and-bookmarks"
                 target="_blank"
                 rel="noreferrer"
               >

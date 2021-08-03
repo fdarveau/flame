@@ -232,7 +232,7 @@ const BookmarkTable = (props: ComponentProps): JSX.Element => {
       <Fragment>
         <div className={classes.Message}>
           {isCustomOrder ? (
-            <p>You can drag and drop single rows to reorder bookmarklication</p>
+            <p>You can drag and drop single rows to reorder bookmark</p>
           ) : (
             <p>
               Custom order is disabled. You can change it in{" "}

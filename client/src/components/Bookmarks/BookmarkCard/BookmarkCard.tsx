@@ -26,15 +26,14 @@ const BookmarkCard = (props: ComponentProps): JSX.Element => {
             >
               {bookmark.icon && (
                 <div className={classes.BookmarkCardIcon}>
-                  {/.(jpeg|jpg|png)$/.test(bookmark.icon) ? (
+                  {(/.(jpeg|jpg|png)$/i).test(bookmark.icon) ? 
                     <img
                       src={`/uploads/${bookmark.icon}`}
                       alt={`${bookmark.name} icon`}
                       className={classes.CustomIcon}
                     />
-                  ) : (
-                    <Icon icon={iconParser(bookmark.icon)} />
-                  )}
+                   : <Icon icon={iconParser(bookmark.icon)} />
+                  }
                 </div>
               )}
               {bookmark.name}

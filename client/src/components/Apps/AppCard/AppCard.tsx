@@ -3,7 +3,6 @@ import { iconParser, searchConfig, urlParser } from '../../../utility';
 import Icon from '../../UI/Icons/Icon/Icon';
 import classes from './AppCard.module.css';
 
-
 const StatusIndicator  = require('react-status-indicator').default;
 interface ComponentProps {
   category: Category;
@@ -28,7 +27,7 @@ const AppCard = (props: ComponentProps): JSX.Element => {
               key={`app-${app.id}`}>
               {app.icon && (
                 <div className={classes.AppCardIcon}>
-                  {(/.(jpeg|jpg|png)$/).test(app.icon)
+                  {(/.(jpeg|jpg|png)$/i).test(app.icon)
                     ? <img
                         src={`/uploads/${app.icon}`}
                         alt={`${app.name} icon`}
