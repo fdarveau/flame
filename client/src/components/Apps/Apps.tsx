@@ -55,6 +55,7 @@ const Apps = (props: ComponentProps): JSX.Element => {
     icon: "string",
     isPinned: false,
     orderId: 0,
+    statusIndicatorEnabled: false,
     id: 0,
     createdAt: new Date(),
     updatedAt: new Date(),

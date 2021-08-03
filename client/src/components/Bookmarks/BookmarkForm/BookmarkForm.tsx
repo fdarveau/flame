@@ -118,9 +118,9 @@ const BookmarkForm = (props: ComponentProps): JSX.Element => {
           url: "",
           categoryId: bookmarkData.categoryId,
           icon: ''
-        })
+        });
 
-        setCustomIcon(null)
+        setCustomIcon(null);
       }
     } else {
       // Update
@@ -141,9 +141,9 @@ const BookmarkForm = (props: ComponentProps): JSX.Element => {
           url: "",
           categoryId: -1,
           icon: ''
-        })
+        });
 
-        setCustomIcon(null)
+        setCustomIcon(null);
       }
 
       props.modalHandler();

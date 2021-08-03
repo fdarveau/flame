@@ -1,13 +1,13 @@
 export const urlParser = (url: string): string[] => {
-  let parsedUrl: string;
   let displayUrl: string;
+  let parsedUrl: string;
 
   if (/(https?|steam):\/\//.test(url)) {
     // Url starts with http[s]:// or steam:// -> leave it as it is
     parsedUrl = url;
   } else {
     // No protocol -> apply http:// prefix
-    parsedUrl = `http://${url}`;
+    parsedUrl = `https://${url}`;
   }
 
   // Create simplified url to display as text

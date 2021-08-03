@@ -63,7 +63,7 @@ export const getBookmarkCategories = () => async (dispatch: Dispatch) => {
 };
 
 /**
- * ADD CATEGORY
+ * GET CATEGORIES
  */
 export interface AddBookmarkCategoryAction {
   type: ActionTypes.addBookmarkCategory;
@@ -135,7 +135,7 @@ export const pinBookmark =
   };
 
 /**
- * ADD BOOKMARK
+ * ADD CATEGORY
  */
 export interface AddBookmarkAction {
   type: ActionTypes.addBookmarkSuccess;
@@ -167,7 +167,7 @@ export const addBookmark = (formData: NewBookmark | FormData) => async (dispatch
   };
 
 /**
- * PIN CATEGORY
+ * ADD BOOKMARK
  */
 export interface PinBookmarkCategoryAction {
   type: ActionTypes.pinBookmarkCategory;

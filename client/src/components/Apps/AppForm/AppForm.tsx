@@ -10,6 +10,7 @@ import {
   updateApp,
   updateAppCategory,
 } from '../../../store/actions';
+import { searchConfig } from '../../../utility';
 import Button from '../../UI/Buttons/Button/Button';
 import InputGroup from '../../UI/Forms/InputGroup/InputGroup';
 import ModalForm from '../../UI/Forms/ModalForm/ModalForm';
@@ -35,13 +36,14 @@ const AppForm = (props: ComponentProps): JSX.Element => {
   const [categoryData, setCategoryData] = useState<NewCategory>({
     name: '',
     type: 'apps'
-  })
+  });
 
   const [appData, setAppData] = useState<NewApp>({
     name: '',
     url: '',
     categoryId: -1,
-    icon: ''
+    icon: '',
+    statusIndicatorEnabled: searchConfig('appStatusIndicatorEnabledByDefault', true)
   });
 
   // Load category data if provided for editing
@@ -60,14 +62,16 @@ const AppForm = (props: ComponentProps): JSX.Element => {
         name: props.app.name,
         url: props.app.url,
         categoryId: props.app.categoryId,
-        icon: props.app.icon
+        icon: props.app.icon,
+        statusIndicatorEnabled: props.app.statusIndicatorEnabled
       })
     } else {
       setAppData({
         name: '',
         url: '',
         categoryId: -1,
-        icon: ''
+        icon: '',
+        statusIndicatorEnabled: searchConfig('appStatusIndicatorEnabledByDefault', true)
       })
     }
   }, [props.app]);
@@ -108,12 +112,6 @@ const AppForm = (props: ComponentProps): JSX.Element => {
         } else {
           props.addApp(appData);
         }
-        setAppData({
-          name: '',
-          url: '',
-          categoryId: appData.categoryId,
-          icon: ''
-        })
       }
     } else {
       // Update
@@ -131,16 +129,17 @@ const AppForm = (props: ComponentProps): JSX.Element => {
           props.modalHandler();
         }
       }
-
-      setAppData({
-        name: '',
-        url: '',
-        categoryId: -1,
-        icon: ''
-      });
-      
-      setCustomIcon(null);
     }
+
+    setAppData({
+      name: '',
+      url: '',
+      categoryId: -1,
+      icon: '',
+      statusIndicatorEnabled: searchConfig('appStatusIndicatorEnabledByDefault', true)
+    });
+      
+    setCustomIcon(null);
   }
 
   const toggleUseCustomIcon = (): void => {
@@ -152,6 +151,13 @@ const AppForm = (props: ComponentProps): JSX.Element => {
     setDataFunction({
       ...data,
       [e.target.name]: e.target.value
+    })
+  }
+
+  const checkboxChangeHandler = (e: ChangeEvent<HTMLInputElement>, setDataFunction: Dispatch<SetStateAction<any>>, data: any): void => {
+    setDataFunction({
+      ...data,
+      [e.target.name]: e.target.checked
     })
   }
 
@@ -306,6 +312,17 @@ const AppForm = (props: ComponentProps): JSX.Element => {
                   </span>
                 </InputGroup>)
             }
+            <InputGroup>
+                <label htmlFor='statusIndicatorEnabled' className={classes.CheckboxLabel}>Enable status indicator</label>
+                <input
+                  type='checkbox'
+                  id='statusIndicatorEnabled'
+                  name='statusIndicatorEnabled' 
+                  className={classes.Checkbox}
+                  defaultChecked={appData.statusIndicatorEnabled}
+                  onChange={(e) => checkboxChangeHandler(e, setAppData, appData)}
+                />
+            </InputGroup>
           </Fragment>
         )
       }

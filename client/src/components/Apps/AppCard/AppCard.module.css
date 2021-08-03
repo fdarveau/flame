@@ -34,6 +34,15 @@
   opacity: 1;
 }
 
+.AppCardDetailsTitle {
+  display: flex;
+  align-items: baseline;
+}
+
+.AppCardDetailsTitle status-indicator {
+  margin-right: 5px;
+}
+
 .Apps {
   display: flex;
   flex-direction: column;

@@ -16,6 +16,7 @@ import Spinner from '../UI/Spinner/Spinner';
 import WeatherWidget from '../Widgets/WeatherWidget/WeatherWidget';
 import { dateTime } from './functions/dateTime';
 import { greeter } from './functions/greeter';
+import { initializeStatusIndicators } from './functions/statusIndicator';
 import classes from './Home.module.css';
 
 interface ComponentProps {
@@ -87,13 +88,19 @@ const Home = (props: ComponentProps): JSX.Element => {
       interval = setInterval(() => {
         setHeader({
           dateTime: dateTime(),
-          greeting: greeter(),
+          greeting: greeter()
         });
-      }, 1000);
+      }, 60000);
     }
 
     return () => clearInterval(interval);
   }, []);
+
+  // Initialize status indicator refreshes
+  useEffect(() => {    
+    let interval = initializeStatusIndicators();
+    return () => clearInterval(interval);
+  });
 
   return (
     <Container>
