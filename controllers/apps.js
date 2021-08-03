@@ -16,24 +16,20 @@ exports.createApp = asyncWrapper(async (req, res, next) => {
   const pinApps = await Config.findOne({
     where: { key: 'pinAppsByDefault' }
   });
-
+  
   let app;
-  let _body = { ...req.body };
+
+  let _body = {
+    ...req.body,
+    categoryId: parseInt(req.body.categoryId),
+    isPinned: (pinApps && parseInt(pinApps.value))
+  };
 
   if (req.file) {
     _body.icon = req.file.filename;
   }
 
-  if (pinApps) {
-    if (parseInt(pinApps.value)) {
-      app = await App.create({
-        ..._body,
-        isPinned: true
-      });
-    } else {
-      app = await App.create(req.body);
-    }
-  }
+  app = await App.create(_body);
 
   res.status(201).json({
     success: true,
