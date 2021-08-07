@@ -268,12 +268,12 @@ export const updateAppCategory =
 
       dispatch<any>(sortAppCategories());
     } catch (err) {
-      console.log(err);
+      console.log(JSON.stringify(err));
       dispatch<CreateNotificationAction>({
         type: ActionTypes.createNotification,
         payload: {
           title: "Error",
-          message: err,
+          message: err.message,
         },
       });
     }
