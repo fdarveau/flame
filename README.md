@@ -165,6 +165,7 @@ labels:
   - flame.type=application # "app" works too
   - flame.name=My container
   - flame.url=https://example.com
+  - flame.category=My category # Optional, default is "Docker"
   - flame.icon=icon-name # Optional, default is "docker"
 ```
 

@@ -98,7 +98,7 @@ const AppForm = (props: ComponentProps): JSX.Element => {
         if (appData.categoryId === -1) {
           props.createNotification({
             title: 'Error',
-            message: 'Please select category'
+            message: 'Please select a category'
           })
           return;
         }

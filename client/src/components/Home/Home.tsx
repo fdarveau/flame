@@ -122,7 +122,7 @@ const Home = (props: ComponentProps): JSX.Element => {
             {appsLoading
               ? <Spinner />
               : <AppGrid
-                  categories={appCategories.filter((category: Category) => category.isPinned)}
+                  categories={appCategories.filter((category: Category) => category.isPinned && apps.findIndex(app => app.categoryId === category.id) > -1)}
                   apps={apps.filter((app: App) => app.isPinned)}
                   totalCategories={appCategories.length}
               />
@@ -138,7 +138,7 @@ const Home = (props: ComponentProps): JSX.Element => {
             {bookmarkCategoriesLoading
               ? <Spinner />
               : <BookmarkGrid
-                categories={bookmarkCategories.filter((category: Category) => category.isPinned)}
+                categories={bookmarkCategories.filter((category: Category) => category.isPinned && bookmarks.findIndex(bookmark => bookmark.categoryId === category.id) > -1)}
                 bookmarks={bookmarks.filter((bookmark: Bookmark) => bookmark.isPinned)}
                 totalCategories={bookmarkCategories.length}
               />
