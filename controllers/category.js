@@ -6,6 +6,14 @@ const Bookmark = require("../models/Bookmark");
 const Config = require("../models/Config");
 const { Sequelize } = require("sequelize");
 
+exports.dockerDefaultCategory = {
+  id: -2,
+  name: "Docker",
+  type: "apps",
+  isPinned: true,
+  orderId: 99,
+};
+
 // @desc      Create new category
 // @route     POST /api/categories
 // @access    Public
@@ -74,6 +82,7 @@ exports.getCategories = asyncWrapper(async (req, res, next) => {
       ],
       order: [[orderType, "ASC"]],
     });
+    categories.push(exports.dockerDefaultCategory);
   }
 
   res.status(200).json({
@@ -101,12 +110,16 @@ exports.getCategory = asyncWrapper(async (req, res, next) => {
   });
 
   if (!category) {
-    return next(
-      new ErrorResponse(
-        `Category with id of ${req.params.id} was not found`,
-        404
-      )
-    );
+    if (req.params.id === exports.dockerDefaultCategory.id) {
+      category = exports.dockerDefaultCategory;
+    } else {
+      return next(
+        new ErrorResponse(
+          `Category with id of ${req.params.id} was not found`,
+          404
+        )
+      );
+    }
   }
 
   res.status(200).json({
