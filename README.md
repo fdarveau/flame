@@ -175,7 +175,7 @@ labels:
   - flame.url=https://example.com
   - flame.category=My category # Optional, default is "Docker"
   - flame.icon=icon-name # Optional, default is "docker"
-  - flame.order=1 # Optional, default is 1
+  - flame.order=1 # Optional, default is 1; lower number is first in the list
 ```
 
 And you must have activated the Docker sync option in the settings panel.
