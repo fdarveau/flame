@@ -152,7 +152,7 @@ const Home = (props: ComponentProps): JSX.Element => {
             <AppGrid
               categories={
                   !localSearch
-                    ? appCategories.filter((category: Category) => category.isPinned)
+                    ? appCategories.filter((category: Category) => category.isPinned && category.apps.length > 0)
                     : searchInCategories(localSearch, appCategories)
               }
               apps={
@@ -181,7 +181,7 @@ const Home = (props: ComponentProps): JSX.Element => {
             <BookmarkGrid
               categories={
                 !localSearch
-                  ? bookmarkCategories.filter((category: Category) => category.isPinned)
+                  ? bookmarkCategories.filter((category: Category) => category.isPinned && category.bookmarks.length > 0)
                   : searchInCategories(localSearch, bookmarkCategories)
               }
               bookmarks={

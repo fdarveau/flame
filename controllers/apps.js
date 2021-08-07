@@ -5,6 +5,8 @@ const Config = require('../models/Config');
 const { Sequelize } = require('sequelize');
 const axios = require('axios');
 const Logger = require('../utils/Logger');
+const Category = require('../models/Category');
+const { dockerDefaultCategory } = require('./category');
 const logger = new Logger();
 const k8s = require('@kubernetes/client-node');
 
@@ -78,6 +80,13 @@ exports.getApps = asyncWrapper(async (req, res, next) => {
         order: [[orderType, 'ASC']]
       });
 
+      const categories = await Category.findAll({
+        where: {
+          type: 'apps'
+        },
+        order: [[orderType, 'ASC']]
+      });
+
       containers = containers.filter(e => Object.keys(e.Labels).length !== 0);
       const dockerApps = [];
       for (const container of containers) {
@@ -88,11 +97,17 @@ exports.getApps = asyncWrapper(async (req, res, next) => {
           'flame.url' in labels &&
           /^app/.test(labels['flame.type'])
         ) {
-          dockerApps.push({
+          const app = {
             name: labels['flame.name'],
             url: labels['flame.url'],
-            icon: labels['flame.icon'] || 'docker'
-          });
+            icon: labels['flame.icon'] || 'docker',
+            categoryId: dockerDefaultCategory.id
+          }
+          if (labels['flame.category']) {
+            const category = categories.find(category => category.name.toUpperCase() === labels['flame.category'].toUpperCase());
+            app.categoryId = category ? category.id : dockerDefaultCategory.id
+          }
+          dockerApps.push(app);
         }
       }
 
