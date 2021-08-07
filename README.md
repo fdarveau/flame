@@ -167,6 +167,7 @@ labels:
   - flame.url=https://example.com
   - flame.category=My category # Optional, default is "Docker"
   - flame.icon=icon-name # Optional, default is "docker"
+  - flame.order=1 # Optional, default is 1
 ```
 
 And you must have activated the Docker sync option in the settings panel.
@@ -179,6 +180,6 @@ And you must have activated the Docker sync option in the settings panel.
 
 ## Support
 
-If you want to support development of Flame and my upcoming self-hosted and open source projects you can use the following link:
+If you want to support development of Flame and ~~my~~ pawelmalak's upcoming self-hosted and open source projects you can use the following link:
 
 [![PayPal Badge](https://img.shields.io/badge/PayPal-00457C?style=for-the-badge&logo=paypal&logoColor=white)](https://www.paypal.com/paypalme/pawelmalak)

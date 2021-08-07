@@ -11,7 +11,7 @@ exports.dockerDefaultCategory = {
   name: "Docker",
   type: "apps",
   isPinned: true,
-  orderId: 99,
+  orderId: 999,
 };
 
 // @desc      Create new category
