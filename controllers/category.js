@@ -110,7 +110,7 @@ exports.getCategory = asyncWrapper(async (req, res, next) => {
   });
 
   if (!category) {
-    if (req.params.id === exports.dockerDefaultCategory.categoryId) {
+    if (req.params.id === exports.dockerDefaultCategory.id) {
       category = exports.dockerDefaultCategory;
     } else {
       return next(
@@ -137,7 +137,7 @@ exports.updateCategory = asyncWrapper(async (req, res, next) => {
   });
 
   if (!category) {
-    if (req.params.id !== exports.dockerDefaultCategory.categoryId) {
+    if (req.params.id !== exports.dockerDefaultCategory.id) {
       return next(
         new ErrorResponse(
           `Category with id of ${req.params.id} was not found`,
@@ -178,7 +178,7 @@ exports.deleteCategory = asyncWrapper(async (req, res, next) => {
   });
 
   if (!category) {
-    if (req.params.id !== exports.dockerDefaultCategory.categoryId) {
+    if (req.params.id !== exports.dockerDefaultCategory.id) {
       return next(
         new ErrorResponse(
           `Category with id of ${req.params.id} was not found`,

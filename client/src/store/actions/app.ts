@@ -227,6 +227,13 @@ export const deleteAppCategory = (id: number) => async (dispatch: Dispatch) => {
     });
   } catch (err) {
     console.log(err);
+    dispatch<CreateNotificationAction>({
+      type: ActionTypes.createNotification,
+      payload: {
+        title: "Error",
+        message: err,
+      },
+    });
   }
 };
 
@@ -262,6 +269,13 @@ export const updateAppCategory =
       dispatch<any>(sortAppCategories());
     } catch (err) {
       console.log(err);
+      dispatch<CreateNotificationAction>({
+        type: ActionTypes.createNotification,
+        payload: {
+          title: "Error",
+          message: err,
+        },
+      });
     }
   };
 
