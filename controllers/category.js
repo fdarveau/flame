@@ -137,18 +137,12 @@ exports.updateCategory = asyncWrapper(async (req, res, next) => {
   });
 
   if (!category) {
-    if (req.params.id !== exports.dockerDefaultCategory.id) {
-      return next(
-        new ErrorResponse(
-          `Category with id of ${req.params.id} was not found`,
-          404
-        )
-      );
-    } else {
-      return next(
-        new ErrorResponse(`Cannot update default Docker category`, 403)
-      );
-    }
+    return next(
+      new ErrorResponse(
+        `Category with id of ${req.params.id} was not found`,
+        404
+      )
+    );
   }
 
   category = await category.update({ ...req.body });
@@ -178,18 +172,12 @@ exports.deleteCategory = asyncWrapper(async (req, res, next) => {
   });
 
   if (!category) {
-    if (req.params.id !== exports.dockerDefaultCategory.id) {
-      return next(
-        new ErrorResponse(
-          `Category with id of ${req.params.id} was not found`,
-          404
-        )
-      );
-    } else {
-      return next(
-        new ErrorResponse(`Cannot delete default Docker category`, 403)
-      );
-    }
+    return next(
+      new ErrorResponse(
+        `Category with id of ${req.params.id} was not found`,
+        404
+      )
+    );
   }
 
   category.apps.forEach(async (app) => {

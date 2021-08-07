@@ -162,7 +162,7 @@ const AppTable = (props: ComponentProps): JSX.Element => {
                               style={style}
                             >
                               <td>{category.name}</td>
-                              {!snapshot.isDragging && (
+                              {!snapshot.isDragging && category.id >= 0 && (
                                 <td className={classes.TableActions}>
                                   <div
                                     className={classes.TableAction}
