@@ -6,7 +6,6 @@ const Bookmark = require("../models/Bookmark");
 const Config = require("../models/Config");
 const { Sequelize } = require("sequelize");
 
-
 exports.dockerDefaultCategory = {
   id: -2,
   name: "Docker",
@@ -83,7 +82,7 @@ exports.getCategories = asyncWrapper(async (req, res, next) => {
       ],
       order: [[orderType, "ASC"]],
     });
-    categories.push(dockerDefaultCategory);
+    categories.push(exports.dockerDefaultCategory);
   }
 
   res.status(200).json({
@@ -111,15 +110,15 @@ exports.getCategory = asyncWrapper(async (req, res, next) => {
   });
 
   if (!category) {
-    if (req.params.id !== -2) {
+    if (req.params.id === exports.dockerDefaultCategory.categoryId) {
+      category = exports.dockerDefaultCategory;
+    } else {
       return next(
         new ErrorResponse(
           `Category with id of ${req.params.id} was not found`,
           404
         )
       );
-    } else {
-      category = dockerDefaultCategory
     }
   }
 
