@@ -103,7 +103,7 @@ exports.getApps = asyncWrapper(async (req, res, next) => {
           if (labels['flame.category']) {
             const category = categories.find(category => category.name.toUpperCase() === labels['flame.category'].toUpperCase());
             console.log(`${labels['flame.name']} : Found category ${JSON.stringify(category)}`);
-            app.categoryId = category ? category.categoryId : dockerDefaultCategory.id
+            app.categoryId = category ? category.id : dockerDefaultCategory.id
             console.log(`${labels['flame.name']} category ID : ${app.categoryId}`);
           }
           dockerApps.push(app);
