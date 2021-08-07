@@ -93,7 +93,7 @@ const Apps = (props: ComponentProps): JSX.Element => {
   };
 
   const instanceOfCategory = (object: any): object is Category => {
-    return "apps" in object;
+    return !("categoryId" in object);
   };
 
   const goToUpdateMode = (data: Category | App): void => {

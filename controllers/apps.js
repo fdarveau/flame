@@ -96,7 +96,8 @@ exports.getApps = asyncWrapper(async (req, res, next) => {
           const app = {
             name: labels['flame.name'],
             url: labels['flame.url'],
-            icon: labels['flame.icon'] || 'docker'
+            icon: labels['flame.icon'] || 'docker',
+            categoryId: dockerDefaultCategory.id
           }
           if (labels['flame.category']) {
             const category = categories.find(category => category.name.toUpperCase() === labels['flame.category'].toUpperCase());

@@ -74,7 +74,7 @@ services:
     container_name: flame
     volumes:
       - <host_dir>:/app/data
-      - /var/run/docker.sock:/var/sock/docker.sock # optional but required for Docker integration feature
+      - /var/run/docker.sock:/var/run/docker.sock # optional but required for Docker integration feature
     ports:
       - 5005:5005
     restart: unless-stopped
