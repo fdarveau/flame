@@ -190,7 +190,9 @@ metadata:
   - flame.pawelmalak/type=application # "app" works too
   - flame.pawelmalak/name=My container
   - flame.pawelmalak/url=https://example.com
+  - flame.pawelmalak/category=My category # Optional, default is "Kubernetes"
   - flame.pawelmalak/icon=icon-name # Optional, default is "kubernetes"
+  - flame.pawelmalak/order=1 # Optional, default is 1; lower number is first in the list
 ```
 
 And you must have activated the Kubernetes sync option in the settings panel.

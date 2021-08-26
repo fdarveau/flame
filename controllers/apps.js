@@ -6,7 +6,7 @@ const { Sequelize } = require('sequelize');
 const axios = require('axios');
 const Logger = require('../utils/Logger');
 const Category = require('../models/Category');
-const { dockerDefaultCategory } = require('./category');
+const { dockerDefaultCategory, kubernetesDefaultCategory } = require('./category');
 const logger = new Logger();
 const k8s = require('@kubernetes/client-node');
 
@@ -61,133 +61,11 @@ exports.getApps = asyncWrapper(async (req, res, next) => {
   let apps;
 
   if (useDockerApi && useDockerApi.value == 1) {
-    let containers = null;
-
-    try {
-      let { data } = await axios.get(
-        'http://localhost/containers/json?{"status":["running"]}',
-        {
-          socketPath: '/var/run/docker.sock'
-        }
-      );
-      containers = data;
-    } catch {
-      logger.log("Can't connect to the docker socket", 'ERROR');
-    }
-
-    if (containers) {
-      apps = await App.findAll({
-        order: [[orderType, 'ASC']]
-      });
-
-      const categories = await Category.findAll({
-        where: {
-          type: 'apps'
-        },
-        order: [[orderType, 'ASC']]
-      });
-
-      containers = containers.filter(e => Object.keys(e.Labels).length !== 0);
-      const dockerApps = [];
-      for (const container of containers) {
-        const labels = container.Labels;
-
-        if (
-          'flame.name' in labels &&
-          'flame.url' in labels &&
-          /^app/.test(labels['flame.type'])
-        ) {
-          const app = {
-            name: labels['flame.name'],
-            url: labels['flame.url'],
-            icon: labels['flame.icon'] || 'docker',
-            categoryId: dockerDefaultCategory.id,
-            orderId: labels['flame.order'] || 1,
-          }
-          if (labels['flame.category']) {
-            const category = categories.find(category => category.name.toUpperCase() === labels['flame.category'].toUpperCase());
-            app.categoryId = category ? category.id : dockerDefaultCategory.id
-          }
-          dockerApps.push(app);
-        }
-      }
-
-      if (unpinStoppedApps && unpinStoppedApps.value == 1) {
-        for (const app of apps) {
-          await app.update({ isPinned: false });
-        }
-      }
-
-      for (const item of dockerApps) {
-        if (apps.some(app => app.name === item.name)) {
-          const app = apps.filter(e => e.name === item.name)[0];
-          await app.update({ ...item, isPinned: true });
-        } else {
-          await App.create({
-            ...item,
-            isPinned: true
-          });
-        }
-      }
-    }
+    apps = await retrieveDockerApps(apps, orderType, unpinStoppedApps);
   }
 
   if (useKubernetesApi && useKubernetesApi.value == 1) {
-    let ingresses = null;
-
-    try {
-      const kc = new k8s.KubeConfig();
-      kc.loadFromCluster();
-      const k8sNetworkingV1Api = kc.makeApiClient(k8s.NetworkingV1Api);
-      await k8sNetworkingV1Api.listIngressForAllNamespaces()
-      .then((res) => {
-          ingresses = res.body.items;
-      });
-    } catch {
-      logger.log("Can't connect to the kubernetes api", 'ERROR');
-    }
-
-    if (ingresses) {
-      apps = await App.findAll({
-        order: [[orderType, 'ASC']]
-      });
-
-      ingresses = ingresses.filter(e => Object.keys(e.metadata.annotations).length !== 0);
-      const kubernetesApps = [];
-      for (const ingress of ingresses) {
-        const annotations = ingress.metadata.annotations;
-
-        if (
-          'flame.pawelmalak/name' in annotations &&
-          'flame.pawelmalak/url' in annotations &&
-          /^app/.test(annotations['flame.pawelmalak/type'])
-        ) {
-          kubernetesApps.push({
-            name: annotations['flame.pawelmalak/name'],
-            url: annotations['flame.pawelmalak/url'],
-            icon: annotations['flame.pawelmalak/icon'] || 'kubernetes'
-          });
-        }
-      }
-
-      if (unpinStoppedApps && unpinStoppedApps.value == 1) {
-        for (const app of apps) {
-          await app.update({ isPinned: false });
-        }
-      }
-
-      for (const item of kubernetesApps) {
-        if (apps.some(app => app.name === item.name)) {
-          const app = apps.filter(e => e.name === item.name)[0];
-          await app.update({ ...item, isPinned: true });
-        } else {
-          await App.create({
-            ...item,
-            isPinned: true
-          });
-        }
-      }
-    }
+    apps = await retrieveKubernetesApps(apps, orderType, unpinStoppedApps);
   }
 
   if (orderType == 'name') {
@@ -295,3 +173,138 @@ exports.reorderApps = asyncWrapper(async (req, res, next) => {
     data: {}
   });
 });
+async function retrieveDockerApps(apps, orderType, unpinStoppedApps) {
+  let containers = null;
+
+  try {
+    let { data } = await axios.get(
+      'http://localhost/containers/json?{"status":["running"]}',
+      {
+        socketPath: '/var/run/docker.sock'
+      }
+    );
+    containers = data;
+  } catch {
+    logger.log("Can't connect to the docker socket", 'ERROR');
+  }
+
+  if (containers) {
+    apps = await App.findAll({
+      order: [[orderType, 'ASC']]
+    });
+
+    const categories = await Category.findAll({
+      where: {
+        type: 'apps'
+      },
+      order: [[orderType, 'ASC']]
+    });
+
+    containers = containers.filter(e => Object.keys(e.Labels).length !== 0);
+    const dockerApps = [];
+    for (const container of containers) {
+      const labels = container.Labels;
+
+      if ('flame.name' in labels &&
+        'flame.url' in labels &&
+        /^app/.test(labels['flame.type'])) {
+        const app = {
+          name: labels['flame.name'],
+          url: labels['flame.url'],
+          icon: labels['flame.icon'] || 'docker',
+          categoryId: dockerDefaultCategory.id,
+          orderId: labels['flame.order'] || 1,
+        };
+        if (labels['flame.category']) {
+          const category = categories.find(category => category.name.toUpperCase() === labels['flame.category'].toUpperCase());
+          app.categoryId = category ? category.id : dockerDefaultCategory.id;
+        }
+        dockerApps.push(app);
+      }
+    }
+
+    if (unpinStoppedApps && unpinStoppedApps.value == 1) {
+      for (const app of apps) {
+        await app.update({ isPinned: false });
+      }
+    }
+
+    for (const item of dockerApps) {
+      if (apps.some(app => app.name === item.name)) {
+        const app = apps.filter(e => e.name === item.name)[0];
+        await app.update({ ...item, isPinned: true });
+      } else {
+        await App.create({
+          ...item,
+          isPinned: true
+        });
+      }
+    }
+  }
+  return apps;
+}
+
+async function retrieveKubernetesApps(apps, orderType, unpinStoppedApps) {
+  let ingresses = null;
+
+  try {
+    const kc = new k8s.KubeConfig();
+    kc.loadFromCluster();
+    const k8sNetworkingV1Api = kc.makeApiClient(k8s.NetworkingV1Api);
+    await k8sNetworkingV1Api.listIngressForAllNamespaces()
+      .then((res) => {
+        ingresses = res.body.items;
+      });
+  } catch {
+    logger.log("Can't connect to the kubernetes api", 'ERROR');
+  }
+
+  if (ingresses) {
+    apps = await App.findAll({
+      order: [[orderType, 'ASC']]
+    });
+
+    ingresses = ingresses.filter(e => Object.keys(e.metadata.annotations).length !== 0);
+    const kubernetesApps = [];
+    for (const ingress of ingresses) {
+      const annotations = ingress.metadata.annotations;
+
+      if ('flame.pawelmalak/name' in annotations &&
+        'flame.pawelmalak/url' in annotations &&
+        /^app/.test(annotations['flame.pawelmalak/type'])) {
+        const app = {
+          name: annotations['flame.pawelmalak/name'],
+          url: annotations['flame.pawelmalak/url'],
+          icon: annotations['flame.pawelmalak/icon'] || 'kubernetes',
+          categoryId: kubernetesDefaultCategory.id,
+          orderId: annotations['flame.pawelmalak/order'] || 1,
+        };
+        if (annotations['flame.pawelmalak/category']) {
+          const category = categories.find(category => category.name.toUpperCase() === annotations['flame.pawelmalak/category'].toUpperCase());
+          app.categoryId = category ? category.id : dockerDefaultCategory.id;
+        }
+        kubernetesApps.push(app);
+      }
+    }
+
+    if (unpinStoppedApps && unpinStoppedApps.value == 1) {
+      for (const app of apps) {
+        await app.update({ isPinned: false });
+      }
+    }
+
+    for (const item of kubernetesApps) {
+      if (apps.some(app => app.name === item.name)) {
+        const app = apps.filter(e => e.name === item.name)[0];
+        await app.update({ ...item, isPinned: true });
+      } else {
+        await App.create({
+          ...item,
+          isPinned: true
+        });
+      }
+    }
+  }
+  return apps;
+}
+
