@@ -213,7 +213,7 @@ async function retrieveDockerApps(apps, orderType, unpinStoppedApps) {
           url: labels['flame.url'],
           icon: labels['flame.icon'] || 'docker',
           categoryId: dockerDefaultCategory.id,
-          orderId: labels['flame.order'] || 1,
+          orderId: labels['flame.order'] || 500,
         };
         if (labels['flame.category']) {
           const category = categories.find(category => category.name.toUpperCase() === labels['flame.category'].toUpperCase());
@@ -277,7 +277,7 @@ async function retrieveKubernetesApps(apps, orderType, unpinStoppedApps) {
           url: annotations['flame.pawelmalak/url'],
           icon: annotations['flame.pawelmalak/icon'] || 'kubernetes',
           categoryId: kubernetesDefaultCategory.id,
-          orderId: annotations['flame.pawelmalak/order'] || 1,
+          orderId: annotations['flame.pawelmalak/order'] || 500,
         };
         if (annotations['flame.pawelmalak/category']) {
           const category = categories.find(category => category.name.toUpperCase() === annotations['flame.pawelmalak/category'].toUpperCase());

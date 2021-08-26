@@ -175,7 +175,7 @@ labels:
   - flame.url=https://example.com
   - flame.category=My category # Optional, default is "Docker"
   - flame.icon=icon-name # Optional, default is "docker"
-  - flame.order=1 # Optional, default is 1; lower number is first in the list
+  - flame.order=1 # Optional, default is 500; lower number is first in the list
 ```
 
 And you must have activated the Docker sync option in the settings panel.
@@ -192,7 +192,7 @@ metadata:
   - flame.pawelmalak/url=https://example.com
   - flame.pawelmalak/category=My category # Optional, default is "Kubernetes"
   - flame.pawelmalak/icon=icon-name # Optional, default is "kubernetes"
-  - flame.pawelmalak/order=1 # Optional, default is 1; lower number is first in the list
+  - flame.pawelmalak/order=1 # Optional, default is 500; lower number is first in the list
 ```
 
 And you must have activated the Kubernetes sync option in the settings panel.
