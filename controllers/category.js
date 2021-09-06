@@ -1,28 +1,31 @@
-const asyncWrapper = require("../middleware/asyncWrapper");
-const ErrorResponse = require("../utils/ErrorResponse");
-const Category = require("../models/Category");
-const App = require("../models/App");
-const Bookmark = require("../models/Bookmark");
-const Config = require("../models/Config");
-const { Sequelize } = require("sequelize");
+const asyncWrapper = require('../middleware/asyncWrapper');
+const ErrorResponse = require('../utils/ErrorResponse');
+const Category = require('../models/Category');
+const App = require('../models/App');
+const Bookmark = require('../models/Bookmark');
+const Config = require('../models/Config');
+const { Sequelize } = require('sequelize');
 
 exports.dockerDefaultCategory = {
   id: -2,
-  name: "Docker",
-  type: "apps",
+  name: 'Docker',
+  type: 'apps',
   isPinned: true,
   orderId: 998,
 };
 
 exports.kubernetesDefaultCategory = {
   id: -3,
-  name: "Kubernetes",
-  type: "apps",
+  name: 'Kubernetes',
+  type: 'apps',
   isPinned: true,
   orderId: 999,
 };
 
-const defaultCategories = [exports.dockerDefaultCategory, exports.kubernetesDefaultCategory];
+const defaultCategories = [
+  exports.dockerDefaultCategory,
+  exports.kubernetesDefaultCategory,
+];
 
 // @desc      Create new category
 // @route     POST /api/categories
@@ -30,7 +33,7 @@ const defaultCategories = [exports.dockerDefaultCategory, exports.kubernetesDefa
 exports.createCategory = asyncWrapper(async (req, res, next) => {
   // Get config from database
   const pinCategories = await Config.findOne({
-    where: { key: "pinCategoriesByDefault" },
+    where: { key: 'pinCategoriesByDefault' },
   });
 
   let category;
@@ -58,31 +61,42 @@ exports.createCategory = asyncWrapper(async (req, res, next) => {
 exports.getCategories = asyncWrapper(async (req, res, next) => {
   // Get config from database
   const useOrdering = await Config.findOne({
-    where: { key: "useOrdering" },
+    where: { key: 'useOrdering' },
   });
 
-  const orderType = useOrdering ? useOrdering.value : "createdAt";
+  const orderType = useOrdering ? useOrdering.value : 'createdAt';
   let categories;
-  let categoryTypes = []
+
+  const query = {
+    include: [],
+    order: [],
+  };
+  const requestedTypes = [];
   if (!req.params.type || req.params.type === 'apps') {
-    categoryTypes.push({model: App, as: "apps"});
+    query.include.push({ model: App, as: 'apps' });
+    requestedTypes.push('apps');
   }
   if (!req.params.type || req.params.type === 'bookmarks') {
-    categoryTypes.push({model: Bookmark, as: "bookmarks"});
+    query.include.push({ model: Bookmark, as: 'bookmarks' });
+    requestedTypes.push('bookmarks');
   }
+  query.where = { type: requestedTypes };
 
-  if (orderType == "name") {
-    categories = await Category.findAll({
-      include: categoryTypes,
-      order: [[Sequelize.fn("lower", Sequelize.col("Category.name")), "ASC"]],
-    });
+  if (orderType == 'name') {
+    query.order.push([
+      Sequelize.fn('lower', Sequelize.col('Category.name')),
+      'ASC',
+    ]);
   } else {
-    categories = await Category.findAll({
-      include: categoryTypes,
-      order: [[orderType, "ASC"]],
-    });
+    query.order.push([orderType, 'ASC']);
   }
-  categories.push(defaultCategories.filter((category) => categoryTypes.findIndex((includedType) => category.type === includedType.as) > -1));
+  
+  categories = await Category.findAll(query);
+  categories.push(
+    defaultCategories.filter(
+      (category) => requestedTypes.indexOf(category.type) > -1
+    )
+  );
 
   res.status(200).json({
     success: true,
@@ -99,11 +113,11 @@ exports.getCategory = asyncWrapper(async (req, res, next) => {
     include: [
       {
         model: App,
-        as: "apps",
+        as: 'apps',
       },
       {
         model: Bookmark,
-        as: "bookmarks",
+        as: 'bookmarks',
       },
     ],
   });
@@ -163,11 +177,11 @@ exports.deleteCategory = asyncWrapper(async (req, res, next) => {
     include: [
       {
         model: App,
-        as: "apps",
+        as: 'apps',
       },
       {
         model: Bookmark,
-        as: "bookmarks",
+        as: 'bookmarks',
       },
     ],
   });
