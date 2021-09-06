@@ -90,13 +90,11 @@ exports.getCategories = asyncWrapper(async (req, res, next) => {
   } else {
     query.order.push([orderType, 'ASC']);
   }
-  
+
   categories = await Category.findAll(query);
-  categories.push(
-    defaultCategories.filter(
-      (category) => requestedTypes.indexOf(category.type) > -1
-    )
-  );
+  defaultCategories
+    .filter((category) => requestedTypes.indexOf(category.type) > -1)
+    .forEach((category) => categories.push(category));
 
   res.status(200).json({
     success: true,
