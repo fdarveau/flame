@@ -281,7 +281,7 @@ async function retrieveKubernetesApps(apps, orderType, unpinStoppedApps) {
         };
         if (annotations['flame.pawelmalak/category']) {
           const category = categories.find(category => category.name.toUpperCase() === annotations['flame.pawelmalak/category'].toUpperCase());
-          app.categoryId = category ? category.id : dockerDefaultCategory.id;
+          app.categoryId = category ? category.id : kubernetesDefaultCategory.id;
         }
         kubernetesApps.push(app);
       }

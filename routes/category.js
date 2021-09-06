@@ -15,6 +15,10 @@ router
   .post(createCategory)
   .get(getCategories);
 
+  router
+    .route('/:type')
+    .get(getCategories);
+
 router
   .route('/:id')
   .get(getCategory)

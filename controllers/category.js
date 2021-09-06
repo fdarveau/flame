@@ -22,6 +22,8 @@ exports.kubernetesDefaultCategory = {
   orderId: 999,
 };
 
+const defaultCategories = [exports.dockerDefaultCategory, exports.kubernetesDefaultCategory];
+
 // @desc      Create new category
 // @route     POST /api/categories
 // @access    Public
@@ -61,37 +63,26 @@ exports.getCategories = asyncWrapper(async (req, res, next) => {
 
   const orderType = useOrdering ? useOrdering.value : "createdAt";
   let categories;
+  let categoryTypes = []
+  if (!req.params.type || req.params.type === 'apps') {
+    categoryTypes.push({model: App, as: "apps"});
+  }
+  if (!req.params.type || req.params.type === 'bookmarks') {
+    categoryTypes.push({model: Bookmark, as: "bookmarks"});
+  }
 
   if (orderType == "name") {
     categories = await Category.findAll({
-      include: [
-        {
-          model: App,
-          as: "apps",
-        },
-        {
-          model: Bookmark,
-          as: "bookmarks",
-        },
-      ],
+      include: categoryTypes,
       order: [[Sequelize.fn("lower", Sequelize.col("Category.name")), "ASC"]],
     });
   } else {
     categories = await Category.findAll({
-      include: [
-        {
-          model: App,
-          as: "apps",
-        },
-        {
-          model: Bookmark,
-          as: "bookmarks",
-        },
-      ],
+      include: categoryTypes,
       order: [[orderType, "ASC"]],
     });
-    categories.push(exports.dockerDefaultCategory);
   }
+  categories.push(defaultCategories.filter((category) => categoryTypes.findIndex((includedType) => category.type === includedType.as) > -1));
 
   res.status(200).json({
     success: true,
@@ -120,6 +111,8 @@ exports.getCategory = asyncWrapper(async (req, res, next) => {
   if (!category) {
     if (req.params.id === exports.dockerDefaultCategory.id) {
       category = exports.dockerDefaultCategory;
+    } else if (req.params.id === exports.kubernetesDefaultCategory.id) {
+      category = exports.kubernetesDefaultCategory;
     } else {
       return next(
         new ErrorResponse(

@@ -49,13 +49,11 @@ export const getAppCategories = () => async (dispatch: Dispatch) => {
   });
 
   try {
-    const res = await axios.get<ApiResponse<Category[]>>("/api/categories");
+    const res = await axios.get<ApiResponse<Category[]>>("/api/categories/apps");
 
     dispatch<GetAppCategoriesAction<Category[]>>({
       type: ActionTypes.getAppCategoriesSuccess,
-      payload: res.data.data.filter(
-        (category: Category) => category.type === "apps"
-      ),
+      payload: res.data.data
     });
   } catch (err) {
     console.log(err);

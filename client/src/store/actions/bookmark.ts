@@ -49,13 +49,11 @@ export const getBookmarkCategories = () => async (dispatch: Dispatch) => {
   });
 
   try {
-    const res = await axios.get<ApiResponse<Category[]>>("/api/categories");
+    const res = await axios.get<ApiResponse<Category[]>>("/api/categories/bookmarks");
 
     dispatch<GetBookmarkCategoriesAction<Category[]>>({
       type: ActionTypes.getBookmarkCategoriesSuccess,
-      payload: res.data.data.filter(
-        (category: Category) => category.type === "bookmarks"
-      ),
+      payload: res.data.data
     });
   } catch (err) {
     console.log(err);
