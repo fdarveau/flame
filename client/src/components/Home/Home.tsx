@@ -101,14 +101,14 @@ const Home = (props: ComponentProps): JSX.Element => {
   const searchInCategories = (query: string, categoriesToSearch: Category[]): Category[] => {
     const category: Category = {
       name: "Search Results",
-      type: categoriesToSearch[0].type,
+      type: categoriesToSearch[0]?.type,
       isPinned: true,
       apps: categoriesToSearch
-        .map((c: Category) => c.apps)
+        .map((c: Category) => c.id >= 0 ? c.apps : apps.filter((app: App) => app.categoryId === c.id))
         .flat()
         .filter((app: App) => new RegExp(query, 'i').test(app.name)),
       bookmarks: categoriesToSearch
-        .map((c: Category) => c.bookmarks)
+      .map((c: Category) => c.id >= 0 ? c.bookmarks : bookmarks.filter((bookmark: Bookmark) => bookmark.categoryId === c.id))
         .flat()
         .filter((bookmark: Bookmark) => new RegExp(query, 'i').test(bookmark.name)),
       id: 0,
