@@ -110,7 +110,7 @@ const Home = (props: ComponentProps): JSX.Element => {
     if (category.apps?.filter((app: App) => app.isPinned).length > 0) return true;
     if (category.bookmarks?.filter((bookmark: Bookmark) => bookmark.isPinned).length > 0) return true;
     if (category.id < 0) { // Is a default category
-      return allItems.findIndex((item: App | Bookmark) => item.categoryId === category.id) >= 0;
+      return allItems.findIndex((item: App | Bookmark) => item.categoryId === category.id && item.isPinned) >= 0;
     }
     return false;
   };
