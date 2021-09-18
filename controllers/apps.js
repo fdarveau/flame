@@ -220,6 +220,9 @@ async function retrieveDockerApps(apps, orderType, unpinStoppedApps) {
           let category = categories.find(category => category.name.toUpperCase() === labels['flame.category'].toUpperCase());
           if (!category) {
             category = await createNewCategory(labels['flame.category']);
+            if (category) {
+              categories.push(category);
+            }
           }
           app.categoryId = category ? category.id : dockerDefaultCategory.id;
         }
@@ -296,6 +299,9 @@ async function retrieveKubernetesApps(apps, orderType, unpinStoppedApps) {
           let category = categories.find(category => category.name.toUpperCase() === annotations['flame.pawelmalak/category'].toUpperCase());
           if (!category) {
             category = await createNewCategory(labels['flame.pawelmalak/category']);
+            if (category) {
+              categories.push(category);
+            }
           }
           app.categoryId = category ? category.id : kubernetesDefaultCategory.id;
         }
