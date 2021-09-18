@@ -173,6 +173,7 @@ exports.reorderApps = asyncWrapper(async (req, res, next) => {
     data: {}
   });
 });
+
 async function retrieveDockerApps(apps, orderType, unpinStoppedApps) {
   let containers = null;
 
@@ -252,6 +253,7 @@ async function createNewCategory(newCategoryName) {
     name: newCategoryName,
     type: 'apps',
     isPinned: true,
+    orderId: Number.MAX_SAFE_INTEGER //New category will always be last and can then be re-ordered manually by user
   });
 }
 

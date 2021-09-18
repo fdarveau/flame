@@ -52,26 +52,12 @@ const Home = (props: ComponentProps): JSX.Element => {
   // Local search query
   const [localSearch, setLocalSearch] = useState<null | string>(null);
 
-  // Load app categories
-  useEffect(() => {
-    if (appCategories.length === 0) {
-      getAppCategories();
-    }
-  }, [getAppCategories]);
-
   // Load apps
   useEffect(() => {
     if (apps.length === 0) {
       getApps();
     }
   }, [getApps]);
-
-  // Load bookmark categories
-  useEffect(() => {
-    if (bookmarkCategories.length === 0) {
-      getBookmarkCategories();
-    }
-  }, [getBookmarkCategories]);
 
   // Load bookmarks
   useEffect(() => {

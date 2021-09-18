@@ -26,6 +26,8 @@ export const getApps = () => async (dispatch: Dispatch) => {
       type: ActionTypes.getAppsSuccess,
       payload: res.data.data,
     });
+
+    await getCategories(dispatch);
   } catch (err) {
     console.log(err);
   }
@@ -49,16 +51,20 @@ export const getAppCategories = () => async (dispatch: Dispatch) => {
   });
 
   try {
-    const res = await axios.get<ApiResponse<Category[]>>("/api/categories/apps");
-
-    dispatch<GetAppCategoriesAction<Category[]>>({
-      type: ActionTypes.getAppCategoriesSuccess,
-      payload: res.data.data
-    });
+    await getCategories(dispatch);
   } catch (err) {
     console.log(err);
   }
 };
+
+async function getCategories(dispatch: Dispatch) {
+  const res = await axios.get<ApiResponse<Category[]>>("/api/categories/apps");
+
+  dispatch<GetAppCategoriesAction<Category[]>>({
+    type: ActionTypes.getAppCategoriesSuccess,
+    payload: res.data.data
+  });
+}
 
 /**
  * ADD CATEGORY
