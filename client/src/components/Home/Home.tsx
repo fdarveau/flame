@@ -106,8 +106,9 @@ const Home = (props: ComponentProps): JSX.Element => {
     return [category];
   };
 
-  const categoryContainsItems = (category: Category, allItems: App[] | Bookmark[]): boolean => {
-    if (category.apps?.length > 0) return true;
+  const categoryContainsPinnedItems = (category: Category, allItems: App[] | Bookmark[]): boolean => {
+    if (category.apps?.filter((app: App) => app.isPinned).length > 0) return true;
+    if (category.bookmarks?.filter((bookmark: Bookmark) => bookmark.isPinned).length > 0) return true;
     if (category.id < 0) { // Is a default category
       return allItems.findIndex((item: App | Bookmark) => item.categoryId === category.id) >= 0;
     }
@@ -146,7 +147,7 @@ const Home = (props: ComponentProps): JSX.Element => {
             <AppGrid
               categories={
                   !localSearch
-                    ? appCategories.filter((category: Category) => category.isPinned && categoryContainsItems(category, apps))
+                    ? appCategories.filter((category: Category) => category.isPinned && categoryContainsPinnedItems(category, apps))
                     : searchInCategories(localSearch, appCategories)
               }
               apps={
@@ -175,7 +176,7 @@ const Home = (props: ComponentProps): JSX.Element => {
             <BookmarkGrid
               categories={
                 !localSearch
-                  ? bookmarkCategories.filter((category: Category) => category.isPinned && categoryContainsItems(category, bookmarks))
+                  ? bookmarkCategories.filter((category: Category) => category.isPinned && categoryContainsPinnedItems(category, bookmarks))
                   : searchInCategories(localSearch, bookmarkCategories)
               }
               bookmarks={
