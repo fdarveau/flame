@@ -216,7 +216,7 @@ async function retrieveDockerApps(apps, orderType, unpinStoppedApps) {
           orderId: labels['flame.order'] || 500,
         };
         if (labels['flame.category']) {
-          const category = categories.find(category => category.name.toUpperCase() === labels['flame.category'].toUpperCase());
+          let category = categories.find(category => category.name.toUpperCase() === labels['flame.category'].toUpperCase());
           if (!category) {
             category = await createNewCategory(labels['flame.category']);
           }
@@ -291,7 +291,7 @@ async function retrieveKubernetesApps(apps, orderType, unpinStoppedApps) {
           orderId: annotations['flame.pawelmalak/order'] || 500,
         };
         if (annotations['flame.pawelmalak/category']) {
-          const category = categories.find(category => category.name.toUpperCase() === annotations['flame.pawelmalak/category'].toUpperCase());
+          let category = categories.find(category => category.name.toUpperCase() === annotations['flame.pawelmalak/category'].toUpperCase());
           if (!category) {
             category = await createNewCategory(labels['flame.pawelmalak/category']);
           }
