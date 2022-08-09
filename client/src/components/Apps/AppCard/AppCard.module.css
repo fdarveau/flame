@@ -46,7 +46,6 @@
 }
 
 .Apps a {
-  line-height: 2;
   transition: all 0.25s;
   display: flex;
   width: 100%;

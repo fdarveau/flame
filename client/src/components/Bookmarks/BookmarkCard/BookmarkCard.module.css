@@ -20,9 +20,9 @@
 }
 
 .Bookmarks a {
-  line-height: 2;
   transition: all 0.25s;
   display: flex;
+  margin-bottom: 10px;
 }
 
 .BookmarkCard a:hover {
@@ -34,7 +34,7 @@
   width: 20px;
   height: 20px;
   display: flex;
-  margin-top: 3px;
+  margin-top: -3px;
   margin-right: 2px;
   justify-content: center;
   align-items: center;
