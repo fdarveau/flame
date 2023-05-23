@@ -1,5 +1,7 @@
 FROM node:16-alpine as builder
 
+RUN apk --no-cache --virtual build-dependencies add python python3 make g++
+
 # Get package.json and install modules
 COPY package*.json /tmp/package.json
 RUN cd /tmp && npm install --production
