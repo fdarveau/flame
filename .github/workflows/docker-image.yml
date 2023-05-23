@@ -26,7 +26,19 @@ jobs:
           TAGS="${DOCKER_IMAGE}:${VERSION},${DOCKER_IMAGE}:${{ steps.date.outputs.date }}"
           echo ${TAGS}
           echo ::set-output name=tags::${TAGS}
-          
+        
+      - name: Prepare-multiarch
+        id: prep-multiarch
+        run: |
+          DOCKER_IMAGE=ghcr.io/${{ github.repository }}
+          VERSION=multiarch
+          if [[ '${{ github.head_ref }}' != '' ]]; then
+            VERSION=${{github.head_ref}}
+          fi
+          TAGS="${DOCKER_IMAGE}:${VERSION}-multiarch,${DOCKER_IMAGE}:${{ steps.date.outputs.date }}-multiarch"
+          echo ${TAGS}
+          echo ::set-output name=tags-multiarch::${TAGS}
+      
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v1
         
@@ -44,6 +56,15 @@ jobs:
         uses: docker/build-push-action@v2
         with:
           context: .
-          file: ./.docker/Dockerfile.multiarch
+          file: ./.docker/Dockerfile
           push: true
-          tags: ${{ steps.prep.outputs.tags }}
+          tags: ${{ steps.prep.outputs.tags }}      
+          
+      - name: Push multiarch to GitHub Packages
+        uses: docker/build-push-action@v2
+        with:
+          context: .
+          file: ./.docker/Dockerfile
+          platforms: linux/amd64,linux/arm/v7,linux/arm64
+          push: true
+          tags: ${{ steps.prep.outputs.tags-multiarch }}

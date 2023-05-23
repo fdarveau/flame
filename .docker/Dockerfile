@@ -1,4 +1,4 @@
-FROM node:16 as builder
+FROM node:16-alpine as builder
 
 # Get package.json and install modules
 COPY package*.json /tmp/package.json
