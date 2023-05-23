@@ -10,7 +10,7 @@ jobs:
     steps:
       - name: Get current date
         id: date
-        run: echo "::set-output name=date::$(date +'%Y-%m-%d')"
+        run: echo "date=$(date +'%Y-%m-%d')" >> "$GITHUB_OUTPUT"
         
       - name: Check out the repo
         uses: actions/checkout@v2
@@ -25,7 +25,7 @@ jobs:
           fi
           TAGS="${DOCKER_IMAGE}:${VERSION},${DOCKER_IMAGE}:${{ steps.date.outputs.date }}"
           echo ${TAGS}
-          echo ::set-output name=tags::${TAGS}
+          echo "tags=${TAGS}" >> "$GITHUB_OUTPUT"
         
       - name: Prepare-multiarch
         id: prep-multiarch
@@ -37,7 +37,7 @@ jobs:
           fi
           TAGS="${DOCKER_IMAGE}:${VERSION}-multiarch,${DOCKER_IMAGE}:${{ steps.date.outputs.date }}-multiarch"
           echo ${TAGS}
-          echo ::set-output name=tags-multiarch::${TAGS}
+          echo "tags-multiarch=${TAGS}" >> "$GITHUB_OUTPUT"
       
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v1
@@ -67,4 +67,4 @@ jobs:
           file: ./.docker/Dockerfile
           platforms: linux/amd64,linux/arm/v7,linux/arm64
           push: true
-          tags: ${{ steps.prep.outputs.tags-multiarch }}
+          tags: ${{ steps.prep-multiarch.outputs.tags-multiarch }}
