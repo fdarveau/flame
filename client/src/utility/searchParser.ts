@@ -1,7 +1,7 @@
-import { queries } from './searchQueries.json';
+import { isUrlOrIp } from '.';
 import { SearchResult } from '../interfaces';
 import { store } from '../store/store';
-import { isUrlOrIp } from '.';
+import searchQueries from './searchQueries.json';
 
 export const searchParser = (searchQuery: string): SearchResult => {
   const result: SearchResult = {
@@ -40,7 +40,7 @@ export const searchParser = (searchQuery: string): SearchResult => {
 
   // Find primary search engine template
   const findProvider = (prefix: string) => {
-    return [...queries, ...customQueries].find((q) => q.prefix === prefix);
+    return [...searchQueries.queries, ...customQueries].find((q) => q.prefix === prefix);
   };
 
   const primarySearch = findProvider(prefix);

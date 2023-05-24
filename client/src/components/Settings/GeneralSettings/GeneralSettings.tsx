@@ -6,7 +6,7 @@ import { GeneralForm, Query } from '../../../interfaces';
 import { actionCreators } from '../../../store';
 import { State } from '../../../store/reducers';
 import { generalSettingsTemplate, inputHandler } from '../../../utility';
-import { queries } from '../../../utility/searchQueries.json';
+import searchQueries from '../../../utility/searchQueries.json';
 import { Button, InputGroup, SettingsHeadline } from '../../UI';
 import { CustomQueries } from './CustomQueries/CustomQueries';
 
@@ -166,8 +166,8 @@ export const GeneralSettings = (): JSX.Element => {
             value={formData.defaultSearchProvider}
             onChange={(e) => inputChangeHandler(e)}
           >
-            {[...queries, ...customQueries].map((query: Query, idx) => {
-              const isCustom = idx >= queries.length;
+            {[...searchQueries.queries, ...customQueries].map((query: Query, idx) => {
+              const isCustom = idx >= searchQueries.queries.length;
 
               return (
                 <option key={idx} value={query.prefix}>
@@ -189,8 +189,8 @@ export const GeneralSettings = (): JSX.Element => {
               value={formData.secondarySearchProvider}
               onChange={(e) => inputChangeHandler(e)}
             >
-              {[...queries, ...customQueries].map((query: Query, idx) => {
-                const isCustom = idx >= queries.length;
+              {[...searchQueries.queries, ...customQueries].map((query: Query, idx) => {
+                const isCustom = idx >= searchQueries.queries.length;
 
                 return (
                   <option key={idx} value={query.prefix}>
