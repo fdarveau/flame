@@ -4,7 +4,7 @@ RUN apk --no-cache --virtual build-dependencies add python python3 make g++
 
 # Get package.json and install modules
 COPY package*.json /tmp/package.json
-RUN cd /tmp && npm install --productionSi l
+RUN cd /tmp && npm install --production
 RUN mkdir -p /app && cp -a /tmp/node_modules /app/
 
 # Get package.json and install modules
