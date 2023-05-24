@@ -12,7 +12,7 @@ RUN mkdir -p /app/client && cp -a /tmp_client/node_modules /app/client/
 
 WORKDIR /app
 
-COPY . /app
+COPY . .
 
 RUN mkdir -p ./public ./data \
     && cd ./client \
