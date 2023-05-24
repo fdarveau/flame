@@ -1,10 +1,10 @@
-FROM node:16 as builder
+FROM node:16-alpine3.11 as builder
 
 RUN apk --no-cache --virtual build-dependencies add python python3 make g++
 
 # Get package.json and install modules
 COPY package*.json /tmp/package.json
-RUN cd /tmp && npm install --production
+RUN cd /tmp && npm install --productionSi l
 RUN mkdir -p /app && cp -a /tmp/node_modules /app/
 
 # Get package.json and install modules
@@ -23,7 +23,7 @@ RUN mkdir -p ./public ./data \
     && mv ./client/build/* ./public \
     && rm -rf ./client
 
-FROM node:16-alpine
+FROM node:16-alpine3.11
 
 COPY --from=builder /app /app
 
