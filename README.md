@@ -2,10 +2,10 @@
 
 ![Homescreen screenshot](.github/home.png)
 
-## Important update 2021-12-10
-Due to prolonged inactivity on my end and multiple conflicting changes with the original repository, I applied app categories from scratch using the original repository's code. **This means there are some breaking changes, the biggest one being the database**. The database schemas of the old version and the new one are incompatible. You will need to delete/rename the previous database file so Flame can re-create it. You can then add your apps/bookmarks manually.
+## Important note
+If you encounter any problem, you can open an Issue in this fork so I can look into it. 
 
-If you encounter any problem, you can open an Issue in this fork so I can look into it.
+Since this is a fork aimed at adding app categories only, no new features will be added, but bugs will be fixed if I can reproduce them on my setup. If my setup does not allow me to reproduce bugs reported (such as the ones involving Kubernetes, which I don't use), I will ask the person who opened the issue to test a bugfix build before publishing the fix.
 
 ## Description
 
@@ -24,16 +24,14 @@ Flame is self-hosted startpage for your server. Its design is inspired (heavily)
 
 ### With Docker (recommended)
 
-[Docker Hub link](https://hub.docker.com/r/pawelmalak/flame)
-
 ```sh
 docker pull ghcr.io/fdarveau/flame:latest
 
 # for ARM architecture (e.g. RaspberryPi)
-docker pull ghcr.io/fdarveau/flame:latest:multiarch
+docker pull ghcr.io/fdarveau/flame:latest-multiarch
 
 # installing specific version
-docker pull ghcr.io/fdarveau/flame:latest:2021-12-12
+docker pull ghcr.io/fdarveau/flame:2021-12-12
 ```
 
 #### Deployment
