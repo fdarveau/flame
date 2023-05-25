@@ -31,7 +31,7 @@ jobs:
         id: prep-multiarch
         run: |
           DOCKER_IMAGE=ghcr.io/${{ github.repository }}
-          VERSION=multiarch
+          VERSION=latest
           if [[ '${{ github.head_ref }}' != '' ]]; then
             VERSION=${{github.head_ref}}
           fi
