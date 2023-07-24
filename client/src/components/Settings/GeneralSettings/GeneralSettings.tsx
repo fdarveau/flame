@@ -21,6 +21,8 @@ export const GeneralSettings = (): JSX.Element => {
   const { updateConfig, sortApps, sortCategories, sortBookmarks } =
     bindActionCreators(actionCreators, dispatch);
 
+  const queries = searchQueries.queries;
+
   // Initial state
   const [formData, setFormData] = useState<GeneralForm>(
     generalSettingsTemplate

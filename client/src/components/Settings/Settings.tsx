@@ -22,6 +22,7 @@ import { WeatherSettings } from './WeatherSettings/WeatherSettings';
 // UI
 // Data
 export const Settings = (): JSX.Element => {
+
   const { isAuthenticated } = useSelector((state: State) => state.auth);
 
   const tabs = isAuthenticated ? settings.routes : settings.routes.filter((r) => !r.authRequired);
