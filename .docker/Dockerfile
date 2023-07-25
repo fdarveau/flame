@@ -4,12 +4,12 @@ RUN apk --no-cache --virtual build-dependencies add python python3 make g++
 
 # Get package.json and install modules
 COPY package*.json /tmp/server/package.json
-RUN cd /tmp/server && npm install --production
+RUN cd /tmp/server && npm install
 RUN mkdir -p /app && cp -a /tmp/server/node_modules /app/node_modules
 
 # Get package.json and install modules
 COPY client/package*.json /tmp/client/package.json
-RUN cd /tmp/client && npm install --production
+RUN cd /tmp/client && npm install
 RUN mkdir -p /app/client && cp -a /tmp/client/node_modules /app/client/node_modules
 
 COPY . /app
