@@ -1,30 +1,27 @@
-import { useState, useEffect } from 'react';
-
-// Redux
-import { useSelector, useDispatch } from 'react-redux';
+import { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { bindActionCreators } from 'redux';
+
+import { Theme } from '../../../../interfaces';
 import { actionCreators } from '../../../../store';
 import { State } from '../../../../store/reducers';
-
-// Other
-import { Theme } from '../../../../interfaces';
-
-// UI
 import { Button, Modal } from '../../../UI';
 import { ThemeGrid } from '../ThemeGrid/ThemeGrid';
 import classes from './ThemeBuilder.module.css';
 import { ThemeCreator } from './ThemeCreator';
 import { ThemeEditor } from './ThemeEditor';
 
+// Redux
+// Other
+// UI
 interface Props {
   themes: Theme[];
 }
 
 export const ThemeBuilder = ({ themes }: Props): JSX.Element => {
-  const {
-    auth: { isAuthenticated },
-    theme: { themeInEdit, userThemes },
-  } = useSelector((state: State) => state);
+  const themeInEdit = useSelector((state: State) => state.theme.themeInEdit);
+  const userThemes = useSelector((state: State) => state.theme.userThemes);  
+  const isAuthenticated = useSelector((state: State) => state.auth.isAuthenticated);
 
   const { editTheme } = bindActionCreators(actionCreators, useDispatch());
 
@@ -43,7 +40,7 @@ export const ThemeBuilder = ({ themes }: Props): JSX.Element => {
       toggleIsInEdit(false);
       toggleShowModal(false);
     }
-  }, [userThemes]);
+  }, [isInEdit, userThemes]);
 
   return (
     <div className={classes.ThemeBuilder}>

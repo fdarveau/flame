@@ -16,11 +16,8 @@ interface Props {
 
 export const BookmarkCard = (props: Props): JSX.Element => {
   const { category, fromHomepage = false } = props;
-
-  const {
-    config: { config },
-    auth: { isAuthenticated },
-  } = useSelector((state: State) => state);
+  const config = useSelector((state: State) => state.config.config);
+  const isAuthenticated = useSelector((state: State) => state.auth.isAuthenticated);
 
   const dispatch = useDispatch();
   const { setEditCategory } = bindActionCreators(actionCreators, dispatch);

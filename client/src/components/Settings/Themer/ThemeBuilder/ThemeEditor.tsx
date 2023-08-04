@@ -1,23 +1,20 @@
 import { Fragment } from 'react';
-
-// Redux
-import { useSelector, useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { bindActionCreators } from 'redux';
+
 import { Theme } from '../../../../interfaces';
 import { actionCreators } from '../../../../store';
 import { State } from '../../../../store/reducers';
-
-// Other
 import { ActionIcons, CompactTable, Icon, ModalForm } from '../../../UI';
 
+// Redux
+// Other
 interface Props {
   modalHandler: () => void;
 }
 
 export const ThemeEditor = (props: Props): JSX.Element => {
-  const {
-    theme: { userThemes },
-  } = useSelector((state: State) => state);
+  const userThemes = useSelector((state: State) => state.theme.userThemes);
 
   const { deleteTheme, editTheme } = bindActionCreators(
     actionCreators,

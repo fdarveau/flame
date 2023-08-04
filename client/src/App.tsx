@@ -2,7 +2,7 @@ import 'external-svg-loader';
 
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { BrowserRouter, Route, Switch } from 'react-router-dom';
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import { bindActionCreators } from 'redux';
 
 import { Apps } from './components/Apps/Apps';
@@ -73,18 +73,18 @@ export const App = (): JSX.Element => {
     if (!loading && !localStorage.theme) {
       setTheme(parsePABToTheme(config.defaultTheme), false);
     }
-  }, [loading]);
+  }, [config.defaultTheme, loading, setTheme]);
 
   return (
     <>
       <BrowserRouter>
-        <Switch>
-          <Route exact path="/" component={Home} />
-          <Route path="/settings" component={Settings} />
-          <Route path="/applications" component={Apps} />
-          <Route path="/bookmarks" component={Bookmarks} />
-          <Route component={NotFound} />
-        </Switch>
+        <Routes>
+          <Route path="/" element={<Home/>} />
+          <Route path="/settings/*" element={<Settings/>} />
+          <Route path="/applications" element={<Apps searching={false}/>} />
+          <Route path="/bookmarks" element={<Bookmarks searching={false}/>} />
+          <Route element={<NotFound/>} />
+        </Routes>
       </BrowserRouter>
       <NotificationCenter />
     </>

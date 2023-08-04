@@ -18,10 +18,8 @@ interface Props {
 }
 
 export const AppsTable = ({ openFormForUpdating }: Props): JSX.Element => {
-  const {
-    apps: { categoryInEdit },
-    config: { config },
-  } = useSelector((state: State) => state);
+  const categoryInEdit = useSelector((state: State) => state.apps.categoryInEdit);
+  const config = useSelector((state: State) => state.config.config);
 
   const dispatch = useDispatch();
   const {

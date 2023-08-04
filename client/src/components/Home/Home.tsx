@@ -16,12 +16,12 @@ import { Header } from './Header/Header';
 import classes from './Home.module.css';
 
 export const Home = (): JSX.Element => {
-  const {
-    apps: { categories: appCategories, loading: appsLoading },
-    bookmarks: { categories: bookmarkCategories, loading: bookmarksLoading },
-    config: { config },
-    auth: { isAuthenticated },
-  } = useSelector((state: State) => state);
+  const appCategories = useSelector((state: State) => state.apps.categories);
+  const appsLoading = useSelector((state: State) => state.apps.loading);
+  const bookmarkCategories = useSelector((state: State) => state.bookmarks.categories);
+  const bookmarksLoading = useSelector((state: State) => state.bookmarks.loading);
+  const config = useSelector((state: State) => state.config.config);
+  const isAuthenticated = useSelector((state: State) => state.auth.isAuthenticated);
 
   const dispatch = useDispatch();
   const { getCategories } = bindActionCreators(
@@ -41,7 +41,7 @@ export const Home = (): JSX.Element => {
     if (!appCategories.length && !bookmarkCategories.length) {
       getCategories();
     }
-  }, []);
+  }, [appCategories.length, bookmarkCategories.length]);
 
   useEffect(() => {
     if (localSearch) {
@@ -81,7 +81,7 @@ export const Home = (): JSX.Element => {
       setAppSearchResult(null);
       setBookmarkSearchResult(null);
     }
-  }, [localSearch]);
+  }, [appCategories, bookmarkCategories, localSearch]);
 
   return (
     <Container>

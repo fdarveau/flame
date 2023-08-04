@@ -1,26 +1,24 @@
-import { ChangeEvent, FormEvent, useState, useEffect } from 'react';
-
-// Redux
+import { ChangeEvent, FormEvent, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { bindActionCreators } from 'redux';
+
+import { Theme } from '../../../../interfaces';
 import { actionCreators } from '../../../../store';
 import { State } from '../../../../store/reducers';
-
-// UI
 import { Button, InputGroup, ModalForm } from '../../../UI';
 import classes from './ThemeCreator.module.css';
 
+// Redux
+// UI
 // Other
-import { Theme } from '../../../../interfaces';
-
 interface Props {
   modalHandler: () => void;
 }
 
 export const ThemeCreator = ({ modalHandler }: Props): JSX.Element => {
   const {
-    theme: { activeTheme, themeInEdit },
-  } = useSelector((state: State) => state);
+    activeTheme, themeInEdit
+  } = useSelector((state: State) => state.theme);
 
   const { addTheme, updateTheme, editTheme } = bindActionCreators(
     actionCreators,
@@ -39,7 +37,7 @@ export const ThemeCreator = ({ modalHandler }: Props): JSX.Element => {
 
   useEffect(() => {
     setFormData({ ...formData, colors: activeTheme.colors });
-  }, [activeTheme]);
+  }, [activeTheme.colors]);
 
   useEffect(() => {
     if (themeInEdit) {

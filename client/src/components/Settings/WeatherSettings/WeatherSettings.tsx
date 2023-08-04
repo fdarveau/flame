@@ -1,21 +1,18 @@
-import { useState, ChangeEvent, useEffect, FormEvent } from 'react';
 import axios from 'axios';
-
-// Redux
+import { ChangeEvent, FormEvent, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { bindActionCreators } from 'redux';
+
+import { ApiResponse, Weather, WeatherForm } from '../../../interfaces';
 import { actionCreators } from '../../../store';
 import { State } from '../../../store/reducers';
-
-// Typescript
-import { ApiResponse, Weather, WeatherForm } from '../../../interfaces';
-
-// UI
-import { InputGroup, Button, SettingsHeadline } from '../../UI';
-
-// Utils
 import { inputHandler, weatherSettingsTemplate } from '../../../utility';
+import { Button, InputGroup, SettingsHeadline } from '../../UI';
 
+// Redux
+// Typescript
+// UI
+// Utils
 export const WeatherSettings = (): JSX.Element => {
   const { loading, config } = useSelector((state: State) => state.config);
 

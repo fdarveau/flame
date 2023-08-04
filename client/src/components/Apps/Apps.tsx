@@ -23,10 +23,10 @@ export enum ContentType {
 
 export const Apps = (props: Props): JSX.Element => {
   // Get Redux state
-  const {
-    apps: { loading, categories, categoryInEdit },
-    auth: { isAuthenticated },
-  } = useSelector((state: State) => state);
+  const categories = useSelector((state: State) => state.apps.categories);
+  const loading = useSelector((state: State) => state.apps.loading);
+  const categoryInEdit = useSelector((state: State) => state.apps.categoryInEdit);
+  const isAuthenticated = useSelector((state: State) => state.auth.isAuthenticated);
 
   // Get Redux action creators
   const dispatch = useDispatch();
