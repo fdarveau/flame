@@ -1,5 +1,5 @@
 import { useSelector } from 'react-redux';
-import { Link, NavLink, Route, Switch } from 'react-router-dom';
+import { Link, NavLink, Route, Routes } from 'react-router-dom';
 
 import { Route as SettingsRoute } from '../../interfaces';
 import { State } from '../../store/reducers';
@@ -22,6 +22,7 @@ import { WeatherSettings } from './WeatherSettings/WeatherSettings';
 // UI
 // Data
 export const Settings = (): JSX.Element => {
+
   const { isAuthenticated } = useSelector((state: State) => state.auth);
 
   const tabs = isAuthenticated ? settings.routes : settings.routes.filter((r) => !r.authRequired);
@@ -34,9 +35,13 @@ export const Settings = (): JSX.Element => {
         <nav className={classes.SettingsNav}>
           {tabs.map(({ name, dest }: SettingsRoute, idx) => (
             <NavLink
-              className={classes.SettingsNavLink}
-              activeClassName={classes.SettingsNavLinkActive}
-              exact
+              className={({ isActive }) => {
+                const linkClasses = [classes.SettingsNavLink];
+                if (isActive) linkClasses.push(classes.SettingsNavLinkActive);
+                
+                return linkClasses.join(" ");
+              }}
+              end
               to={dest}
               key={idx}
             >
@@ -47,24 +52,25 @@ export const Settings = (): JSX.Element => {
 
         {/* ROUTES */}
         <section className={classes.SettingsContent}>
-          <Switch>
-            <Route exact path="/settings" component={Themer} />
-            <ProtectedRoute
-              path="/settings/weather"
-              component={WeatherSettings}
-            />
-            <ProtectedRoute
-              path="/settings/general"
-              component={GeneralSettings}
-            />
-            <ProtectedRoute path="/settings/interface" component={UISettings} />
-            <ProtectedRoute
-              path="/settings/docker"
-              component={DockerSettings}
-            />
-            <ProtectedRoute path="/settings/css" component={StyleSettings} />
-            <Route path="/settings/app" component={AppDetails} />
-          </Switch>
+          <Routes>
+            <Route path="" element={<Themer/>} />
+            <Route path="weather" element={<ProtectedRoute/>}>
+              <Route path="" element={<WeatherSettings/>}/>
+            </Route>
+            <Route path="general" element={<ProtectedRoute/>}>
+              <Route path="" element={<GeneralSettings/>}/>
+            </Route>
+            <Route path="interface" element={<ProtectedRoute/>}>
+              <Route path="" element={<UISettings/>}/>
+            </Route>
+            <Route path="docker" element={<ProtectedRoute/>}>
+              <Route path="" element={<DockerSettings/>}/>
+            </Route>
+            <Route path="css" element={<ProtectedRoute/>}>
+              <Route path="" element={<StyleSettings/>}/>
+            </Route>
+            <Route path="app" element={<AppDetails/>} />
+          </Routes>
         </section>
       </div>
     </Container>

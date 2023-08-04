@@ -22,9 +22,7 @@ export const BookmarkGrid = (props: Props): JSX.Element => {
     fromHomepage = false,
   } = props;
 
-  const {
-    config: { config }
-  } = useSelector((state: State) => state);
+  const config = useSelector((state: State) => state.config.config);
 
   const shouldBeShown = (category: Category) => {
     return !config.hideEmptyCategories || category.bookmarks.length > 0 || !fromHomepage

@@ -1,20 +1,17 @@
-import { useState, useEffect, Fragment } from 'react';
 import axios from 'axios';
-
-// Redux
+import { Fragment, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 
-// Typescript
-import { Weather, ApiResponse } from '../../../interfaces';
-
-// CSS
-import classes from './WeatherWidget.module.css';
-
-// UI
-import { WeatherIcon } from '../../UI';
+import { ApiResponse, Weather } from '../../../interfaces';
 import { State } from '../../../store/reducers';
 import { weatherTemplate } from '../../../utility/templateObjects/weatherTemplate';
+import { WeatherIcon } from '../../UI';
+import classes from './WeatherWidget.module.css';
 
+// Redux
+// Typescript
+// CSS
+// UI
 export const WeatherWidget = (): JSX.Element => {
   const { loading: configLoading, config } = useSelector(
     (state: State) => state.config

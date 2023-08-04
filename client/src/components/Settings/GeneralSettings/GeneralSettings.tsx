@@ -11,11 +11,9 @@ import { Button, InputGroup, SettingsHeadline } from '../../UI';
 import { CustomQueries } from './CustomQueries/CustomQueries';
 
 export const GeneralSettings = (): JSX.Element => {
-  const {
-    config: { loading, customQueries, config },
-    apps: { categories: appCategories },
-    bookmarks: { categories: bookmarkCategories },
-  } = useSelector((state: State) => state);
+  const config = useSelector((state: State) => state.config);
+  const appCategories = useSelector((state: State) => state.apps.categories);
+  const bookmarkCategories = useSelector((state: State) => state.bookmarks.categories);
 
   const dispatch = useDispatch();
   const { updateConfig, sortApps, sortCategories, sortBookmarks } =
@@ -29,9 +27,9 @@ export const GeneralSettings = (): JSX.Element => {
   // Get config
   useEffect(() => {
     setFormData({
-      ...config,
+      ...config.config,
     });
-  }, [loading]);
+  }, [config]);
 
   // Form handler
   const formSubmitHandler = async (e: FormEvent) => {
@@ -41,7 +39,7 @@ export const GeneralSettings = (): JSX.Element => {
     await updateConfig(formData);
 
     // Sort entities with new settings
-    if (formData.useOrdering !== config.useOrdering) {
+    if (formData.useOrdering !== config.config.useOrdering) {
       sortCategories();
 
       for (let { id } of appCategories) {
@@ -166,7 +164,7 @@ export const GeneralSettings = (): JSX.Element => {
             value={formData.defaultSearchProvider}
             onChange={(e) => inputChangeHandler(e)}
           >
-            {[...searchQueries.queries, ...customQueries].map((query: Query, idx) => {
+            {[...searchQueries.queries, ...config.customQueries].map((query: Query, idx) => {
               const isCustom = idx >= searchQueries.queries.length;
 
               return (
@@ -189,7 +187,7 @@ export const GeneralSettings = (): JSX.Element => {
               value={formData.secondarySearchProvider}
               onChange={(e) => inputChangeHandler(e)}
             >
-              {[...searchQueries.queries, ...customQueries].map((query: Query, idx) => {
+              {[...searchQueries.queries, ...config.customQueries].map((query: Query, idx) => {
                 const isCustom = idx >= searchQueries.queries.length;
 
                 return (
