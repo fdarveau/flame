@@ -26,7 +26,7 @@ export const AppsForm = ({
   const { categories } = useSelector((state: State) => state.apps);
 
   const dispatch = useDispatch();
-  const { addApp, updateApp, setEditApp, createNotification } =
+  const { addApp, updateApp, createNotification } =
     bindActionCreators(actionCreators, dispatch);
 
   const [useCustomIcon, toggleUseCustomIcon] = useState<boolean>(false);

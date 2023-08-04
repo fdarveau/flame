@@ -1,32 +1,25 @@
 import { ChangeEvent, FormEvent, Fragment, useEffect, useState } from 'react';
-
-// Redux
 import { useDispatch, useSelector } from 'react-redux';
 import { bindActionCreators } from 'redux';
+
+import { Theme, ThemeSettingsForm } from '../../../interfaces';
 import { actionCreators } from '../../../store';
 import { State } from '../../../store/reducers';
-
-// Typescript
-import { Theme, ThemeSettingsForm } from '../../../interfaces';
-
-// Components
+import { inputHandler, parseThemeToPAB, themeSettingsTemplate } from '../../../utility';
 import { Button, InputGroup, SettingsHeadline, Spinner } from '../../UI';
 import { ThemeBuilder } from './ThemeBuilder/ThemeBuilder';
 import { ThemeGrid } from './ThemeGrid/ThemeGrid';
 
+// Redux
+// Typescript
+// Components
 // Other
-import {
-  inputHandler,
-  parseThemeToPAB,
-  themeSettingsTemplate,
-} from '../../../utility';
-
-export const Themer = (): JSX.Element => {
-  const {
-    auth: { isAuthenticated },
-    config: { loading, config },
-    theme: { themes, userThemes },
-  } = useSelector((state: State) => state);
+export const Themer = (): JSX.Element => {  
+  const themes = useSelector((state: State) => state.theme.themes);
+  const userThemes = useSelector((state: State) => state.theme.userThemes);  
+  const config = useSelector((state: State) => state.config.config);
+  const loading = useSelector((state: State) => state.config.loading);
+  const isAuthenticated = useSelector((state: State) => state.auth.isAuthenticated);
 
   const dispatch = useDispatch();
   const { updateConfig } = bindActionCreators(actionCreators, dispatch);

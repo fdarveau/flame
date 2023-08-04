@@ -18,10 +18,8 @@ interface Props {
 }
 
 export const BookmarksTable = ({ openFormForUpdating }: Props): JSX.Element => {
-  const {
-    bookmarks: { categoryInEdit },
-    config: { config },
-  } = useSelector((state: State) => state);
+  const categoryInEdit = useSelector((state: State) => state.bookmarks.categoryInEdit);
+  const config = useSelector((state: State) => state.config.config);
 
   const dispatch = useDispatch();
   const {
