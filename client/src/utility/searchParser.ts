@@ -4,6 +4,8 @@ import { store } from '../store/store';
 import searchQueries from './searchQueries.json';
 
 export const searchParser = (searchQuery: string): SearchResult => {
+  const queries = searchQueries.queries;
+
   const result: SearchResult = {
     isLocal: false,
     isURL: false,
@@ -40,7 +42,7 @@ export const searchParser = (searchQuery: string): SearchResult => {
 
   // Find primary search engine template
   const findProvider = (prefix: string) => {
-    return [...searchQueries.queries, ...customQueries].find((q) => q.prefix === prefix);
+    return [...queries, ...customQueries].find((q) => q.prefix === prefix);
   };
 
   const primarySearch = findProvider(prefix);
@@ -53,9 +55,9 @@ export const searchParser = (searchQuery: string): SearchResult => {
 
     if (prefix === 'l') {
       result.isLocal = true;
-    } else {
-      result.sameTab = config.searchSameTab;
     }
+
+    result.sameTab = config.searchSameTab;
 
     if (secondarySearch) {
       result.secondarySearch = secondarySearch;
