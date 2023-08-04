@@ -19,6 +19,8 @@ export const GeneralSettings = (): JSX.Element => {
   const { updateConfig, sortApps, sortCategories, sortBookmarks } =
     bindActionCreators(actionCreators, dispatch);
 
+  const queries = searchQueries.queries;
+
   // Initial state
   const [formData, setFormData] = useState<GeneralForm>(
     generalSettingsTemplate
@@ -164,8 +166,8 @@ export const GeneralSettings = (): JSX.Element => {
             value={formData.defaultSearchProvider}
             onChange={(e) => inputChangeHandler(e)}
           >
-            {[...searchQueries.queries, ...config.customQueries].map((query: Query, idx) => {
-              const isCustom = idx >= searchQueries.queries.length;
+            {[...queries, ...config.customQueries].map((query: Query, idx) => {
+              const isCustom = idx >= queries.length;
 
               return (
                 <option key={idx} value={query.prefix}>
@@ -187,8 +189,8 @@ export const GeneralSettings = (): JSX.Element => {
               value={formData.secondarySearchProvider}
               onChange={(e) => inputChangeHandler(e)}
             >
-              {[...searchQueries.queries, ...config.customQueries].map((query: Query, idx) => {
-                const isCustom = idx >= searchQueries.queries.length;
+              {[...queries, ...config.customQueries].map((query: Query, idx) => {
+                const isCustom = idx >= queries.length;
 
                 return (
                   <option key={idx} value={query.prefix}>

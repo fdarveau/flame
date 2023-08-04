@@ -8,7 +8,7 @@ import { Container, Headline } from '../UI';
 import { AppDetails } from './AppDetails/AppDetails';
 import { DockerSettings } from './DockerSettings/DockerSettings';
 import { GeneralSettings } from './GeneralSettings/GeneralSettings';
-import settings from './settings.json';
+import clientRoutes from './settings.json';
 import classes from './Settings.module.css';
 import { StyleSettings } from './StyleSettings/StyleSettings';
 import { Themer } from './Themer/Themer';
@@ -22,10 +22,11 @@ import { WeatherSettings } from './WeatherSettings/WeatherSettings';
 // UI
 // Data
 export const Settings = (): JSX.Element => {
+  const routes = clientRoutes.routes;
 
   const { isAuthenticated } = useSelector((state: State) => state.auth);
 
-  const tabs = isAuthenticated ? settings.routes : settings.routes.filter((r) => !r.authRequired);
+  const tabs = isAuthenticated ? routes : routes.filter((r) => !r.authRequired);
 
   return (
     <Container>
