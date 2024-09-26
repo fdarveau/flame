@@ -24,7 +24,7 @@ RUN mkdir -p ./public ./data \
     && mv ./client/build/* ./public \
     && rm -rf ./client
 
-FROM node:16-alpine3.11
+FROM node:22-alpine
 
 COPY --from=builder /app /app
 
