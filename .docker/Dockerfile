@@ -1,6 +1,6 @@
-FROM node:16-alpine3.11 as builder
+FROM node:22-alpine as builder
 
-RUN apk --no-cache --virtual build-dependencies add python python3 make g++
+RUN apk --no-cache --virtual build-dependencies add python3 make g++
 
 # Get package.json and install modules
 COPY package*.json /tmp/package.json
