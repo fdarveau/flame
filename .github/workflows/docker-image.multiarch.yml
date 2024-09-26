@@ -1,8 +1,6 @@
-name: Docker Image CI
+name: Docker Image CI (multiarch)
 on:
   push:
-    branches: [ master ]
-  pull_request:
     branches: [ master ]
 jobs:
   build:
@@ -15,17 +13,17 @@ jobs:
       - name: Check out the repo
         uses: actions/checkout@v2
         
-      - name: Prepare
-        id: prep
+      - name: Prepare-multiarch
+        id: prep-multiarch
         run: |
           DOCKER_IMAGE=ghcr.io/${{ github.repository }}
           VERSION=latest
           if [[ '${{ github.head_ref }}' != '' ]]; then
             VERSION=${{github.head_ref}}
           fi
-          TAGS="${DOCKER_IMAGE}:${VERSION},${DOCKER_IMAGE}:${{ steps.date.outputs.date }}"
+          TAGS="${DOCKER_IMAGE}:${VERSION}-multiarch,${DOCKER_IMAGE}:${{ steps.date.outputs.date }}-multiarch"
           echo ${TAGS}
-          echo "tags=${TAGS}" >> "$GITHUB_OUTPUT"
+          echo "tags-multiarch=${TAGS}" >> "$GITHUB_OUTPUT"
       
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
@@ -38,12 +36,13 @@ jobs:
         with:
           registry: ghcr.io
           username: ${{ github.repository_owner }}
-          password: ${{ secrets.GITHUB_TOKEN }}
+          password: ${{ secrets.GITHUB_TOKEN }} 
           
-      - name: Push to GitHub Packages
+      - name: Push multiarch to GitHub Packages
         uses: docker/build-push-action@v6
         with:
           context: .
           file: ./.docker/Dockerfile
+          platforms: linux/amd64,linux/arm/v7,linux/arm64
           push: true
-          tags: ${{ steps.prep.outputs.tags }}
+          tags: ${{ steps.prep-multiarch.outputs.tags-multiarch }}
