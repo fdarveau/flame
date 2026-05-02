@@ -60,7 +60,7 @@ const useKubernetes = async (apps) => {
         /^app/.test(annotations['flame.pawelmalak/type'])
       ) {
         
-        const names = annotations['flame.pawelmalak/.name'].split(';');
+        const names = annotations['flame.pawelmalak/name'].split(';');
         const urls = annotations['flame.pawelmalak/url'].split(';');
         const categoriesLabels = annotations['flame.pawelmalak/category'] ? annotations['flame.pawelmalak/category'].split(';') : [];
         const orders = annotations['flame.pawelmalak/order'] ? annotations['flame.pawelmalak/order'].split(';') : [];
